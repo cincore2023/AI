@@ -313,7 +313,10 @@ const dataSource = ref([])
 const getDataSourceFunc = async () => {
   const res = await getActivitiesDataSource()
   if (res.code === 0) {
-    dataSource.value = res.data
+    dataSource.value = {
+      category: res.data.category.filter(item => item.type === "activity" && item.parent_id !== 0),
+    }
+    console.log(dataSource.value)
   }
 }
 getDataSourceFunc()

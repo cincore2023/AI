@@ -6,7 +6,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"go.uber.org/zap"
-	
+	"gorm.io/gorm"
 )
 
 type ActivitiesService struct{}
@@ -138,7 +138,7 @@ func (activitiesService *ActivitiesService) GetActivitiesDataSource(ctx context.
 	res = make(map[string][]map[string]any)
 	category := make([]map[string]any, 0)
 
-	err = global.GVA_DB.Table("program_categories").Where("deleted_at IS NULL").Select("category_name as label,id as value").Scan(&category).Error
+	err = global.GVA_DB.Table("program_categories").Where("deleted_at IS NULL").Select("category_name as label ,id as value, type, parent_id").Scan(&category).Error
 	if err != nil {
 		return
 	}
