@@ -159,12 +159,31 @@ func (activitiesApi *ActivitiesApi) GetActivitiesList(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
+
+	// 设置默认分页参数
+	if pageInfo.Page <= 0 {
+		pageInfo.Page = 1
+	}
+	if pageInfo.PageSize <= 0 {
+		pageInfo.PageSize = 10
+	}
+	if pageInfo.PageSize > 100 {
+		pageInfo.PageSize = 100
+	}
+
+	// 添加调试日志
+	global.GVA_LOG.Info("分页参数", zap.Int("page", pageInfo.Page), zap.Int("pageSize", pageInfo.PageSize))
+
 	list, total, err := activitiesService.GetActivitiesInfoList(ctx, pageInfo)
 	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败:"+err.Error(), c)
 		return
 	}
+
+	// 添加调试日志
+	global.GVA_LOG.Info("查询结果", zap.Int64("total", total), zap.Int("listLength", len(list)))
+
 	response.OkWithDetailed(response.PageResult{
 		List:     list,
 		Total:    total,

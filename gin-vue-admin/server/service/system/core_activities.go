@@ -5,7 +5,8 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
-	"gorm.io/gorm"
+	"go.uber.org/zap"
+	
 )
 
 type ActivitiesService struct{}
@@ -63,8 +64,23 @@ func (activitiesService *ActivitiesService) GetActivities(ctx context.Context, I
 
 // GetActivitiesInfoList 分页获取活动管理记录
 func (activitiesService *ActivitiesService) GetActivitiesInfoList(ctx context.Context, info systemReq.ActivitiesSearch) (list []system.Activities, total int64, err error) {
+	// 设置默认分页参数
+	if info.Page <= 0 {
+		info.Page = 1
+	}
+	if info.PageSize <= 0 {
+		info.PageSize = 10
+	}
+	if info.PageSize > 100 {
+		info.PageSize = 100
+	}
+
 	limit := info.PageSize
 	offset := info.PageSize * (info.Page - 1)
+
+	// 添加调试日志
+	global.GVA_LOG.Info("服务层分页参数", zap.Int("page", info.Page), zap.Int("pageSize", info.PageSize), zap.Int("limit", limit), zap.Int("offset", offset))
+
 	// 创建db
 	db := global.GVA_DB.Model(&system.Activities{})
 	var activitiess []system.Activities
@@ -92,6 +108,9 @@ func (activitiesService *ActivitiesService) GetActivitiesInfoList(ctx context.Co
 		return
 	}
 
+	// 添加调试日志
+	global.GVA_LOG.Info("总数查询结果", zap.Int64("total", total))
+
 	var OrderStr string
 	orderMap := make(map[string]bool)
 	orderMap["id"] = true
@@ -107,6 +126,9 @@ func (activitiesService *ActivitiesService) GetActivitiesInfoList(ctx context.Co
 	}
 
 	err = db.Limit(limit).Offset(offset).Find(&activitiess).Error
+
+	// 添加调试日志
+	global.GVA_LOG.Info("查询结果", zap.Int("listLength", len(activitiess)), zap.Error(err))
 
 	return activitiess, total, err
 }

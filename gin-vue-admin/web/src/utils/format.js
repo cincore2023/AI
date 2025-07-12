@@ -4,7 +4,7 @@ import { ref } from 'vue'
 
 export const formatBoolean = (bool) => {
   if (bool !== null) {
-    return bool ? '是' : '否'
+    return bool ? '显示' : '隐藏'
   } else {
     return ''
   }
