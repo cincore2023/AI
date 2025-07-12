@@ -112,3 +112,15 @@ redis-cli -h localhost -p 6379
 - 如需修改数据库或 Redis 配置，请编辑 docker-compose.yml 中的 environment 部分
 - 生产环境建议为 Redis 设置密码
 - Redis 已启用 AOF 持久化，数据更安全
+
+## 10. 数据库 SQL 文件管理
+```bash
+# 给脚本执行权限
+chmod +x sync_db.sh
+
+# 同步数据库到本地
+./sync_db.sh
+
+# 查看帮助信息
+./sync_db.sh --help
+```
