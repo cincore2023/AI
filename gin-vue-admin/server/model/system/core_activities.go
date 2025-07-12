@@ -1,13 +1,13 @@
 // 自动生成模板Activities
 package system
 
-import 
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"time"
 )
 
-// 活动管理 结构体  Activities
+// 活动管理 结构体
+type Activities struct {
 	global.GVA_MODEL
 	ActivityName     *string    `json:"activityName" form:"activityName" gorm:"column:activity_name;" binding:"required"`      //活动名称
 	Price            *float64   `json:"price" form:"price" gorm:"column:price;"`                                               //活动价格
@@ -23,10 +23,9 @@ import (
 	CreatedBy        uint       `gorm:"column:created_by;comment:创建者"`
 	UpdatedBy        uint       `gorm:"column:updated_by;comment:更新者"`
 	DeletedBy        uint       `gorm:"column:deleted_by;comment:删除者"`
-    DeletedBy  uint   `gorm:"column:deleted_by;comment:删除者"`
 }
 
 // TableName 活动管理 Activities自定义表名 core_activities
+func (Activities) TableName() string {
 	return "core_activities"
-    return "core_activities"
 }

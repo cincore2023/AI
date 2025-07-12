@@ -61,13 +61,12 @@ func (activitiesService *ActivitiesService) GetActivities(ctx context.Context, I
 	return
 }
 
-// GetActivitiesInfoList 分页获取活动管理记
 // GetActivitiesInfoList 分页获取活动管理记录
 func (activitiesService *ActivitiesService) GetActivitiesInfoList(ctx context.Context, info systemReq.ActivitiesSearch) (list []system.Activities, total int64, err error) {
-func (activitiesService *ActivitiesService)GetActivitiesInfoList(ctx context.Context, info systemReq.ActivitiesSearch) (list []system.Activities, total int64, err error) {
 	limit := info.PageSize
+	offset := info.PageSize * (info.Page - 1)
 	// 创建db
-    // 创建db
+	db := global.GVA_DB.Model(&system.Activities{})
 	var activitiess []system.Activities
 	// 如果有条件搜索 下方会自动创建搜索语句
 	if len(info.CreatedAtRange) == 2 {
@@ -77,19 +76,22 @@ func (activitiesService *ActivitiesService)GetActivitiesInfoList(ctx context.Con
 	if info.ActivityName != nil && *info.ActivityName != "" {
 		db = db.Where("activity_name LIKE ?", "%"+*info.ActivityName+"%")
 	}
-    }
 	if info.StartPrice != nil && info.EndPrice != nil {
 		db = db.Where("price BETWEEN ? AND ? ", *info.StartPrice, *info.EndPrice)
+	}
 	if info.Category != nil {
 		db = db.Where("category = ?", *info.Category)
 	}
 	if info.Status != nil {
 		db = db.Where("status = ?", *info.Status)
 	}
-    }
+
+	// 获取总数
+	err = db.Count(&total).Error
 	if err != nil {
 		return
 	}
+
 	var OrderStr string
 	orderMap := make(map[string]bool)
 	orderMap["id"] = true
@@ -103,25 +105,27 @@ func (activitiesService *ActivitiesService)GetActivitiesInfoList(ctx context.Con
 		}
 		db = db.Order(OrderStr)
 	}
-       }
 
-		db = db.Limit(limit).Offset(offset)
-	}
-    }
+	err = db.Limit(limit).Offset(offset).Find(&activitiess).Error
 
 	return activitiess, total, err
-	return  activitiess, total, err
-func (activitiesService *ActivitiesService) GetActivitiesDataSource(ctx context.Context) (res map[string][]map[string]any, err error) {
-func (activitiesService *ActivitiesService)GetActivitiesDataSource(ctx context.Context) (res map[string][]map[string]any, err error) {
+}
 
+// GetActivitiesDataSource 获取活动数据源
+func (activitiesService *ActivitiesService) GetActivitiesDataSource(ctx context.Context) (res map[string][]map[string]any, err error) {
+	res = make(map[string][]map[string]any)
 	category := make([]map[string]any, 0)
 
-	global.GVA_DB.Table("program_categories").Where("deleted_at IS NULL").Select("category_name as label,id as value").Scan(&category)
+	err = global.GVA_DB.Table("program_categories").Where("deleted_at IS NULL").Select("category_name as label,id as value").Scan(&category).Error
+	if err != nil {
+		return
+	}
 	res["category"] = category
-	   res["category"] = category
 	return
+}
+
+// GetActivitiesPublic 获取公开活动数据
 func (activitiesService *ActivitiesService) GetActivitiesPublic(ctx context.Context) {
 	// 此方法为获取数据源定义的数据
 	// 请自行实现
-    // 请自行实现
 }

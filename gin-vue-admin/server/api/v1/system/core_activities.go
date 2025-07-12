@@ -140,7 +140,6 @@ func (activitiesApi *ActivitiesApi) FindActivities(c *gin.Context) {
 	response.OkWithData(reactivities, c)
 }
 
-// GetActivitiesList 分页获取活动管理列
 // GetActivitiesList 分页获取活动管理列表
 // @Tags Activities
 // @Summary 分页获取活动管理列表
@@ -150,17 +149,18 @@ func (activitiesApi *ActivitiesApi) FindActivities(c *gin.Context) {
 // @Param data query systemReq.ActivitiesSearch true "分页获取活动管理列表"
 // @Success 200 {object} response.Response{data=response.PageResult,msg=string} "获取成功"
 // @Router /activities/getActivitiesList [get]
+func (activitiesApi *ActivitiesApi) GetActivitiesList(c *gin.Context) {
 	// 创建业务用Context
 	ctx := c.Request.Context()
-    ctx := c.Request.Context()
 
 	var pageInfo systemReq.ActivitiesSearch
 	err := c.ShouldBindQuery(&pageInfo)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 		return
+	}
 	list, total, err := activitiesService.GetActivitiesInfoList(ctx, pageInfo)
-	list, total, err := activitiesService.GetActivitiesInfoList(ctx,pageInfo)
+	if err != nil {
 		global.GVA_LOG.Error("获取失败!", zap.Error(err))
 		response.FailWithMessage("获取失败:"+err.Error(), c)
 		return
@@ -171,9 +171,8 @@ func (activitiesApi *ActivitiesApi) FindActivities(c *gin.Context) {
 		Page:     pageInfo.Page,
 		PageSize: pageInfo.PageSize,
 	}, "获取成功", c)
-    }, "获取成功", c)
-i
 }
+
 // GetActivitiesDataSource 获取Activities的数据源
 // @Tags Activities
 // @Summary 获取Activities的数据源
@@ -181,9 +180,9 @@ i
 // @Produce application/json
 // @Success 200 {object} response.Response{data=object,msg=string} "查询成功"
 // @Router /activities/getActivitiesDataSource [get]
+func (activitiesApi *ActivitiesApi) GetActivitiesDataSource(c *gin.Context) {
 	// 创建业务用Context
 	ctx := c.Request.Context()
-    ctx := c.Request.Context()
 	// 此接口为获取数据源定义的数据
 	dataSource, err := activitiesService.GetActivitiesDataSource(ctx)
 	if err != nil {
@@ -192,7 +191,6 @@ i
 		return
 	}
 	response.OkWithData(dataSource, c)
-   response.OkWithData(dataSource, c)
 }
 
 // GetActivitiesPublic 不需要鉴权的活动管理接口
@@ -202,14 +200,13 @@ i
 // @Produce application/json
 // @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
 // @Router /activities/getActivitiesPublic [get]
+func (activitiesApi *ActivitiesApi) GetActivitiesPublic(c *gin.Context) {
 	// 创建业务用Context
 	ctx := c.Request.Context()
-    ctx := c.Request.Context()
 	// 此接口不需要鉴权
 	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
 	activitiesService.GetActivitiesPublic(ctx)
 	response.OkWithDetailed(gin.H{
 		"info": "不需要鉴权的活动管理接口信息",
 	}, "获取成功", c)
-    }, "获取成功", c)
 }
