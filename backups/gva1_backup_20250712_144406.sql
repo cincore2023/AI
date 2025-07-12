@@ -2838,359 +2838,211 @@ COPY public."User" (id, created_at, updated_at, deleted_at, open_id, nickname, p
 --
 
 COPY public.casbin_rule (id, ptype, v0, v1, v2, v3, v4, v5) FROM stdin;
-224	p	3	/menu/getMenu	POST			
-225	p	3	/jwt/jsonInBlacklist	POST			
-226	p	3	/base/login	POST			
-227	p	3	/user/changePassword	POST			
-228	p	3	/user/setUserAuthority	POST			
-229	p	3	/user/getUserInfo	GET			
-230	p	3	/user/setSelfInfo	PUT			
-231	p	3	/fileUploadAndDownload/upload	POST			
-232	p	3	/sysDictionary/findSysDictionary	GET			
-233	p	4	/menu/getMenu	POST			
-234	p	4	/jwt/jsonInBlacklist	POST			
-235	p	4	/base/login	POST			
-236	p	4	/user/changePassword	POST			
-237	p	4	/user/setUserAuthority	POST			
-238	p	4	/user/getUserInfo	GET			
-239	p	4	/user/setSelfInfo	PUT			
-240	p	4	/fileUploadAndDownload/upload	POST			
-241	p	4	/sysDictionary/findSysDictionary	GET			
-242	p	999	/menu/getMenu	POST			
-243	p	999	/jwt/jsonInBlacklist	POST			
-244	p	999	/base/login	POST			
-245	p	999	/user/changePassword	POST			
-246	p	999	/user/setUserAuthority	POST			
-247	p	999	/user/getUserInfo	GET			
-248	p	999	/user/setSelfInfo	PUT			
-249	p	999	/fileUploadAndDownload/upload	POST			
-250	p	999	/sysDictionary/findSysDictionary	GET			
-251	p	5	/menu/getMenu	POST			
-252	p	5	/jwt/jsonInBlacklist	POST			
-253	p	5	/base/login	POST			
-254	p	5	/user/changePassword	POST			
-255	p	5	/user/setUserAuthority	POST			
-256	p	5	/user/getUserInfo	GET			
-257	p	5	/user/setSelfInfo	PUT			
-258	p	5	/fileUploadAndDownload/upload	POST			
-259	p	5	/sysDictionary/findSysDictionary	GET			
-1072	p	1	/activities/getActivitiesList	GET			
-1073	p	1	/activities/findActivities	GET			
-1074	p	1	/activities/updateActivities	PUT			
-1075	p	1	/activities/deleteActivitiesByIds	DELETE			
-1076	p	1	/activities/deleteActivities	DELETE			
-1077	p	1	/activities/createActivities	POST			
-1078	p	1	/code/getCodeList	GET			
-1079	p	1	/code/findCode	GET			
-1080	p	1	/code/updateCode	PUT			
-1081	p	1	/code/deleteCodeByIds	DELETE			
-1082	p	1	/code/deleteCode	DELETE			
-1083	p	1	/code/createCode	POST			
-1084	p	1	/wxUser/getWechatUserList	GET			
-1085	p	1	/wxUser/findWechatUser	GET			
-1086	p	1	/wxUser/updateWechatUser	PUT			
-1087	p	1	/wxUser/deleteWechatUserByIds	DELETE			
-1088	p	1	/wxUser/deleteWechatUser	DELETE			
-1089	p	1	/wxUser/createWechatUser	POST			
-1090	p	1	/course/getCourseList	GET			
-1091	p	1	/course/findCourse	GET			
-1092	p	1	/course/updateCourse	PUT			
-1093	p	1	/course/deleteCourseByIds	DELETE			
-1094	p	1	/course/deleteCourse	DELETE			
-1095	p	1	/course/createCourse	POST			
-1096	p	1	/benefit/getBenefitList	GET			
-1097	p	1	/benefit/findBenefit	GET			
-1098	p	1	/benefit/updateBenefit	PUT			
-1099	p	1	/benefit/deleteBenefitByIds	DELETE			
-1100	p	1	/benefit/deleteBenefit	DELETE			
-1101	p	1	/benefit/createBenefit	POST			
-1102	p	1	/teacher/getTeacherList	GET			
-1103	p	1	/teacher/findTeacher	GET			
-1104	p	1	/teacher/updateTeacher	PUT			
-1105	p	1	/teacher/deleteTeacherByIds	DELETE			
-1106	p	1	/teacher/deleteTeacher	DELETE			
-1107	p	1	/teacher/createTeacher	POST			
-1108	p	1	/banner/getBannerList	GET			
-1109	p	1	/banner/findBanner	GET			
-1110	p	1	/banner/updateBanner	PUT			
-1111	p	1	/banner/deleteBannerByIds	DELETE			
-1112	p	1	/banner/deleteBanner	DELETE			
-1113	p	1	/banner/createBanner	POST			
-1114	p	1	/poster/getPosterList	GET			
-1115	p	1	/poster/findPoster	GET			
-1116	p	1	/poster/updatePoster	PUT			
-1117	p	1	/poster/deletePosterByIds	DELETE			
-1118	p	1	/poster/deletePoster	DELETE			
-1119	p	1	/poster/createPoster	POST			
-1120	p	1	/category/getCategoryList	GET			
-1121	p	1	/category/findCategory	GET			
-1122	p	1	/category/updateCategory	PUT			
-1123	p	1	/category/deleteCategoryByIds	DELETE			
-1124	p	1	/category/deleteCategory	DELETE			
-1125	p	1	/category/createCategory	POST			
-1126	p	1	/attachmentCategory/deleteCategory	POST			
-1127	p	1	/attachmentCategory/addCategory	POST			
-1128	p	1	/attachmentCategory/getCategoryList	GET			
-1129	p	1	/sysParams/getSysParam	GET			
-1130	p	1	/sysParams/getSysParamsList	GET			
-1131	p	1	/sysParams/findSysParams	GET			
-1132	p	1	/sysParams/updateSysParams	PUT			
-1133	p	1	/sysParams/deleteSysParamsByIds	DELETE			
-1134	p	1	/sysParams/deleteSysParams	DELETE			
-1135	p	1	/sysParams/createSysParams	POST			
-1136	p	1	/info/getInfoList	GET			
-1137	p	1	/info/findInfo	GET			
-1138	p	1	/info/updateInfo	PUT			
-1139	p	1	/info/deleteInfoByIds	DELETE			
-1140	p	1	/info/deleteInfo	DELETE			
-1141	p	1	/info/createInfo	POST			
-1142	p	1	/sysExportTemplate/importExcel	POST			
-1143	p	1	/sysExportTemplate/exportTemplate	GET			
-1144	p	1	/sysExportTemplate/exportExcel	GET			
-1145	p	1	/sysExportTemplate/getSysExportTemplateList	GET			
-1146	p	1	/sysExportTemplate/findSysExportTemplate	GET			
-1147	p	1	/sysExportTemplate/updateSysExportTemplate	PUT			
-1148	p	1	/sysExportTemplate/deleteSysExportTemplateByIds	DELETE			
-1149	p	1	/sysExportTemplate/deleteSysExportTemplate	DELETE			
-1150	p	1	/sysExportTemplate/createSysExportTemplate	POST			
-1151	p	1	/authorityBtn/canRemoveAuthorityBtn	POST			
-1152	p	1	/authorityBtn/getAuthorityBtn	POST			
-1153	p	1	/authorityBtn/setAuthorityBtn	POST			
-1154	p	1	/email/sendEmail	POST			
-1155	p	1	/email/emailTest	POST			
-1156	p	1	/simpleUploader/mergeFileMd5	GET			
-1157	p	1	/simpleUploader/checkFileMd5	GET			
-1158	p	1	/simpleUploader/upload	POST			
-1159	p	1	/sysOperationRecord/deleteSysOperationRecordByIds	DELETE			
-1160	p	1	/sysOperationRecord/deleteSysOperationRecord	DELETE			
-1161	p	1	/sysOperationRecord/getSysOperationRecordList	GET			
-1162	p	1	/sysOperationRecord/findSysOperationRecord	GET			
-1163	p	1	/sysOperationRecord/createSysOperationRecord	POST			
-1164	p	1	/sysDictionary/getSysDictionaryList	GET			
-1165	p	1	/sysDictionary/findSysDictionary	GET			
-1166	p	1	/sysDictionary/updateSysDictionary	PUT			
-1167	p	1	/sysDictionary/deleteSysDictionary	DELETE			
-399	p	2	/activities/getActivitiesList	GET			
-400	p	2	/activities/findActivities	GET			
-401	p	2	/activities/updateActivities	PUT			
-402	p	2	/activities/deleteActivitiesByIds	DELETE			
-403	p	2	/activities/deleteActivities	DELETE			
-404	p	2	/activities/createActivities	POST			
-405	p	2	/code/getCodeList	GET			
-406	p	2	/code/findCode	GET			
-407	p	2	/code/updateCode	PUT			
-408	p	2	/code/deleteCodeByIds	DELETE			
-409	p	2	/code/deleteCode	DELETE			
-410	p	2	/code/createCode	POST			
-411	p	2	/wxUser/getWechatUserList	GET			
-412	p	2	/wxUser/findWechatUser	GET			
-413	p	2	/wxUser/updateWechatUser	PUT			
-414	p	2	/wxUser/deleteWechatUserByIds	DELETE			
-415	p	2	/wxUser/deleteWechatUser	DELETE			
-416	p	2	/wxUser/createWechatUser	POST			
-417	p	2	/course/getCourseList	GET			
-418	p	2	/course/findCourse	GET			
-419	p	2	/course/updateCourse	PUT			
-420	p	2	/course/deleteCourseByIds	DELETE			
-421	p	2	/course/deleteCourse	DELETE			
-422	p	2	/course/createCourse	POST			
-423	p	2	/benefit/getBenefitList	GET			
-424	p	2	/benefit/findBenefit	GET			
-425	p	2	/benefit/updateBenefit	PUT			
-426	p	2	/benefit/deleteBenefitByIds	DELETE			
-427	p	2	/benefit/deleteBenefit	DELETE			
-428	p	2	/benefit/createBenefit	POST			
-429	p	2	/teacher/getTeacherList	GET			
-430	p	2	/teacher/findTeacher	GET			
-431	p	2	/teacher/updateTeacher	PUT			
-432	p	2	/teacher/deleteTeacherByIds	DELETE			
-433	p	2	/teacher/deleteTeacher	DELETE			
-434	p	2	/teacher/createTeacher	POST			
-435	p	2	/banner/getBannerList	GET			
-436	p	2	/banner/findBanner	GET			
-437	p	2	/banner/updateBanner	PUT			
-438	p	2	/banner/deleteBannerByIds	DELETE			
-439	p	2	/banner/deleteBanner	DELETE			
-440	p	2	/banner/createBanner	POST			
-441	p	2	/poster/getPosterList	GET			
-442	p	2	/poster/findPoster	GET			
-443	p	2	/poster/updatePoster	PUT			
-444	p	2	/poster/deletePosterByIds	DELETE			
-445	p	2	/poster/deletePoster	DELETE			
-446	p	2	/poster/createPoster	POST			
-447	p	2	/category/getCategoryList	GET			
-448	p	2	/category/findCategory	GET			
-449	p	2	/category/updateCategory	PUT			
-450	p	2	/category/deleteCategoryByIds	DELETE			
-451	p	2	/category/deleteCategory	DELETE			
-452	p	2	/category/createCategory	POST			
-453	p	2	/attachmentCategory/deleteCategory	POST			
-454	p	2	/attachmentCategory/addCategory	POST			
-455	p	2	/attachmentCategory/getCategoryList	GET			
-456	p	2	/sysParams/getSysParam	GET			
-457	p	2	/sysParams/getSysParamsList	GET			
-458	p	2	/sysParams/findSysParams	GET			
-459	p	2	/sysParams/updateSysParams	PUT			
-460	p	2	/sysParams/deleteSysParamsByIds	DELETE			
-461	p	2	/sysParams/deleteSysParams	DELETE			
-462	p	2	/sysParams/createSysParams	POST			
-463	p	2	/info/getInfoList	GET			
-464	p	2	/info/findInfo	GET			
-465	p	2	/info/updateInfo	PUT			
-466	p	2	/info/deleteInfoByIds	DELETE			
-467	p	2	/info/deleteInfo	DELETE			
-468	p	2	/info/createInfo	POST			
-469	p	2	/authorityBtn/canRemoveAuthorityBtn	POST			
-470	p	2	/authorityBtn/getAuthorityBtn	POST			
-471	p	2	/authorityBtn/setAuthorityBtn	POST			
-472	p	2	/simpleUploader/mergeFileMd5	GET			
-473	p	2	/simpleUploader/checkFileMd5	GET			
-474	p	2	/simpleUploader/upload	POST			
-475	p	2	/sysOperationRecord/deleteSysOperationRecordByIds	DELETE			
-476	p	2	/sysOperationRecord/deleteSysOperationRecord	DELETE			
-477	p	2	/sysOperationRecord/getSysOperationRecordList	GET			
-478	p	2	/sysOperationRecord/findSysOperationRecord	GET			
-479	p	2	/sysOperationRecord/createSysOperationRecord	POST			
-480	p	2	/sysDictionary/findSysDictionary	GET			
-481	p	2	/customer/customerList	GET			
-482	p	2	/customer/customer	GET			
-483	p	2	/customer/customer	DELETE			
-484	p	2	/customer/customer	POST			
-485	p	2	/customer/customer	PUT			
-486	p	2	/system/setSystemConfig	POST			
-487	p	2	/system/getSystemConfig	POST			
-488	p	2	/system/getServerInfo	POST			
-489	p	2	/fileUploadAndDownload/importURL	POST			
-490	p	2	/fileUploadAndDownload/getFileList	POST			
-491	p	2	/fileUploadAndDownload/editFileName	POST			
-492	p	2	/fileUploadAndDownload/deleteFile	POST			
-493	p	2	/fileUploadAndDownload/upload	POST			
-494	p	2	/fileUploadAndDownload/removeChunk	POST			
-495	p	2	/fileUploadAndDownload/breakpointContinueFinish	POST			
-496	p	2	/fileUploadAndDownload/breakpointContinue	POST			
-497	p	2	/fileUploadAndDownload/findFile	GET			
-498	p	2	/menu/addMenuAuthority	POST			
-499	p	2	/menu/getMenuAuthority	POST			
-500	p	2	/menu/getBaseMenuTree	POST			
-501	p	2	/menu/getMenuList	POST			
-502	p	2	/menu/getBaseMenuById	POST			
-503	p	2	/menu/updateBaseMenu	POST			
-504	p	2	/menu/deleteBaseMenu	POST			
-505	p	2	/menu/getMenu	POST			
-506	p	2	/menu/addBaseMenu	POST			
-507	p	2	/casbin/getPolicyPathByAuthorityId	POST			
-508	p	2	/casbin/updateCasbin	POST			
-509	p	2	/authority/setDataAuthority	POST			
-510	p	2	/authority/getAuthorityList	POST			
-511	p	2	/authority/updateAuthority	PUT			
-512	p	2	/authority/deleteAuthority	POST			
-513	p	2	/authority/createAuthority	POST			
-514	p	2	/authority/copyAuthority	POST			
-515	p	2	/api/ignoreApi	POST			
-516	p	2	/api/enterSyncApi	POST			
-517	p	2	/api/getApiGroups	GET			
-518	p	2	/api/syncApi	GET			
-519	p	2	/api/deleteApisByIds	DELETE			
-520	p	2	/api/getApiById	POST			
-521	p	2	/api/getAllApis	POST			
-522	p	2	/api/getApiList	POST			
-523	p	2	/api/updateApi	POST			
-524	p	2	/api/deleteApi	POST			
-525	p	2	/api/createApi	POST			
-526	p	2	/user/setSelfSetting	PUT			
-527	p	2	/user/resetPassword	POST			
-528	p	2	/user/setUserAuthority	POST			
-529	p	2	/user/changePassword	POST			
-530	p	2	/user/setUserAuthorities	POST			
-531	p	2	/user/getUserInfo	GET			
-532	p	2	/user/setSelfInfo	PUT			
-533	p	2	/user/setUserInfo	PUT			
-534	p	2	/user/getUserList	POST			
-535	p	2	/user/admin_register	POST			
-536	p	2	/user/deleteUser	DELETE			
-537	p	2	/jwt/jsonInBlacklist	POST			
-1168	p	1	/sysDictionary/createSysDictionary	POST			
-1169	p	1	/sysDictionaryDetail/getSysDictionaryDetailList	GET			
-1170	p	1	/sysDictionaryDetail/findSysDictionaryDetail	GET			
-1171	p	1	/sysDictionaryDetail/deleteSysDictionaryDetail	DELETE			
-1172	p	1	/sysDictionaryDetail/createSysDictionaryDetail	POST			
-1173	p	1	/sysDictionaryDetail/updateSysDictionaryDetail	PUT			
-1174	p	1	/autoCode/addFunc	POST			
-1175	p	1	/autoCode/delSysHistory	POST			
-1176	p	1	/autoCode/getSysHistory	POST			
-1177	p	1	/autoCode/rollback	POST			
-1178	p	1	/autoCode/getMeta	POST			
-1179	p	1	/autoCode/delPackage	POST			
-1180	p	1	/autoCode/getPackage	POST			
-1181	p	1	/autoCode/getTemplates	GET			
-1182	p	1	/autoCode/createPackage	POST			
-1183	p	1	/autoCode/mcpList	POST			
-1184	p	1	/autoCode/mcpTest	POST			
-1185	p	1	/autoCode/mcp	POST			
-1186	p	1	/autoCode/pubPlug	POST			
-1187	p	1	/autoCode/installPlugin	POST			
-1188	p	1	/autoCode/getColumn	GET			
-1189	p	1	/autoCode/preview	POST			
-1190	p	1	/autoCode/createTemp	POST			
-1191	p	1	/autoCode/getTables	GET			
-1192	p	1	/autoCode/getDB	GET			
-1193	p	1	/customer/customerList	GET			
-1194	p	1	/customer/customer	GET			
-1195	p	1	/customer/customer	DELETE			
-1196	p	1	/customer/customer	POST			
-1197	p	1	/customer/customer	PUT			
-1198	p	1	/system/setSystemConfig	POST			
-1199	p	1	/system/getSystemConfig	POST			
-1200	p	1	/system/getServerInfo	POST			
-1201	p	1	/fileUploadAndDownload/importURL	POST			
-1202	p	1	/fileUploadAndDownload/getFileList	POST			
-1203	p	1	/fileUploadAndDownload/editFileName	POST			
-1204	p	1	/fileUploadAndDownload/deleteFile	POST			
-1205	p	1	/fileUploadAndDownload/upload	POST			
-1206	p	1	/fileUploadAndDownload/removeChunk	POST			
-1207	p	1	/fileUploadAndDownload/breakpointContinueFinish	POST			
-1208	p	1	/fileUploadAndDownload/breakpointContinue	POST			
-1209	p	1	/fileUploadAndDownload/findFile	GET			
-1210	p	1	/menu/addMenuAuthority	POST			
-1211	p	1	/menu/getMenuAuthority	POST			
-1212	p	1	/menu/getBaseMenuTree	POST			
-1213	p	1	/menu/getMenuList	POST			
-1214	p	1	/menu/getBaseMenuById	POST			
-1215	p	1	/menu/updateBaseMenu	POST			
-1216	p	1	/menu/deleteBaseMenu	POST			
-1217	p	1	/menu/getMenu	POST			
-1218	p	1	/menu/addBaseMenu	POST			
-1219	p	1	/casbin/getPolicyPathByAuthorityId	POST			
-1220	p	1	/casbin/updateCasbin	POST			
-1221	p	1	/authority/setDataAuthority	POST			
-1222	p	1	/authority/getAuthorityList	POST			
-1223	p	1	/authority/updateAuthority	PUT			
-1224	p	1	/authority/deleteAuthority	POST			
-1225	p	1	/authority/createAuthority	POST			
-1226	p	1	/authority/copyAuthority	POST			
-1227	p	1	/api/ignoreApi	POST			
-1228	p	1	/api/enterSyncApi	POST			
-1229	p	1	/api/getApiGroups	GET			
-1230	p	1	/api/syncApi	GET			
-1231	p	1	/api/deleteApisByIds	DELETE			
-1232	p	1	/api/getApiById	POST			
-1233	p	1	/api/getAllApis	POST			
-1234	p	1	/api/getApiList	POST			
-1235	p	1	/api/updateApi	POST			
-1236	p	1	/api/deleteApi	POST			
-1237	p	1	/api/createApi	POST			
-1238	p	1	/user/setSelfSetting	PUT			
-1239	p	1	/user/resetPassword	POST			
-1240	p	1	/user/setUserAuthority	POST			
-1241	p	1	/user/changePassword	POST			
-1242	p	1	/user/setUserAuthorities	POST			
-1243	p	1	/user/getUserInfo	GET			
-1244	p	1	/user/setSelfInfo	PUT			
-1245	p	1	/user/setUserInfo	PUT			
-1246	p	1	/user/getUserList	POST			
-1247	p	1	/user/admin_register	POST			
-1248	p	1	/user/deleteUser	DELETE			
-1249	p	1	/jwt/jsonInBlacklist	POST			
+1	p	888	/user/admin_register	POST			
+2	p	888	/api/createApi	POST			
+3	p	888	/api/getApiList	POST			
+4	p	888	/api/getApiById	POST			
+5	p	888	/api/deleteApi	POST			
+6	p	888	/api/updateApi	POST			
+7	p	888	/api/getAllApis	POST			
+8	p	888	/api/deleteApisByIds	DELETE			
+9	p	888	/api/syncApi	GET			
+10	p	888	/api/getApiGroups	GET			
+11	p	888	/api/enterSyncApi	POST			
+12	p	888	/api/ignoreApi	POST			
+13	p	888	/authority/copyAuthority	POST			
+14	p	888	/authority/updateAuthority	PUT			
+15	p	888	/authority/createAuthority	POST			
+16	p	888	/authority/deleteAuthority	POST			
+17	p	888	/authority/getAuthorityList	POST			
+18	p	888	/authority/setDataAuthority	POST			
+19	p	888	/menu/getMenu	POST			
+20	p	888	/menu/getMenuList	POST			
+21	p	888	/menu/addBaseMenu	POST			
+22	p	888	/menu/getBaseMenuTree	POST			
+23	p	888	/menu/addMenuAuthority	POST			
+24	p	888	/menu/getMenuAuthority	POST			
+25	p	888	/menu/deleteBaseMenu	POST			
+26	p	888	/menu/updateBaseMenu	POST			
+27	p	888	/menu/getBaseMenuById	POST			
+28	p	888	/user/getUserInfo	GET			
+29	p	888	/user/setUserInfo	PUT			
+30	p	888	/user/setSelfInfo	PUT			
+31	p	888	/user/getUserList	POST			
+32	p	888	/user/deleteUser	DELETE			
+33	p	888	/user/changePassword	POST			
+34	p	888	/user/setUserAuthority	POST			
+35	p	888	/user/setUserAuthorities	POST			
+36	p	888	/user/resetPassword	POST			
+37	p	888	/user/setSelfSetting	PUT			
+38	p	888	/fileUploadAndDownload/findFile	GET			
+39	p	888	/fileUploadAndDownload/breakpointContinueFinish	POST			
+40	p	888	/fileUploadAndDownload/breakpointContinue	POST			
+41	p	888	/fileUploadAndDownload/removeChunk	POST			
+42	p	888	/fileUploadAndDownload/upload	POST			
+43	p	888	/fileUploadAndDownload/deleteFile	POST			
+44	p	888	/fileUploadAndDownload/editFileName	POST			
+45	p	888	/fileUploadAndDownload/getFileList	POST			
+46	p	888	/fileUploadAndDownload/importURL	POST			
+47	p	888	/casbin/updateCasbin	POST			
+48	p	888	/casbin/getPolicyPathByAuthorityId	POST			
+49	p	888	/jwt/jsonInBlacklist	POST			
+50	p	888	/system/getSystemConfig	POST			
+51	p	888	/system/setSystemConfig	POST			
+52	p	888	/system/getServerInfo	POST			
+53	p	888	/customer/customer	GET			
+54	p	888	/customer/customer	PUT			
+55	p	888	/customer/customer	POST			
+56	p	888	/customer/customer	DELETE			
+57	p	888	/customer/customerList	GET			
+58	p	888	/autoCode/getDB	GET			
+59	p	888	/autoCode/getMeta	POST			
+60	p	888	/autoCode/preview	POST			
+61	p	888	/autoCode/getTables	GET			
+62	p	888	/autoCode/getColumn	GET			
+63	p	888	/autoCode/rollback	POST			
+64	p	888	/autoCode/createTemp	POST			
+65	p	888	/autoCode/delSysHistory	POST			
+66	p	888	/autoCode/getSysHistory	POST			
+67	p	888	/autoCode/createPackage	POST			
+68	p	888	/autoCode/getTemplates	GET			
+69	p	888	/autoCode/getPackage	POST			
+70	p	888	/autoCode/delPackage	POST			
+71	p	888	/autoCode/createPlug	POST			
+72	p	888	/autoCode/installPlugin	POST			
+73	p	888	/autoCode/pubPlug	POST			
+74	p	888	/autoCode/addFunc	POST			
+75	p	888	/autoCode/mcp	POST			
+76	p	888	/autoCode/mcpTest	POST			
+77	p	888	/autoCode/mcpList	POST			
+78	p	888	/sysDictionaryDetail/findSysDictionaryDetail	GET			
+79	p	888	/sysDictionaryDetail/updateSysDictionaryDetail	PUT			
+80	p	888	/sysDictionaryDetail/createSysDictionaryDetail	POST			
+81	p	888	/sysDictionaryDetail/getSysDictionaryDetailList	GET			
+82	p	888	/sysDictionaryDetail/deleteSysDictionaryDetail	DELETE			
+83	p	888	/sysDictionary/findSysDictionary	GET			
+84	p	888	/sysDictionary/updateSysDictionary	PUT			
+85	p	888	/sysDictionary/getSysDictionaryList	GET			
+86	p	888	/sysDictionary/createSysDictionary	POST			
+87	p	888	/sysDictionary/deleteSysDictionary	DELETE			
+88	p	888	/sysOperationRecord/findSysOperationRecord	GET			
+89	p	888	/sysOperationRecord/updateSysOperationRecord	PUT			
+90	p	888	/sysOperationRecord/createSysOperationRecord	POST			
+91	p	888	/sysOperationRecord/getSysOperationRecordList	GET			
+92	p	888	/sysOperationRecord/deleteSysOperationRecord	DELETE			
+93	p	888	/sysOperationRecord/deleteSysOperationRecordByIds	DELETE			
+94	p	888	/email/emailTest	POST			
+95	p	888	/email/sendEmail	POST			
+96	p	888	/simpleUploader/upload	POST			
+97	p	888	/simpleUploader/checkFileMd5	GET			
+98	p	888	/simpleUploader/mergeFileMd5	GET			
+99	p	888	/authorityBtn/setAuthorityBtn	POST			
+100	p	888	/authorityBtn/getAuthorityBtn	POST			
+101	p	888	/authorityBtn/canRemoveAuthorityBtn	POST			
+102	p	888	/sysExportTemplate/createSysExportTemplate	POST			
+103	p	888	/sysExportTemplate/deleteSysExportTemplate	DELETE			
+104	p	888	/sysExportTemplate/deleteSysExportTemplateByIds	DELETE			
+105	p	888	/sysExportTemplate/updateSysExportTemplate	PUT			
+106	p	888	/sysExportTemplate/findSysExportTemplate	GET			
+107	p	888	/sysExportTemplate/getSysExportTemplateList	GET			
+108	p	888	/sysExportTemplate/exportExcel	GET			
+109	p	888	/sysExportTemplate/exportTemplate	GET			
+110	p	888	/sysExportTemplate/importExcel	POST			
+111	p	888	/info/createInfo	POST			
+112	p	888	/info/deleteInfo	DELETE			
+113	p	888	/info/deleteInfoByIds	DELETE			
+114	p	888	/info/updateInfo	PUT			
+115	p	888	/info/findInfo	GET			
+116	p	888	/info/getInfoList	GET			
+117	p	888	/sysParams/createSysParams	POST			
+118	p	888	/sysParams/deleteSysParams	DELETE			
+119	p	888	/sysParams/deleteSysParamsByIds	DELETE			
+120	p	888	/sysParams/updateSysParams	PUT			
+121	p	888	/sysParams/findSysParams	GET			
+122	p	888	/sysParams/getSysParamsList	GET			
+123	p	888	/sysParams/getSysParam	GET			
+124	p	888	/attachmentCategory/getCategoryList	GET			
+125	p	888	/attachmentCategory/addCategory	POST			
+126	p	888	/attachmentCategory/deleteCategory	POST			
+127	p	8881	/user/admin_register	POST			
+128	p	8881	/api/createApi	POST			
+129	p	8881	/api/getApiList	POST			
+130	p	8881	/api/getApiById	POST			
+131	p	8881	/api/deleteApi	POST			
+132	p	8881	/api/updateApi	POST			
+133	p	8881	/api/getAllApis	POST			
+134	p	8881	/authority/createAuthority	POST			
+135	p	8881	/authority/deleteAuthority	POST			
+136	p	8881	/authority/getAuthorityList	POST			
+137	p	8881	/authority/setDataAuthority	POST			
+138	p	8881	/menu/getMenu	POST			
+139	p	8881	/menu/getMenuList	POST			
+140	p	8881	/menu/addBaseMenu	POST			
+141	p	8881	/menu/getBaseMenuTree	POST			
+142	p	8881	/menu/addMenuAuthority	POST			
+143	p	8881	/menu/getMenuAuthority	POST			
+144	p	8881	/menu/deleteBaseMenu	POST			
+145	p	8881	/menu/updateBaseMenu	POST			
+146	p	8881	/menu/getBaseMenuById	POST			
+147	p	8881	/user/changePassword	POST			
+148	p	8881	/user/getUserList	POST			
+149	p	8881	/user/setUserAuthority	POST			
+150	p	8881	/fileUploadAndDownload/upload	POST			
+151	p	8881	/fileUploadAndDownload/getFileList	POST			
+152	p	8881	/fileUploadAndDownload/deleteFile	POST			
+153	p	8881	/fileUploadAndDownload/editFileName	POST			
+154	p	8881	/fileUploadAndDownload/importURL	POST			
+155	p	8881	/casbin/updateCasbin	POST			
+156	p	8881	/casbin/getPolicyPathByAuthorityId	POST			
+157	p	8881	/jwt/jsonInBlacklist	POST			
+158	p	8881	/system/getSystemConfig	POST			
+159	p	8881	/system/setSystemConfig	POST			
+160	p	8881	/customer/customer	POST			
+161	p	8881	/customer/customer	PUT			
+162	p	8881	/customer/customer	DELETE			
+163	p	8881	/customer/customer	GET			
+164	p	8881	/customer/customerList	GET			
+165	p	8881	/user/getUserInfo	GET			
+166	p	9528	/user/admin_register	POST			
+167	p	9528	/api/createApi	POST			
+168	p	9528	/api/getApiList	POST			
+169	p	9528	/api/getApiById	POST			
+170	p	9528	/api/deleteApi	POST			
+171	p	9528	/api/updateApi	POST			
+172	p	9528	/api/getAllApis	POST			
+173	p	9528	/authority/createAuthority	POST			
+174	p	9528	/authority/deleteAuthority	POST			
+175	p	9528	/authority/getAuthorityList	POST			
+176	p	9528	/authority/setDataAuthority	POST			
+177	p	9528	/menu/getMenu	POST			
+178	p	9528	/menu/getMenuList	POST			
+179	p	9528	/menu/addBaseMenu	POST			
+180	p	9528	/menu/getBaseMenuTree	POST			
+181	p	9528	/menu/addMenuAuthority	POST			
+182	p	9528	/menu/getMenuAuthority	POST			
+183	p	9528	/menu/deleteBaseMenu	POST			
+184	p	9528	/menu/updateBaseMenu	POST			
+185	p	9528	/menu/getBaseMenuById	POST			
+186	p	9528	/user/changePassword	POST			
+187	p	9528	/user/getUserList	POST			
+188	p	9528	/user/setUserAuthority	POST			
+189	p	9528	/fileUploadAndDownload/upload	POST			
+190	p	9528	/fileUploadAndDownload/getFileList	POST			
+191	p	9528	/fileUploadAndDownload/deleteFile	POST			
+192	p	9528	/fileUploadAndDownload/editFileName	POST			
+193	p	9528	/fileUploadAndDownload/importURL	POST			
+194	p	9528	/casbin/updateCasbin	POST			
+195	p	9528	/casbin/getPolicyPathByAuthorityId	POST			
+196	p	9528	/jwt/jsonInBlacklist	POST			
+197	p	9528	/system/getSystemConfig	POST			
+198	p	9528	/system/setSystemConfig	POST			
+199	p	9528	/customer/customer	PUT			
+200	p	9528	/customer/customer	GET			
+201	p	9528	/customer/customer	POST			
+202	p	9528	/customer/customer	DELETE			
+203	p	9528	/customer/customerList	GET			
+204	p	9528	/autoCode/createTemp	POST			
+205	p	9528	/user/getUserInfo	GET			
 \.
 
 
@@ -3241,7 +3093,6 @@ COPY public.exa_file_chunks (id, created_at, updated_at, deleted_at, exa_file_id
 COPY public.exa_file_upload_and_downloads (id, created_at, updated_at, deleted_at, name, class_id, url, tag, key) FROM stdin;
 1	2025-07-12 04:34:44.945368+00	2025-07-12 04:34:44.945368+00	\N	10.png	0	https://qmplusimg.henrongyi.top/gvalogo.png	png	158787308910.png
 2	2025-07-12 04:34:44.945368+00	2025-07-12 04:34:44.945368+00	\N	logo.png	0	https://qmplusimg.henrongyi.top/1576554439myAvatar.png	png	1587973709logo.png
-3	2025-07-12 07:24:18.61188+00	2025-07-12 07:24:18.61188+00	\N	截屏2025-07-12 下午12.42.40.png	0	uploads/file/0687a9e9d758f14019bc65c23e99dbea_20250712152418.png	png	0687a9e9d758f14019bc65c23e99dbea_20250712152418.png
 \.
 
 
@@ -3274,8 +3125,6 @@ COPY public.gva_announcements_info (id, created_at, updated_at, deleted_at, titl
 --
 
 COPY public.jwt_blacklists (id, created_at, updated_at, deleted_at, jwt) FROM stdin;
-1	2025-07-12 07:03:27.694071+00	2025-07-12 07:03:27.694071+00	\N	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiMThkNGU0Y2ItMzdjNy00ZWI4LWJlN2UtMmRkNWYwZTI1N2I5IiwiSUQiOjEsIlVzZXJuYW1lIjoiYWRtaW4iLCJOaWNrTmFtZSI6Ik1yLuWlh-a3vCIsIkF1dGhvcml0eUlkIjo4ODgsIkJ1ZmZlclRpbWUiOjg2NDAwLCJpc3MiOiJxbVBsdXMiLCJhdWQiOlsiR1ZBIl0sImV4cCI6MTc1Mjg5OTY5OCwibmJmIjoxNzUyMjk0ODk4fQ.Fz_Nb7xca86lm4UCPYeAsH7YelmoLQ-acKbdVOlQcAY
-2	2025-07-12 07:04:45.565261+00	2025-07-12 07:04:45.565261+00	\N	eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVVUlEIjoiYmZiYWRiMmYtYWNiYy00NmFiLTgxZTUtMzc5ZDdiYzhiYTA2IiwiSUQiOjMsIlVzZXJuYW1lIjoibHoxMjMiLCJOaWNrTmFtZSI6Imx6IiwiQXV0aG9yaXR5SWQiOjIsIkJ1ZmZlclRpbWUiOjg2NDAwLCJpc3MiOiJxbVBsdXMiLCJhdWQiOlsiR1ZBIl0sImV4cCI6MTc1MjkwODYyNCwibmJmIjoxNzUyMzAzODI0fQ.U_0X2fJDFXsR50DZO5k3QASjU4CowWbSm9jO89Wy6WQ
 \.
 
 
@@ -3522,12 +3371,9 @@ COPY public.sys_apis (id, created_at, updated_at, deleted_at, path, description,
 --
 
 COPY public.sys_authorities (created_at, updated_at, deleted_at, authority_id, authority_name, parent_id, default_router) FROM stdin;
-2025-07-12 06:56:27.580641+00	2025-07-12 06:56:27.581387+00	\N	999	网管	0	dashboard
-2025-07-12 06:55:27.965306+00	2025-07-12 06:56:40.76459+00	\N	3	运营人员	999	dashboard
-2025-07-12 06:56:13.305491+00	2025-07-12 06:56:48.579847+00	\N	4	核销人员	999	dashboard
-2025-07-12 06:57:24.650448+00	2025-07-12 06:57:24.651131+00	\N	5	AI应用	999	dashboard
-2025-07-12 06:54:53.380794+00	2025-07-12 06:58:34.822492+00	\N	2	管理员	1	dashboard
-2025-07-12 06:54:45.145924+00	2025-07-12 07:28:21.27626+00	\N	1	超级管理员	0	dashboard
+2025-07-12 04:34:44.697423+00	2025-07-12 04:34:44.910245+00	\N	888	普通用户	0	dashboard
+2025-07-12 04:34:44.697423+00	2025-07-12 04:34:44.922142+00	\N	9528	测试角色	0	dashboard
+2025-07-12 04:34:44.697423+00	2025-07-12 04:34:44.931745+00	\N	8881	普通用户子角色	888	dashboard
 \.
 
 
@@ -3544,68 +3390,64 @@ COPY public.sys_authority_btns (authority_id, sys_menu_id, sys_base_menu_btn_id)
 --
 
 COPY public.sys_authority_menus (sys_base_menu_id, sys_authority_authority_id) FROM stdin;
-1	1
-1	2
-1	3
-1	4
-1	999
-1	5
-37	2
-36	2
-44	2
-43	2
-41	2
-40	2
-39	2
-45	2
-38	2
-3	2
-10	2
-13	2
-15	2
-4	2
-45	1
-43	1
-41	1
-3	1
-10	1
-11	1
-12	1
-13	1
-14	1
-15	1
-16	1
-4	1
-6	1
-25	1
-24	1
-20	1
-23	1
-21	1
-22	1
-26	1
-27	1
-28	1
-29	1
-9	1
-30	1
-31	1
-32	1
-33	1
-34	1
-5	1
-17	1
-18	1
-19	1
-47	1
-44	1
-8	1
-46	1
-40	1
-39	1
-38	1
-37	1
-36	1
+1	888
+2	888
+3	888
+4	888
+5	888
+6	888
+8	888
+9	888
+10	888
+11	888
+12	888
+13	888
+14	888
+15	888
+16	888
+17	888
+18	888
+19	888
+20	888
+21	888
+22	888
+23	888
+24	888
+25	888
+26	888
+27	888
+28	888
+29	888
+30	888
+31	888
+32	888
+33	888
+34	888
+1	9528
+2	9528
+4	9528
+8	9528
+1	8881
+2	8881
+3	8881
+4	8881
+5	8881
+6	8881
+8	8881
+9	8881
+17	8881
+18	8881
+19	8881
+20	8881
+21	8881
+22	8881
+23	8881
+24	8881
+25	8881
+26	8881
+27	8881
+28	8881
+29	8881
 \.
 
 
@@ -3644,7 +3486,6 @@ COPY public.sys_auto_code_packages (id, created_at, updated_at, deleted_at, "des
 --
 
 COPY public.sys_base_menu_btns (id, created_at, updated_at, deleted_at, name, "desc", sys_base_menu_id) FROM stdin;
-1	2025-07-12 07:13:32.439735+00	2025-07-12 07:13:32.439735+00	\N			46
 \.
 
 
@@ -3662,6 +3503,7 @@ COPY public.sys_base_menu_parameters (id, created_at, updated_at, deleted_at, sy
 
 COPY public.sys_base_menus (id, created_at, updated_at, deleted_at, menu_level, parent_id, path, name, hidden, component, sort, active_name, keep_alive, default_menu, title, icon, close_tab, transition_type) FROM stdin;
 1	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	\N	0	0	dashboard	dashboard	f	view/dashboard/index.vue	1		f	f	仪表盘	odometer	f	
+2	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	\N	0	0	about	about	f	view/about/index.vue	9		f	f	关于我们	info-filled	f	
 3	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	\N	0	0	admin	superAdmin	f	view/superAdmin/index.vue	3		f	f	超级管理员	user	f	
 4	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	\N	0	0	person	person	t	view/person/person.vue	4		f	f	个人信息	message	f	
 5	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	\N	0	0	example	example	f	view/example/index.vue	7		f	f	示例文件	management	f	
@@ -3695,19 +3537,16 @@ COPY public.sys_base_menus (id, created_at, updated_at, deleted_at, menu_level, 
 34	2025-07-12 04:34:44.741897+00	2025-07-12 04:34:44.741897+00	\N	1	9	anInfo	anInfo	f	plugin/announcement/view/info.vue	5		f	f	公告管理[示例]	scaleToOriginal	f	
 7	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	2025-07-12 04:40:51.993947+00	0	0	https://www.gin-vue-admin.com	https://www.gin-vue-admin.com	f	/	0		f	f	官方网站	customer-gva	f	
 35	2025-07-12 04:51:11.203294+00	2025-07-12 04:51:11.203294+00	2025-07-12 04:52:37.011009+00	0	0	category	category	f	view/system/program_category/program_category.vue	0		f	f	分类		f	
+36	2025-07-12 04:55:10.944143+00	2025-07-12 04:55:10.944143+00	\N	0	0	category	category	f	view/system/program_category/program_category.vue	0		f	f	分类		f	
+37	2025-07-12 05:07:06.583279+00	2025-07-12 05:07:06.583279+00	\N	0	0	poster	poster	f	view/system/program_poster/program_poster.vue	0		f	f	推广海报		f	
+38	2025-07-12 05:11:27.164009+00	2025-07-12 05:11:27.164009+00	\N	0	0	banner	banner	f	view/system/program_banner/program_banner.vue	0		f	f	轮播管理		f	
+39	2025-07-12 05:15:14.540606+00	2025-07-12 05:15:14.540606+00	\N	0	0	teacher	teacher	f	view/system/program_teacher/program_teacher.vue	0		f	f	讲师管理		f	
+40	2025-07-12 05:20:17.862557+00	2025-07-12 05:20:17.862557+00	\N	0	0	benefit	benefit	f	view/system/program_benefit/program_benefit.vue	0		f	f	权益等级		f	
 41	2025-07-12 05:40:53.604704+00	2025-07-12 05:40:53.604704+00	\N	0	0	course	course	f	view/system/core_course/core_course.vue	0		f	f	课程管理		f	
 43	2025-07-12 06:03:26.282232+00	2025-07-12 06:03:26.282232+00	\N	0	0	wxUser	wxUser	f	view/system/usermanagement/usermanagement.vue	0		f	f	用户管理		f	
+44	2025-07-12 06:11:25.939243+00	2025-07-12 06:11:25.939243+00	\N	0	0	code	code	f	view/system/finance_code/finance_code.vue	0		f	f	兑换码明细		f	
 42	2025-07-12 05:54:20.959179+00	2025-07-12 05:54:20.959179+00	2025-07-12 06:13:56.656439+00	0	0	activities	activities	f	view/system/core_activities/core_activities.vue	0		f	f	活动管理		f	
 45	2025-07-12 06:14:24.762394+00	2025-07-12 06:14:24.762394+00	\N	0	0	activities	activities	f	view/system/core_activities/core_activities.vue	0		f	f	活动管理		f	
-37	2025-07-12 05:07:06.583279+00	2025-07-12 07:19:13.02177+00	\N	0	46	poster	poster	f	view/system/program_poster/program_poster.vue	0		f	f	推广海报		f	
-46	2025-07-12 07:13:32.437206+00	2025-07-12 07:16:35.21431+00	\N	0	0	index	index	f	view/routerHolder.vue	10		t	f	程序管理	setting	t	
-36	2025-07-12 04:55:10.944143+00	2025-07-12 07:18:52.706594+00	\N	0	46	category	category	f	view/system/program_category/program_category.vue	1		f	f	分类管理		f	
-38	2025-07-12 05:11:27.164009+00	2025-07-12 07:19:27.330159+00	\N	0	46	banner	banner	f	view/system/program_banner/program_banner.vue	0		f	f	轮播管理		f	
-39	2025-07-12 05:15:14.540606+00	2025-07-12 07:21:00.988639+00	\N	0	46	teacher	teacher	f	view/system/program_teacher/program_teacher.vue	0		f	f	讲师管理		f	
-40	2025-07-12 05:20:17.862557+00	2025-07-12 07:21:23.816112+00	\N	0	46	benefit	benefit	f	view/system/program_benefit/program_benefit.vue	0		f	f	权益等级		f	
-44	2025-07-12 06:11:25.939243+00	2025-07-12 07:23:42.100803+00	\N	0	47	code	code	f	view/system/finance_code/finance_code.vue	0		f	f	兑换码明细		f	
-2	2025-07-12 04:34:44.739433+00	2025-07-12 04:34:44.739433+00	2025-07-12 07:14:06.673738+00	0	0	about	about	f	view/about/index.vue	9		f	f	关于我们	info-filled	f	
-47	2025-07-12 07:23:10.46975+00	2025-07-12 07:23:10.46975+00	\N	0	0	finance	finance	f	view/routerHolder.vue	8		f	f	财务管理	wallet	f	
 \.
 
 
@@ -3716,8 +3555,11 @@ COPY public.sys_base_menus (id, created_at, updated_at, deleted_at, menu_level, 
 --
 
 COPY public.sys_data_authority_id (sys_authority_authority_id, data_authority_id_authority_id) FROM stdin;
+888	888
 888	9528
 888	8881
+9528	9528
+9528	8881
 \.
 
 
@@ -3830,50 +3672,6 @@ COPY public.sys_ignore_apis (id, created_at, updated_at, deleted_at, path, metho
 
 COPY public.sys_operation_records (id, created_at, updated_at, deleted_at, ip, method, path, status, latency, agent, error_message, body, resp, user_id) FROM stdin;
 1	2025-07-12 04:40:52.01082+00	2025-07-12 04:40:52.01082+00	\N	127.0.0.1	POST	/menu/deleteBaseMenu	200	21803006	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":7}	{"code":0,"data":{},"msg":"删除成功"}	1
-2	2025-07-12 06:54:45.165768+00	2025-07-12 06:54:45.165768+00	\N	127.0.0.1	POST	/authority/createAuthority	200	22215016	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":1,"authorityName":"超级管理员","parentId":0}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:54:45.145924+08:00","UpdatedAt":"2025-07-12T14:54:45.147388+08:00","DeletedAt":null,"authorityId":1,"authorityName":"超级管理员","parentId":0,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:54:45.148785+08:00","UpdatedAt":"2025-07-12T14:54:45.148785+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-3	2025-07-12 06:54:53.395465+00	2025-07-12 06:54:53.395465+00	\N	127.0.0.1	POST	/authority/createAuthority	200	16381749	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":2,"authorityName":"管理员","parentId":0}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:54:53.380794+08:00","UpdatedAt":"2025-07-12T14:54:53.381508+08:00","DeletedAt":null,"authorityId":2,"authorityName":"管理员","parentId":0,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:54:53.38206+08:00","UpdatedAt":"2025-07-12T14:54:53.38206+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-4	2025-07-12 06:55:27.974879+00	2025-07-12 06:55:27.974879+00	\N	127.0.0.1	POST	/authority/createAuthority	200	10989955	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":3,"authorityName":"运营人员","parentId":0}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:55:27.965306+08:00","UpdatedAt":"2025-07-12T14:55:27.965983+08:00","DeletedAt":null,"authorityId":3,"authorityName":"运营人员","parentId":0,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:55:27.966666+08:00","UpdatedAt":"2025-07-12T14:55:27.966666+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-5	2025-07-12 06:55:42.607628+00	2025-07-12 06:55:42.607628+00	\N	127.0.0.1	PUT	/authority/updateAuthority	200	10395320	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":2,"authorityName":"管理员","parentId":1}	{"code":0,"data":{"authority":{"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"authorityId":2,"authorityName":"管理员","parentId":1,"dataAuthorityId":null,"children":null,"menus":null,"defaultRouter":""}},"msg":"更新成功"}	1
-6	2025-07-12 06:55:47.365505+00	2025-07-12 06:55:47.365505+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	23730897	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":9528}	{"code":7,"data":{},"msg":"删除失败此角色有用户正在使用禁止删除"}	1
-7	2025-07-12 06:56:13.318607+00	2025-07-12 06:56:13.318607+00	\N	127.0.0.1	POST	/authority/createAuthority	200	14842717	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":4,"authorityName":"核销人员","parentId":0}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:56:13.305491+08:00","UpdatedAt":"2025-07-12T14:56:13.306182+08:00","DeletedAt":null,"authorityId":4,"authorityName":"核销人员","parentId":0,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:56:13.306871+08:00","UpdatedAt":"2025-07-12T14:56:13.306871+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-8	2025-07-12 06:56:27.5949+00	2025-07-12 06:56:27.5949+00	\N	127.0.0.1	POST	/authority/createAuthority	200	23585543	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":999,"authorityName":"网管","parentId":0}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:56:27.580641+08:00","UpdatedAt":"2025-07-12T14:56:27.581387+08:00","DeletedAt":null,"authorityId":999,"authorityName":"网管","parentId":0,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:56:27.582146+08:00","UpdatedAt":"2025-07-12T14:56:27.582146+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-9	2025-07-12 06:56:40.773207+00	2025-07-12 06:56:40.773207+00	\N	127.0.0.1	PUT	/authority/updateAuthority	200	11311186	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":3,"authorityName":"运营人员","parentId":999}	{"code":0,"data":{"authority":{"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"authorityId":3,"authorityName":"运营人员","parentId":999,"dataAuthorityId":null,"children":null,"menus":null,"defaultRouter":""}},"msg":"更新成功"}	1
-10	2025-07-12 06:56:48.58854+00	2025-07-12 06:56:48.58854+00	\N	127.0.0.1	PUT	/authority/updateAuthority	200	10805967	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":4,"authorityName":"核销人员","parentId":999}	{"code":0,"data":{"authority":{"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"authorityId":4,"authorityName":"核销人员","parentId":999,"dataAuthorityId":null,"children":null,"menus":null,"defaultRouter":""}},"msg":"更新成功"}	1
-26	2025-07-12 07:19:47.480391+00	2025-07-12 07:19:47.480391+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	16911327	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-11	2025-07-12 06:57:24.664632+00	2025-07-12 06:57:24.664632+00	\N	127.0.0.1	POST	/authority/createAuthority	200	16099679	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":5,"authorityName":"AI应用","parentId":999}	{"code":0,"data":{"authority":{"CreatedAt":"2025-07-12T14:57:24.650448+08:00","UpdatedAt":"2025-07-12T14:57:24.651131+08:00","DeletedAt":null,"authorityId":5,"authorityName":"AI应用","parentId":999,"dataAuthorityId":null,"children":null,"menus":[{"ID":1,"CreatedAt":"2025-07-12T14:57:24.651785+08:00","UpdatedAt":"2025-07-12T14:57:24.651785+08:00","parentId":0,"path":"dashboard","name":"dashboard","hidden":false,"component":"view/dashboard/index.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"仪表盘","icon":"setting","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":null,"menuBtn":null}],"defaultRouter":"dashboard"}},"msg":"创建成功"}	1
-12	2025-07-12 06:58:34.833937+00	2025-07-12 06:58:34.833937+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	26035767	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-13	2025-07-12 07:01:58.110726+00	2025-07-12 07:01:58.110726+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	22731125	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-14	2025-07-12 07:01:59.072167+00	2025-07-12 07:01:59.072167+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	17903874	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-15	2025-07-12 07:03:19.885237+00	2025-07-12 07:03:19.885237+00	\N	127.0.0.1	POST	/user/admin_register	200	83254641	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"userName":"lz123","password":"123456","nickName":"lz","headerImg":"https://qmplusimg.henrongyi.top/1576554439myAvatar.png","authorityId":2,"authorityIds":[2],"enable":1}	{"code":0,"data":{"user":{"ID":3,"CreatedAt":"2025-07-12T15:03:19.878558+08:00","UpdatedAt":"2025-07-12T15:03:19.878558+08:00","uuid":"bfbadb2f-acbc-46ab-81e5-379d7bc8ba06","userName":"lz123","nickName":"lz","headerImg":"https://qmplusimg.henrongyi.top/1576554439myAvatar.png","authorityId":2,"authority":{"CreatedAt":"0001-01-01T00:00:00Z","UpdatedAt":"0001-01-01T00:00:00Z","DeletedAt":null,"authorityId":0,"authorityName":"","parentId":null,"dataAuthorityId":null,"children":null,"menus":null,"defaultRouter":""},"authorities":[{"CreatedAt":"2025-07-12T15:03:19.879785+08:00","UpdatedAt":"2025-07-12T15:03:19.879785+08:00","DeletedAt":null,"authorityId":2,"authorityName":"","parentId":null,"dataAuthorityId":null,"children":null,"menus":null,"defaultRouter":"dashboard"}],"phone":"","email":"","enable":1,"originSetting":null}},"msg":"注册成功"}	1
-16	2025-07-12 07:13:32.44506+00	2025-07-12 07:13:32.44506+00	\N	127.0.0.1	POST	/menu/addBaseMenu	200	11163415	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":0,"path":"program","name":"program","hidden":false,"parentId":0,"component":"view/routerHolder.vue","meta":{"title":"程序管理","icon":"setting","defaultMenu":false,"closeTab":true,"keepAlive":true},"sort":10,"parameters":[],"menuBtn":[{"name":"","desc":""}]}	{"code":0,"data":{},"msg":"添加成功"}	1
-17	2025-07-12 07:14:06.686939+00	2025-07-12 07:14:06.686939+00	\N	127.0.0.1	POST	/menu/deleteBaseMenu	200	25361807	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":2}	{"code":0,"data":{},"msg":"删除成功"}	1
-18	2025-07-12 07:14:46.736244+00	2025-07-12 07:14:46.736244+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	14282144	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":36,"CreatedAt":"2025-07-12T12:55:10.944143+08:00","UpdatedAt":"2025-07-12T12:55:10.944143+08:00","parentId":46,"path":"category","name":"category","hidden":false,"component":"view/system/program_category/program_category.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"分类","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-19	2025-07-12 07:16:35.223262+00	2025-07-12 07:16:35.223262+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	15232132	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":46,"CreatedAt":"2025-07-12T15:13:32.437206+08:00","UpdatedAt":"2025-07-12T15:13:32.437206+08:00","parentId":0,"path":"index","name":"index","hidden":false,"component":"view/routerHolder.vue","sort":10,"meta":{"activeName":"","keepAlive":true,"defaultMenu":false,"title":"程序管理","icon":"setting","closeTab":true,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[{"ID":1,"CreatedAt":"2025-07-12T15:13:32.439735+08:00","UpdatedAt":"2025-07-12T15:13:32.439735+08:00","name":"","desc":"","sysBaseMenuID":46}]}	{"code":0,"data":{},"msg":"更新成功"}	1
-20	2025-07-12 07:17:48.039635+00	2025-07-12 07:17:48.039635+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	26671191	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-21	2025-07-12 07:18:10.932737+00	2025-07-12 07:18:10.932737+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	18749293	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-22	2025-07-12 07:18:12.866973+00	2025-07-12 07:18:12.866973+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	23116385	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-23	2025-07-12 07:18:52.71458+00	2025-07-12 07:18:52.71458+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	11776999	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":36,"CreatedAt":"2025-07-12T12:55:10.944143+08:00","UpdatedAt":"2025-07-12T15:14:46.732642+08:00","parentId":46,"path":"category","name":"category","hidden":false,"component":"view/system/program_category/program_category.vue","sort":1,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"分类管理","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-24	2025-07-12 07:19:13.030497+00	2025-07-12 07:19:13.030497+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	14180346	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":37,"CreatedAt":"2025-07-12T13:07:06.583279+08:00","UpdatedAt":"2025-07-12T13:07:06.583279+08:00","parentId":46,"path":"poster","name":"poster","hidden":false,"component":"view/system/program_poster/program_poster.vue","sort":0,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"推广海报","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-25	2025-07-12 07:19:27.339893+00	2025-07-12 07:19:27.339893+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	14663305	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":38,"CreatedAt":"2025-07-12T13:11:27.164009+08:00","UpdatedAt":"2025-07-12T13:11:27.164009+08:00","parentId":46,"path":"banner","name":"banner","hidden":false,"component":"view/system/program_banner/program_banner.vue","sort":0,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"轮播管理","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-28	2025-07-12 07:20:09.707951+00	2025-07-12 07:20:09.707951+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	21459016	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-42	2025-07-12 07:29:19.373097+00	2025-07-12 07:29:19.373097+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	4036540	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":888}	{"code":7,"data":{},"msg":"删除失败此角色存在子角色不允许删除"}	1
-43	2025-07-12 07:29:22.270952+00	2025-07-12 07:29:22.270952+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	28712214	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":9528}	{"code":0,"data":{},"msg":"删除成功"}	1
-44	2025-07-12 07:29:28.889566+00	2025-07-12 07:29:28.889566+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	21183546	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":8881}	{"code":0,"data":{},"msg":"删除成功"}	1
-45	2025-07-12 07:29:31.356953+00	2025-07-12 07:29:31.356953+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	22691377	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":888}	{"code":0,"data":{},"msg":"删除成功"}	1
-27	2025-07-12 07:19:48.703285+00	2025-07-12 07:19:48.703285+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	11615633	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-29	2025-07-12 07:21:00.998622+00	2025-07-12 07:21:00.998622+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	17176086	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":39,"CreatedAt":"2025-07-12T13:15:14.540606+08:00","UpdatedAt":"2025-07-12T13:15:14.540606+08:00","parentId":46,"path":"teacher","name":"teacher","hidden":false,"component":"view/system/program_teacher/program_teacher.vue","sort":0,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"讲师管理","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-30	2025-07-12 07:21:23.883701+00	2025-07-12 07:21:23.883701+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	74651301	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":40,"CreatedAt":"2025-07-12T13:20:17.862557+08:00","UpdatedAt":"2025-07-12T13:20:17.862557+08:00","parentId":46,"path":"benefit","name":"benefit","hidden":false,"component":"view/system/program_benefit/program_benefit.vue","sort":0,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"权益等级","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-31	2025-07-12 07:23:10.480009+00	2025-07-12 07:23:10.480009+00	\N	127.0.0.1	POST	/menu/addBaseMenu	200	14873351	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":0,"path":"finance","name":"finance","hidden":false,"parentId":0,"component":"view/routerHolder.vue","meta":{"title":"财务管理","icon":"wallet","defaultMenu":false,"closeTab":false,"keepAlive":false},"sort":8}	{"code":0,"data":{},"msg":"添加成功"}	1
-32	2025-07-12 07:23:42.10902+00	2025-07-12 07:23:42.10902+00	\N	127.0.0.1	POST	/menu/updateBaseMenu	200	10845046	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":44,"CreatedAt":"2025-07-12T14:11:25.939243+08:00","UpdatedAt":"2025-07-12T14:11:25.939243+08:00","parentId":47,"path":"code","name":"code","hidden":false,"component":"view/system/finance_code/finance_code.vue","sort":0,"meta":{"activeName":"","keepAlive":false,"defaultMenu":false,"title":"兑换码明细","icon":"","closeTab":false,"transitionType":""},"authoritys":null,"children":null,"parameters":[],"menuBtn":[]}	{"code":0,"data":{},"msg":"更新成功"}	1
-33	2025-07-12 07:27:03.763789+00	2025-07-12 07:27:03.763789+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	24271642	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-34	2025-07-12 07:28:14.496963+00	2025-07-12 07:28:14.496963+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	16223857	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-35	2025-07-12 07:28:18.037332+00	2025-07-12 07:28:18.037332+00	\N	127.0.0.1	POST	/casbin/updateCasbin	200	38761595	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"更新成功"}	1
-36	2025-07-12 07:28:21.28469+00	2025-07-12 07:28:21.28469+00	\N	127.0.0.1	POST	/menu/addMenuAuthority	200	14784279	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		[超出记录长度]	{"code":0,"data":{},"msg":"添加成功"}	1
-37	2025-07-12 07:28:43.197451+00	2025-07-12 07:28:43.197451+00	\N	127.0.0.1	POST	/user/setUserAuthorities	200	15312498	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":2,"authorityIds":[888]}	{"code":0,"data":{},"msg":"修改成功"}	1
-38	2025-07-12 07:28:45.950119+00	2025-07-12 07:28:45.950119+00	\N	127.0.0.1	DELETE	/user/deleteUser	200	11166462	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"id":2}	{"code":0,"data":{},"msg":"删除成功"}	1
-39	2025-07-12 07:28:54.473497+00	2025-07-12 07:28:54.473497+00	\N	127.0.0.1	POST	/user/setUserAuthorities	200	15551673	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":1,"authorityIds":[8881,1]}	{"code":0,"data":{},"msg":"修改成功"}	1
-40	2025-07-12 07:28:59.018628+00	2025-07-12 07:28:59.018628+00	\N	127.0.0.1	POST	/user/setUserAuthorities	200	12273534	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"ID":1,"authorityIds":[1]}	{"code":0,"data":{},"msg":"修改成功"}	1
-41	2025-07-12 07:29:09.490417+00	2025-07-12 07:29:09.490417+00	\N	127.0.0.1	POST	/authority/deleteAuthority	200	9615952	Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36		{"authorityId":888}	{"code":7,"data":{},"msg":"删除失败此角色存在子角色不允许删除"}	1
 \.
 
 
@@ -3890,8 +3688,10 @@ COPY public.sys_params (id, created_at, updated_at, deleted_at, name, key, value
 --
 
 COPY public.sys_user_authority (sys_user_id, sys_authority_authority_id) FROM stdin;
-3	2
-1	1
+1	888
+1	9528
+1	8881
+2	888
 \.
 
 
@@ -3900,9 +3700,8 @@ COPY public.sys_user_authority (sys_user_id, sys_authority_authority_id) FROM st
 --
 
 COPY public.sys_users (id, created_at, updated_at, deleted_at, uuid, username, password, nick_name, header_img, authority_id, phone, email, enable, origin_setting) FROM stdin;
-3	2025-07-12 07:03:19.878558+00	2025-07-12 07:03:19.878558+00	\N	bfbadb2f-acbc-46ab-81e5-379d7bc8ba06	lz123	$2a$10$NTMrNGovPo0yapsSFbGJs.2cpcBJeCx4IOJNSwItP7ctAWzPIK1nK	lz	https://qmplusimg.henrongyi.top/1576554439myAvatar.png	2			1	\N
-2	2025-07-12 04:34:44.878894+00	2025-07-12 07:28:43.193427+00	2025-07-12 07:28:45.939183+00	334126b6-2e48-4209-9b19-f2d80370909d	a303176530	$2a$10$k7yPlSP0gbm6du619D4IQui3Jz6cPOQwlJFl4425BCLHxylqU84uy	用户1	https:///qmplusimg.henrongyi.top/1572075907logo.png	888	17611111111	333333333@qq.com	1	\N
-1	2025-07-12 04:34:44.878894+00	2025-07-12 07:28:59.010227+00	\N	18d4e4cb-37c7-4eb8-be7e-2dd5f0e257b9	admin	$2a$10$12DTj9A4f.81WqUWj7x6G.xQbynwjc/AZdBu.bN6Y.EiWBAhBc29K	Mr.奇淼	https://qmplusimg.henrongyi.top/gva_header.jpg	1	17611111111	333333333@qq.com	1	\N
+1	2025-07-12 04:34:44.878894+00	2025-07-12 04:34:44.884667+00	\N	18d4e4cb-37c7-4eb8-be7e-2dd5f0e257b9	admin	$2a$10$12DTj9A4f.81WqUWj7x6G.xQbynwjc/AZdBu.bN6Y.EiWBAhBc29K	Mr.奇淼	https://qmplusimg.henrongyi.top/gva_header.jpg	888	17611111111	333333333@qq.com	1	\N
+2	2025-07-12 04:34:44.878894+00	2025-07-12 04:34:44.892421+00	\N	334126b6-2e48-4209-9b19-f2d80370909d	a303176530	$2a$10$k7yPlSP0gbm6du619D4IQui3Jz6cPOQwlJFl4425BCLHxylqU84uy	用户1	https:///qmplusimg.henrongyi.top/1572075907logo.png	9528	17611111111	333333333@qq.com	1	\N
 \.
 
 
@@ -3917,7 +3716,7 @@ SELECT pg_catalog.setval('public."User_id_seq"', 1, false);
 -- Name: casbin_rule_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.casbin_rule_id_seq', 1249, true);
+SELECT pg_catalog.setval('public.casbin_rule_id_seq', 205, true);
 
 
 --
@@ -3959,7 +3758,7 @@ SELECT pg_catalog.setval('public.exa_file_chunks_id_seq', 1, false);
 -- Name: exa_file_upload_and_downloads_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.exa_file_upload_and_downloads_id_seq', 3, true);
+SELECT pg_catalog.setval('public.exa_file_upload_and_downloads_id_seq', 2, true);
 
 
 --
@@ -3987,7 +3786,7 @@ SELECT pg_catalog.setval('public.gva_announcements_info_id_seq', 1, false);
 -- Name: jwt_blacklists_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.jwt_blacklists_id_seq', 2, true);
+SELECT pg_catalog.setval('public.jwt_blacklists_id_seq', 1, false);
 
 
 --
@@ -4057,7 +3856,7 @@ SELECT pg_catalog.setval('public.sys_auto_code_packages_id_seq', 3, true);
 -- Name: sys_base_menu_btns_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.sys_base_menu_btns_id_seq', 1, true);
+SELECT pg_catalog.setval('public.sys_base_menu_btns_id_seq', 1, false);
 
 
 --
@@ -4071,7 +3870,7 @@ SELECT pg_catalog.setval('public.sys_base_menu_parameters_id_seq', 1, false);
 -- Name: sys_base_menus_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.sys_base_menus_id_seq', 47, true);
+SELECT pg_catalog.setval('public.sys_base_menus_id_seq', 45, true);
 
 
 --
@@ -4120,7 +3919,7 @@ SELECT pg_catalog.setval('public.sys_ignore_apis_id_seq', 13, true);
 -- Name: sys_operation_records_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.sys_operation_records_id_seq', 45, true);
+SELECT pg_catalog.setval('public.sys_operation_records_id_seq', 1, true);
 
 
 --
@@ -4134,7 +3933,7 @@ SELECT pg_catalog.setval('public.sys_params_id_seq', 1, false);
 -- Name: sys_users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: gva
 --
 
-SELECT pg_catalog.setval('public.sys_users_id_seq', 3, true);
+SELECT pg_catalog.setval('public.sys_users_id_seq', 2, true);
 
 
 --
