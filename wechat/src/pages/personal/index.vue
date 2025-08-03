@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import BindRequiredModal from '@/components/Personal/Modals/BindRequiredModal.vue'
+
+import BindSalesModal from '@/components/Personal/Modals/BindSalesModal.vue'
+import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
+import PartnerSection from '@/components/Personal/PartnerSection.vue'
+import ServiceSection from '@/components/Personal/ServiceSection.vue'
+import UserInfoSection from '@/components/Personal/UserInfoSection.vue'
+
 import { useMemberStore } from '@/store/member'
 
 interface ServiceItem {
@@ -19,7 +26,15 @@ interface PartnerInfo {
 }
 
 const memberStore = useMemberStore()
-const isMember = computed(() => memberStore.isMember)
+
+// 绑定销售专员相关
+const showBindSalesModal = ref(false)
+const bindSalesPhone = ref('')
+
+// 会员开通相关
+const showMembershipModal = ref(false)
+const showBindSalesRequiredModal = ref(false)
+const hasBoundSales = ref(false) // 模拟是否已绑定销售专员
 
 // 我的服务列表
 const serviceList = ref<ServiceItem[]>([
@@ -75,34 +90,69 @@ function handleModifyNickname() {
   })
 }
 
-// 立即续费
+// 立即续费/开通会员
 function handleRenew() {
-  uni.showModal({
-    title: '续费会员',
-    content: '是否立即续费会员？',
-    success: (res) => {
-      if (res.confirm) {
-        memberStore.activateMember()
-      }
-    },
+  showMembershipModal.value = true
+}
+
+// 确认开通会员
+function confirmMembership() {
+  // 检查是否已绑定销售专员
+  if (!hasBoundSales.value) {
+    showBindSalesRequiredModal.value = true
+    return
+  }
+
+  // 这里应该调用API开通会员
+  // const response = await http.post('/api/membership/activate')
+
+  memberStore.activateMember()
+  uni.showToast({
+    title: '会员开通成功',
+    icon: 'success',
   })
+
+  showMembershipModal.value = false
 }
 
 // 绑定销售专员
 function handleBindSales() {
-  uni.showModal({
-    title: '绑定销售专员',
-    content: '请输入销售专员编号',
-    editable: true,
-    success: (res) => {
-      if (res.confirm && res.content) {
-        uni.showToast({
-          title: '绑定成功',
-          icon: 'success',
-        })
-      }
-    },
+  showBindSalesModal.value = true
+}
+
+// 确认绑定销售专员
+function confirmBindSales() {
+  if (!bindSalesPhone.value.trim()) {
+    uni.showToast({
+      title: '请输入销售专员手机号',
+      icon: 'none',
+    })
+    return
+  }
+
+  // 这里应该调用API绑定销售专员
+  // const response = await http.post('/api/sales/bind', { phone: bindSalesPhone.value })
+
+  hasBoundSales.value = true
+  uni.showToast({
+    title: '绑定成功',
+    icon: 'success',
   })
+
+  showBindSalesModal.value = false
+  bindSalesPhone.value = ''
+}
+
+// 取消绑定销售专员
+function cancelBindSales() {
+  showBindSalesModal.value = false
+  bindSalesPhone.value = ''
+}
+
+// 从需要绑定提示弹框跳转到绑定弹框
+function handleBindSalesFromRequired() {
+  showBindSalesRequiredModal.value = false
+  showBindSalesModal.value = true
 }
 
 // 提现
@@ -143,7 +193,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <view class="personal-center">
+  <view class="min-h-screen bg-gray-100">
     <!-- 头部 -->
     <HeaderSimple
       title="个人中心"
@@ -152,116 +202,47 @@ onMounted(async () => {
     />
 
     <!-- 用户信息区域 -->
-    <view class="user-info-section">
-      <view class="user-info">
-        <image :src="userInfo.avatar" class="user-avatar" />
-        <view class="user-details">
-          <view class="nickname-row">
-            <text class="nickname">{{ userInfo.nickname }}</text>
-            <button class="modify-btn" @click="handleModifyNickname">修改</button>
-          </view>
-          <text class="phone">{{ userInfo.phone }}</text>
-        </view>
-      </view>
-
-      <!-- VIP状态 -->
-      <view v-if="isMember" class="vip-banner">
-        <view class="vip-content">
-          <text class="vip-icon">👑</text>
-          <text class="vip-text">尊敬的VIP用户</text>
-        </view>
-        <view class="vip-expire">
-          您的会员有效期至{{ userInfo.memberExpireDate }}
-        </view>
-        <button class="renew-btn" @click="handleRenew">立即续费</button>
-      </view>
-    </view>
+    <UserInfoSection
+      :user-info="userInfo"
+      @modify-nickname="handleModifyNickname"
+      @renew="handleRenew"
+    />
 
     <!-- 我的服务 -->
-    <view class="service-section">
-      <view class="section-header">
-        <text class="section-title">我的服务</text>
-        <view class="sales-bind">
-          <text class="sales-label">销售专员:</text>
-          <button class="bind-btn" @click="handleBindSales">立即绑定</button>
-        </view>
-      </view>
-
-      <view class="service-grid">
-        <view
-          v-for="(service, index) in serviceList"
-          :key="index"
-          class="service-item"
-          @click="handleServiceClick(service)"
-        >
-          <view class="service-icon">{{ service.icon }}</view>
-          <text class="service-title">{{ service.title }}</text>
-        </view>
-      </view>
-    </view>
+    <ServiceSection
+      :service-list="serviceList"
+      @service-click="handleServiceClick"
+      @bind-sales="handleBindSales"
+    />
 
     <!-- 合伙人中心 -->
-    <view class="partner-section">
-      <view class="partner-header">
-        <text class="partner-title">合伙人中心</text>
-      </view>
-
-      <!-- 收入概览 -->
-      <view class="income-overview">
-        <view class="income-item">
-          <view class="income-info">
-            <text class="income-label">可提现收入</text>
-            <text class="income-amount">¥{{ partnerInfo.withdrawableIncome }}</text>
-          </view>
-          <button class="withdraw-btn" @click="handleWithdraw">提现</button>
-        </view>
-
-        <view class="income-item">
-          <view class="income-info">
-            <text class="income-label">累计收入</text>
-            <text class="income-amount">¥{{ partnerInfo.totalIncome }}</text>
-          </view>
-          <button class="details-btn" @click="handleIncomeDetails">收支明细</button>
-        </view>
-      </view>
-
-      <!-- 详细统计 -->
-      <view class="partner-stats">
-        <view class="stat-row">
-          <view class="stat-item">
-            <text class="stat-label">我的团队</text>
-            <text class="stat-value">{{ partnerInfo.teamCount }}人</text>
-          </view>
-          <view class="stat-item">
-            <text class="stat-label">提现中</text>
-            <text class="stat-value">¥{{ partnerInfo.withdrawing }}</text>
-          </view>
-        </view>
-
-        <view class="stat-row">
-          <view class="stat-item">
-            <text class="stat-label">推广码</text>
-            <button class="code-btn" @click="handleGenerateCode">生成推广码</button>
-          </view>
-          <view class="stat-item">
-            <text class="stat-label">已提现</text>
-            <text class="stat-value">¥{{ partnerInfo.withdrawn }}</text>
-          </view>
-        </view>
-
-        <view class="stat-row">
-          <view class="stat-item">
-            <text class="stat-label">会员兑换码</text>
-            <text class="stat-value">{{ partnerInfo.memberCode }}</text>
-          </view>
-          <view class="stat-item">
-            <text class="stat-label">活动兑换码</text>
-            <text class="stat-value">{{ partnerInfo.activityCode }}</text>
-          </view>
-        </view>
-      </view>
-    </view>
+    <PartnerSection
+      :partner-info="partnerInfo"
+      @withdraw="handleWithdraw"
+      @income-details="handleIncomeDetails"
+      @generate-code="handleGenerateCode"
+    />
   </view>
+
+  <!-- 绑定销售专员弹框 -->
+  <BindSalesModal
+    v-model:show="showBindSalesModal"
+    v-model:bind-sales-phone="bindSalesPhone"
+    @confirm="confirmBindSales"
+    @cancel="cancelBindSales"
+  />
+
+  <!-- 会员开通弹框 -->
+  <MembershipModal
+    v-model:show="showMembershipModal"
+    @confirm="confirmMembership"
+  />
+
+  <!-- 需要绑定销售专员提示弹框 -->
+  <BindRequiredModal
+    v-model:show="showBindSalesRequiredModal"
+    @confirm="handleBindSalesFromRequired"
+  />
 </template>
 
 <route lang="jsonc" type="home">
@@ -273,270 +254,3 @@ onMounted(async () => {
   }
 }
 </route>
-
-<style lang="scss" scoped>
-.personal-center {
-  min-height: 100vh;
-  background-color: var(--bg-secondary);
-}
-
-.user-info-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
-
-.user-avatar {
-  width: 120rpx;
-  height: 120rpx;
-  border-radius: 50%;
-  margin-right: var(--spacing-md);
-}
-
-.user-details {
-  flex: 1;
-}
-
-.nickname-row {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
-}
-
-.nickname {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: var(--text-primary);
-  margin-right: var(--spacing-sm);
-}
-
-.modify-btn {
-  font-size: 22rpx;
-  color: var(--text-tertiary);
-  background: none;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius-sm);
-  padding: 4rpx 12rpx;
-}
-
-.phone {
-  font-size: 26rpx;
-  color: var(--text-secondary);
-}
-
-.vip-banner {
-  background: var(--text-primary);
-  color: var(--text-inverse);
-  padding: var(--spacing-md);
-  border-radius: var(--radius-md);
-  position: relative;
-}
-
-.vip-content {
-  display: flex;
-  align-items: center;
-  margin-bottom: var(--spacing-xs);
-}
-
-.vip-icon {
-  font-size: 32rpx;
-  margin-right: var(--spacing-sm);
-}
-
-.vip-text {
-  font-size: 28rpx;
-  font-weight: bold;
-}
-
-.vip-expire {
-  font-size: 24rpx;
-  opacity: 0.8;
-  margin-bottom: var(--spacing-sm);
-}
-
-.renew-btn {
-  position: absolute;
-  right: var(--spacing-md);
-  top: 50%;
-  transform: translateY(-50%);
-  background: var(--text-inverse);
-  color: var(--text-primary);
-  border: 1px solid var(--text-primary);
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 24rpx;
-}
-
-.service-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: var(--text-primary);
-}
-
-.sales-bind {
-  display: flex;
-  align-items: center;
-}
-
-.sales-label {
-  font-size: 24rpx;
-  color: var(--text-secondary);
-  margin-right: var(--spacing-sm);
-}
-
-.bind-btn {
-  font-size: 22rpx;
-  color: var(--primary-color);
-  background: none;
-  border: 1px solid var(--primary-color);
-  border-radius: var(--radius-sm);
-  padding: 4rpx 12rpx;
-}
-
-.service-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--spacing-md);
-}
-
-.service-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: var(--spacing-md);
-  background: var(--bg-secondary);
-  border-radius: var(--radius-md);
-}
-
-.service-icon {
-  font-size: 48rpx;
-  margin-bottom: var(--spacing-sm);
-}
-
-.service-title {
-  font-size: 24rpx;
-  color: var(--text-primary);
-  text-align: center;
-}
-
-.partner-section {
-  background: var(--text-primary);
-  color: var(--text-inverse);
-  padding: var(--spacing-md);
-}
-
-.partner-header {
-  margin-bottom: var(--spacing-md);
-}
-
-.partner-title {
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.income-overview {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-}
-
-.income-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: var(--spacing-md);
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-}
-
-.income-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.income-label {
-  font-size: 24rpx;
-  opacity: 0.8;
-  margin-bottom: var(--spacing-xs);
-}
-
-.income-amount {
-  font-size: 32rpx;
-  font-weight: bold;
-}
-
-.withdraw-btn,
-.details-btn {
-  background: var(--text-inverse);
-  color: var(--text-primary);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-xs) var(--spacing-md);
-  font-size: 24rpx;
-}
-
-.partner-stats {
-  background: var(--text-inverse);
-  color: var(--text-primary);
-  border-radius: var(--radius-md);
-  padding: var(--spacing-md);
-}
-
-.stat-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: var(--spacing-md);
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.stat-item {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  color: var(--text-secondary);
-  margin-bottom: var(--spacing-xs);
-}
-
-.stat-value {
-  font-size: 28rpx;
-  font-weight: bold;
-  color: var(--text-primary);
-}
-
-.code-btn {
-  background: var(--primary-color);
-  color: var(--text-inverse);
-  border: none;
-  border-radius: var(--radius-sm);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 22rpx;
-}
-</style> 

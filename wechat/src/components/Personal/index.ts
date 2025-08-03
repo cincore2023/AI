@@ -1,0 +1,6 @@
+export { default as UserInfoSection } from './UserInfoSection.vue'
+export { default as ServiceSection } from './ServiceSection.vue'
+export { default as PartnerSection } from './PartnerSection.vue'
+export { default as BindSalesModal } from './Modals/BindSalesModal.vue'
+export { default as MembershipModal } from './Modals/MembershipModal.vue'
+export { default as BindRequiredModal } from './Modals/BindRequiredModal.vue' 

@@ -1,0 +1,128 @@
+<script setup lang="ts">
+interface PartnerInfo {
+  withdrawableIncome: number
+  totalIncome: number
+  teamCount: number
+  withdrawing: number
+  withdrawn: number
+  memberCode: number
+  activityCode: number
+}
+
+interface Props {
+  partnerInfo: PartnerInfo
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<{
+  withdraw: []
+  incomeDetails: []
+  generateCode: []
+}>()
+
+function handleWithdraw() {
+  emit('withdraw')
+}
+
+function handleIncomeDetails() {
+  emit('incomeDetails')
+}
+
+function handleGenerateCode() {
+  emit('generateCode')
+}
+</script>
+
+<template>
+  <view class="bg-blue-500 text-white p-6 rounded-t-2xl mt-6">
+    <view class="mb-6">
+      <text class="text-2xl font-bold flex items-center">
+        <text class="mr-2">👑</text>
+        合伙人中心
+      </text>
+    </view>
+
+    <!-- 收入概览 -->
+    <view class="mb-6">
+      <view class="grid grid-cols-2 gap-4">
+        <view class="bg-white/20 p-4 rounded-lg">
+          <view class="flex items-center mb-2">
+            <text class="text-lg mr-1">💰</text>
+            <text class="text-sm opacity-90">可提现收入</text>
+          </view>
+          <text class="text-2xl font-bold">¥{{ partnerInfo.withdrawableIncome }}</text>
+          <view
+            class="w-full mt-3 bg-red-500 text-white py-2 rounded text-sm text-center"
+            @click="handleWithdraw"
+          >
+            <text class="mr-1">💳</text>
+            <text>提现</text>
+          </view>
+        </view>
+
+        <view class="bg-white/20 p-4 rounded-lg">
+          <view class="flex items-center mb-2">
+            <text class="text-lg mr-1">📈</text>
+            <text class="text-sm opacity-90">累计收入</text>
+          </view>
+          <text class="text-2xl font-bold">¥{{ partnerInfo.totalIncome }}</text>
+          <view
+            class="w-full mt-3 bg-blue-400 text-white py-2 rounded text-sm text-center"
+            @click="handleIncomeDetails"
+          >
+            <text class="mr-1">📊</text>
+            <text>收支明细</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 详细统计 -->
+    <view class="bg-white text-gray-800 rounded-xl p-6">
+      <view class="grid grid-cols-2 gap-4 mb-4">
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">👥</text>
+          <text class="text-xs text-gray-600 mb-1 block">我的团队</text>
+          <text class="text-lg font-bold">{{ partnerInfo.teamCount }}人</text>
+        </view>
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">⏳</text>
+          <text class="text-xs text-gray-600 mb-1 block">提现中</text>
+          <text class="text-lg font-bold">¥{{ partnerInfo.withdrawing }}</text>
+        </view>
+      </view>
+
+      <view class="grid grid-cols-2 gap-4 mb-4">
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">🎫</text>
+          <text class="text-xs text-gray-600 mb-1 block">推广码</text>
+          <view
+            class="bg-green-500 text-white px-3 py-1 rounded text-xs text-center mx-auto"
+            @click="handleGenerateCode"
+          >
+            <text class="mr-1">✨</text>
+            <text>生成推广码</text>
+          </view>
+        </view>
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">💸</text>
+          <text class="text-xs text-gray-600 mb-1 block">已提现</text>
+          <text class="text-lg font-bold">¥{{ partnerInfo.withdrawn }}</text>
+        </view>
+      </view>
+
+      <view class="grid grid-cols-2 gap-4">
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">👑</text>
+          <text class="text-xs text-gray-600 mb-1 block">会员兑换码</text>
+          <text class="text-lg font-bold">{{ partnerInfo.memberCode }}</text>
+        </view>
+        <view class="bg-gray-100 rounded-lg p-4 text-center">
+          <text class="text-xl mb-2 block">🎁</text>
+          <text class="text-xs text-gray-600 mb-1 block">活动兑换码</text>
+          <text class="text-lg font-bold">{{ partnerInfo.activityCode }}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</template> 

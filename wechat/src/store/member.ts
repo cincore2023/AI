@@ -34,7 +34,8 @@ export const useMemberStore = defineStore('member', {
         
         // 模拟会员状态
         this.memberInfo = {
-          isMember: Math.random() > 0.5,
+          // isMember: Math.random() > 0.5,
+          isMember: true,
           memberLevel: 'VIP',
           expireDate: '2024-12-31',
           benefits: ['免费观看所有课程', '优先客服支持', '专属学习资料']

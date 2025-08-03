@@ -48,6 +48,12 @@
         "text": "关于",
         "icon": "i-carbon-code",
         "iconType": "unocss"
+      },
+      {
+        "pagePath": "pages/personal/index",
+        "text": "个人中心",
+        "icon": "i-carbon-code",
+        "iconType": "unocss"
       }
     ]
   },
@@ -110,6 +116,18 @@
         "navigationStyle": "custom",
         "navigationBarTitleText": "课程管理"
       }
+    },
+    {
+      "path": "pages/finance/balance",
+      "type": "page"
+    },
+    {
+      "path": "pages/finance/team",
+      "type": "page"
+    },
+    {
+      "path": "pages/finance/transactions",
+      "type": "page"
     }
   ],
   "subPackages": [
