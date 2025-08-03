@@ -25,7 +25,10 @@ function handleWithdraw() {
 }
 
 function handleIncomeDetails() {
-  emit('incomeDetails')
+  // 跳转到收支明细页面
+  uni.navigateTo({
+    url: '/pages/finance/transactions'
+  })
 }
 
 function handleGenerateCode() {
@@ -34,7 +37,7 @@ function handleGenerateCode() {
 </script>
 
 <template>
-  <view class="bg-blue-500 text-white p-6 rounded-t-2xl mt-6">
+  <view class="bg-gray-800 text-white p-6 rounded-t-2xl mt-6">
     <view class="mb-6">
       <text class="text-xl font-bold flex items-center">
         <text class="mr-3">👑</text>

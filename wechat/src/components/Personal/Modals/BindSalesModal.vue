@@ -38,7 +38,7 @@ function handleClose() {
     <view class="w-[90vw] overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- 头部区域 -->
       <view class="relative p-6 text-center text-white">
-        <view class="absolute inset-0 bg-gray-600" />
+        <view class="absolute inset-0 bg-gray-800" />
         <view class="relative z-10">
           <view class="mb-3 flex justify-center">
             <view class="h-12 w-12 flex items-center justify-center rounded-full bg-white/20">

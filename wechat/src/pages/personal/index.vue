@@ -174,7 +174,7 @@ function handleWithdraw() {
 // 收支明细
 function handleIncomeDetails() {
   uni.navigateTo({
-    url: '/pages/partner/income',
+    url: '/pages/finance/transactions',
   })
 }
 

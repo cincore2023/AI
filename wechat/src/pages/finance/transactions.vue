@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 
 interface Transaction {
   id: string

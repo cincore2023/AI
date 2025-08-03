@@ -20,16 +20,16 @@ function handleClose() {
 
 <template>
   <sar-popup
-    :show="show"
-    @update:show="(value) => emit('update:show', value)"
+    :visible="show"
+    @update:visible="(value) => emit('update:show', value)"
     position="center"
     :close-on-click-overlay="true"
     :close-on-click-close-icon="true"
     round
     safe-area-inset-bottom
   >
-    <view class="w-130 bg-white rounded-lg overflow-hidden">
-      <view class="bg-blue-500 text-white p-5 text-center">
+    <view class="w-[80vw] bg-white rounded-lg overflow-hidden">
+      <view class="bg-gray-800 text-white p-5 text-center">
         <text class="text-lg font-bold">请绑定销售人</text>
       </view>
 
@@ -41,7 +41,7 @@ function handleClose() {
 
       <view class="p-5 border-t border-gray-200">
         <view
-          class="w-full bg-blue-500 text-white py-3 rounded text-center"
+          class="w-full bg-gray-900 text-white py-3 rounded text-center"
           @click="handleConfirm"
         >
           绑定销售员
@@ -49,4 +49,4 @@ function handleClose() {
       </view>
     </view>
   </sar-popup>
-</template> 
+</template>

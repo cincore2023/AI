@@ -15,7 +15,7 @@ defineEmits<Emits>()
 const systemInfo = uni.getWindowInfo()
 
 const BottomStyle = computed(() => ({
-  paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom}px` || '0px',
+  paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom + 5 }px` || '0px',
   paddingTop: '20rpx',
 }))
 
