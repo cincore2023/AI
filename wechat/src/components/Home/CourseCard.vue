@@ -27,12 +27,12 @@ defineProps<{
     <!-- 课程信息 -->
     <view class="course-info flex-1 p-3">
       <!-- 课程标题 -->
-      <text class="course-title line-clamp-2 text-sm font-medium">{{ course.title }}</text>
+      <text class="course-title line-clamp-2 text-base font-medium">{{ course.title }}</text>
 
       <!-- 学习人数和价格 -->
       <view class="course-meta mt-2 flex items-center justify-between">
-        <text class="learners text-xs">{{ course.learners }}人学习</text>
-        <text class="price text-sm font-bold">
+        <text class="learners text-sm">{{ course.learners }}人学习</text>
+        <text class="price text-base font-bold">
           {{ course.price === '免费' ? '免费' : `¥${course.price}` }}
         </text>
       </view>
@@ -62,13 +62,13 @@ defineProps<{
 }
 
 .course-tag {
-  font-size: 20rpx;
+  font-size: 24rpx;
   color: #666;
   backdrop-filter: blur(4rpx);
 }
 
 .course-title {
-  font-size: 28rpx;
+  font-size: 32rpx;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -78,7 +78,7 @@ defineProps<{
 }
 
 .course-meta {
-  font-size: 24rpx;
+  font-size: 28rpx;
 }
 
 .learners {

@@ -27,7 +27,14 @@ function handleWithdraw() {
 function handleIncomeDetails() {
   // 跳转到收支明细页面
   uni.navigateTo({
-    url: '/pages/finance/transactions'
+    url: '/pages/finance/transactions',
+  })
+}
+
+function handleMyTeam() {
+  // 跳转到收支明细页面
+  uni.navigateTo({
+    url: '/pages/finance/team',
   })
 }
 
@@ -37,9 +44,9 @@ function handleGenerateCode() {
 </script>
 
 <template>
-  <view class="bg-gray-800 text-white p-6 rounded-t-2xl mt-6">
+  <view class="mt-6 rounded-t-2xl bg-gray-800 p-6 text-white">
     <view class="mb-6">
-      <text class="text-xl font-bold flex items-center">
+      <text class="flex items-center text-xl font-bold">
         <text class="mr-3">👑</text>
         合伙人中心
       </text>
@@ -48,14 +55,14 @@ function handleGenerateCode() {
     <!-- 收入概览 -->
     <view class="mb-6">
       <view class="grid grid-cols-2 gap-5">
-        <view class="bg-white/20 p-5 rounded-lg">
-          <view class="flex items-center mb-3">
-            <text class="text-lg mr-2">💰</text>
+        <view class="rounded-lg bg-white/20 p-5">
+          <view class="mb-3 flex items-center">
+            <text class="mr-2 text-lg">💰</text>
             <text class="text-sm opacity-90">可提现收入</text>
           </view>
-          <text class="text-xl font-bold mb-4">¥{{ partnerInfo.withdrawableIncome }}</text>
+          <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.withdrawableIncome }}</text>
           <view
-            class="w-full bg-red-500 text-white py-3 rounded text-sm text-center"
+            class="w-full rounded bg-red-500 py-3 text-center text-sm text-white"
             @click="handleWithdraw"
           >
             <text class="mr-2">💳</text>
@@ -63,14 +70,14 @@ function handleGenerateCode() {
           </view>
         </view>
 
-        <view class="bg-white/20 p-5 rounded-lg">
-          <view class="flex items-center mb-3">
-            <text class="text-lg mr-2">📈</text>
+        <view class="rounded-lg bg-white/20 p-5">
+          <view class="mb-3 flex items-center">
+            <text class="mr-2 text-lg">📈</text>
             <text class="text-sm opacity-90">累计收入</text>
           </view>
-          <text class="text-xl font-bold mb-4">¥{{ partnerInfo.totalIncome }}</text>
+          <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.totalIncome }}</text>
           <view
-            class="w-full bg-blue-400 text-white py-3 rounded text-sm text-center"
+            class="w-full rounded bg-blue-400 py-3 text-center text-sm text-white"
             @click="handleIncomeDetails"
           >
             <text class="mr-2">📊</text>
@@ -81,50 +88,50 @@ function handleGenerateCode() {
     </view>
 
     <!-- 详细统计 -->
-    <view class="bg-white text-gray-800 rounded-xl p-6">
-      <view class="grid grid-cols-2 gap-5 mb-5">
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">👥</text>
-          <text class="text-xs text-gray-600 mb-2 block">我的团队</text>
+    <view class="rounded-xl bg-white p-6 text-gray-800">
+      <view class="grid grid-cols-2 mb-5 gap-5">
+        <view class="rounded-lg bg-gray-100 p-5 text-center" @click="handleMyTeam">
+          <text class="mb-3 block text-2xl">👥</text>
+          <text class="mb-2 block text-xs text-gray-600">我的团队</text>
           <text class="text-lg font-bold">{{ partnerInfo.teamCount }}人</text>
         </view>
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">⏳</text>
-          <text class="text-xs text-gray-600 mb-2 block">提现中</text>
+        <view class="rounded-lg bg-gray-100 p-5 text-center">
+          <text class="mb-3 block text-2xl">⏳</text>
+          <text class="mb-2 block text-xs text-gray-600">提现中</text>
           <text class="text-lg font-bold">¥{{ partnerInfo.withdrawing }}</text>
         </view>
       </view>
 
-      <view class="grid grid-cols-2 gap-5 mb-5">
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">🎫</text>
-          <text class="text-xs text-gray-600 mb-2 block">推广码</text>
+      <view class="grid grid-cols-2 mb-5 gap-5">
+        <view class="rounded-lg bg-gray-100 p-5 text-center">
+          <text class="mb-3 block text-2xl">🎫</text>
+          <text class="mb-2 block text-xs text-gray-600">推广码</text>
           <view
-            class="bg-green-500 text-white px-4 py-2 rounded text-sm text-center mx-auto whitespace-nowrap"
+            class="mx-auto whitespace-nowrap rounded bg-green-500 px-4 py-2 text-center text-sm text-white"
             @click="handleGenerateCode"
           >
             <text>生成推广码</text>
           </view>
         </view>
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">💸</text>
-          <text class="text-xs text-gray-600 mb-2 block">已提现</text>
+        <view class="rounded-lg bg-gray-100 p-5 text-center">
+          <text class="mb-3 block text-2xl">💸</text>
+          <text class="mb-2 block text-xs text-gray-600">已提现</text>
           <text class="text-lg font-bold">¥{{ partnerInfo.withdrawn }}</text>
         </view>
       </view>
 
       <view class="grid grid-cols-2 gap-5">
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">👑</text>
-          <text class="text-xs text-gray-600 mb-2 block">会员兑换码</text>
+        <view class="rounded-lg bg-gray-100 p-5 text-center">
+          <text class="mb-3 block text-2xl">👑</text>
+          <text class="mb-2 block text-xs text-gray-600">会员兑换码</text>
           <text class="text-lg font-bold">{{ partnerInfo.memberCode }}</text>
         </view>
-        <view class="bg-gray-100 rounded-lg p-5 text-center">
-          <text class="text-2xl mb-3 block">🎁</text>
-          <text class="text-xs text-gray-600 mb-2 block">活动兑换码</text>
+        <view class="rounded-lg bg-gray-100 p-5 text-center">
+          <text class="mb-3 block text-2xl">🎁</text>
+          <text class="mb-2 block text-xs text-gray-600">活动兑换码</text>
           <text class="text-lg font-bold">{{ partnerInfo.activityCode }}</text>
         </view>
       </view>
     </view>
   </view>
-</template> 
+</template>

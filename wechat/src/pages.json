@@ -59,15 +59,6 @@
   },
   "pages": [
     {
-      "path": "pages/personal/index",
-      "type": "home",
-      "layout": "tabbar",
-      "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": "个人中心"
-      }
-    },
-    {
       "path": "pages/index/index",
       "type": "home",
       "layout": "tabbar",
@@ -123,11 +114,25 @@
     },
     {
       "path": "pages/finance/team",
-      "type": "page"
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的团队"
+      }
     },
     {
       "path": "pages/finance/transactions",
       "type": "page"
+    },
+    {
+      "path": "pages/personal/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "个人中心"
+      }
     }
   ],
   "subPackages": [

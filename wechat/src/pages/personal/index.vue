@@ -252,7 +252,7 @@ onMounted(async () => {
   />
 </template>
 
-<route lang="jsonc" type="home">
+<route lang="jsonc" type="page">
 {
   "layout": "tabbar",
   "style": {

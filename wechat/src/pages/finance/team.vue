@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 
 interface TeamMember {
   id: string
@@ -127,129 +127,131 @@ function handleRenewMember(member: TeamMember) {
 </script>
 
 <template>
-  <view class="team-page">
+  <view class="default-layout-content">
     <!-- 头部 -->
     <HeaderSimple title="我的团队" :show-back="true" />
-    
-    <!-- 标签页 -->
-    <view class="tab-container">
-      <sar-tabs v-model:current="activeTab" :list="[{ title: '我的团队' }]" />
-    </view>
-    
-    <!-- 搜索和筛选 -->
-    <view class="search-section">
-      <view class="search-row">
-        <sar-input
-          v-model="searchForm.keyword"
-          placeholder="用户"
-          class="search-input"
+
+    <scroll-view
+      class="no-scrollbar flex flex-1 flex-col"
+      :scroll-y="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
+      <!-- 标签页 -->
+      <view class="tab-container">
+        <sar-tabs v-model:current="activeTab" :list="[{ title: '我的团队' }]" />
+      </view>
+
+      <!-- 搜索和筛选 -->
+      <view class="search-section">
+        <view class="search-row">
+          <sar-input
+            v-model="searchForm.keyword"
+            placeholder="用户"
+            class="search-input"
+          >
+            <template #suffix>
+              <text class="search-icon">🔍</text>
+            </template>
+          </sar-input>
+        </view>
+
+        <view class="button-row">
+          <sar-button type="solid" size="small" theme="primary" @click="handleSearch">
+            查询
+          </sar-button>
+          <sar-button type="outline" size="small" theme="default" @click="handleReset">
+            重置
+          </sar-button>
+        </view>
+
+        <view class="filter-row">
+          <!--        <sar-select -->
+          <!--          v-model="searchForm.registerTime" -->
+          <!--          :options="timeOptions" -->
+          <!--          placeholder="注册时间" -->
+          <!--          class="filter-item" -->
+          <!--        /> -->
+          <!--        <sar-select -->
+          <!--          v-model="searchForm.activationMethod" -->
+          <!--          :options="activationOptions" -->
+          <!--          placeholder="开通方式" -->
+          <!--          class="filter-item" -->
+          <!--        /> -->
+        </view>
+      </view>
+
+      <!-- 团队成员列表 -->
+      <view class="team-list">
+        <view
+          v-for="member in teamMembers"
+          :key="member.id"
+          class="member-item"
         >
-          <template #suffix>
-            <text class="search-icon">🔍</text>
-          </template>
-        </sar-input>
-      </view>
-      
-      <view class="button-row">
-        <sar-button type="solid" size="small" theme="primary" @click="handleSearch">
-          查询
-        </sar-button>
-        <sar-button type="outline" size="small" theme="default" @click="handleReset">
-          重置
-        </sar-button>
-      </view>
-      
-      <view class="filter-row">
-<!--        <sar-select-->
-<!--          v-model="searchForm.registerTime"-->
-<!--          :options="timeOptions"-->
-<!--          placeholder="注册时间"-->
-<!--          class="filter-item"-->
-<!--        />-->
-<!--        <sar-select-->
-<!--          v-model="searchForm.activationMethod"-->
-<!--          :options="activationOptions"-->
-<!--          placeholder="开通方式"-->
-<!--          class="filter-item"-->
-<!--        />-->
-      </view>
-    </view>
-    
-    <!-- 团队成员列表 -->
-    <view class="team-list">
-      <view
-        v-for="member in teamMembers"
-        :key="member.id"
-        class="member-item"
-      >
-        <view class="member-header">
-          <view class="user-info">
-            <image :src="member.userAvatar" class="user-avatar" />
-            <view class="user-details">
-              <text class="user-name">{{ member.userName }}</text>
-              <text class="user-id">(id:{{ member.userId }})</text>
+          <view class="member-header">
+            <view class="user-info">
+              <image :src="member.userAvatar" class="user-avatar" />
+              <view class="user-details">
+                <text class="user-name">{{ member.userName }}</text>
+                <text class="user-id">(id:{{ member.userId }})</text>
+              </view>
+            </view>
+            <view class="member-status">
+              <sar-tag
+                :theme="member.isMember ? 'success' : 'default'"
+                size="small"
+              >
+                {{ member.isMember ? '会员' : '非会员' }}
+              </sar-tag>
             </view>
           </view>
-          <view class="member-status">
-            <sar-tag 
-              :theme="member.isMember ? 'success' : 'default'" 
+
+          <view class="member-content">
+            <view class="info-row">
+              <text class="info-label">会员到期时间:</text>
+              <text class="info-value">
+                {{ member.isMember ? member.memberExpireTime : '该用户还不是会员' }}
+              </text>
+            </view>
+
+            <view class="info-row">
+              <text class="info-label">注册时间:</text>
+              <text class="info-value">{{ member.registerTime }}</text>
+            </view>
+
+            <view v-if="member.activationMethod" class="info-row">
+              <text class="info-label">开通方式:</text>
+              <text class="info-value">{{ member.activationMethod }}</text>
+            </view>
+          </view>
+
+          <view class="member-actions">
+            <sar-button
+              v-if="!member.isMember"
+              type="solid"
               size="small"
+              theme="primary"
+              @click="handleActivateMember(member)"
             >
-              {{ member.isMember ? '会员' : '非会员' }}
-            </sar-tag>
+              开通会员
+            </sar-button>
+            <sar-button
+              v-if="member.isMember"
+              type="outline"
+              size="small"
+              theme="primary"
+              @click="handleRenewMember(member)"
+            >
+              会员续费
+            </sar-button>
           </view>
-        </view>
-        
-        <view class="member-content">
-          <view class="info-row">
-            <text class="info-label">会员到期时间:</text>
-            <text class="info-value">
-              {{ member.isMember ? member.memberExpireTime : '该用户还不是会员' }}
-            </text>
-          </view>
-          
-          <view class="info-row">
-            <text class="info-label">注册时间:</text>
-            <text class="info-value">{{ member.registerTime }}</text>
-          </view>
-          
-          <view v-if="member.activationMethod" class="info-row">
-            <text class="info-label">开通方式:</text>
-            <text class="info-value">{{ member.activationMethod }}</text>
-          </view>
-        </view>
-        
-        <view class="member-actions">
-          <sar-button 
-            v-if="!member.isMember"
-            type="solid" 
-            size="small" 
-            theme="primary"
-            @click="handleActivateMember(member)"
-          >
-            开通会员
-          </sar-button>
-          <sar-button 
-            v-if="member.isMember"
-            type="outline" 
-            size="small" 
-            theme="primary"
-            @click="handleRenewMember(member)"
-          >
-            会员续费
-          </sar-button>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
 <style lang="scss" scoped>
-.team-page {
-  min-height: 100vh;
-  background-color: var(--bg-secondary);
-}
-
 .tab-container {
   background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-primary);
@@ -366,4 +368,14 @@ function handleRenewMember(member: TeamMember) {
   justify-content: flex-end;
   gap: var(--spacing-sm);
 }
-</style> 
+</style>
+
+<route lang="jsonc" type="page">
+{
+  "layout": "default",
+  "style": {
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "我的团队"
+  }
+}
+</route>

@@ -74,7 +74,7 @@ defineExpose({
               {{ item.icon }}
             </view>
           </view>
-          <text class="icon-text text-xs">{{ item.text }}</text>
+          <text class="icon-text text-[24rpx]">{{ item.text }}</text>
         </view>
       </view>
     </scroll-view>
@@ -112,8 +112,6 @@ defineExpose({
 
 .icon-text {
   color: var(--text-primary);
-  font-size: 20rpx;
-  line-height: 1.2;
   // 文字完整显示，不省略
   white-space: nowrap;
   text-align: center;

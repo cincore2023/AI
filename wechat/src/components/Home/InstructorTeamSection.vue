@@ -60,8 +60,8 @@ function handleViewAll() {
 <template>
   <view class="instructor-section">
     <view class="section-header mb-4 flex items-center justify-between">
-      <text class="section-title text-lg font-bold">讲师团队</text>
-      <view class="view-all-btn rounded-full px-3 py-1 text-xs" @click="handleViewAll">
+      <text class="section-title text-xl font-bold">讲师团队</text>
+      <view class="view-all-btn rounded-full px-3 py-1 text-sm" @click="handleViewAll">
         查看全部
       </view>
     </view>
@@ -89,7 +89,7 @@ function handleViewAll() {
 
           <!-- 讲师信息 -->
           <view class="instructor-info flex flex-col text-center">
-            <text class="instructor-name text-sm font-medium">{{ instructor.name }}</text>
+            <text class="instructor-name text-base font-medium">{{ instructor.name }}</text>
             <text class="instructor-title mt-1">{{ instructor.title }}</text>
           </view>
         </view>
@@ -104,12 +104,12 @@ function handleViewAll() {
 }
 
 .section-title {
-  font-size: 36rpx;
+  font-size: 40rpx;
   color: var(--text-primary);
 }
 
 .view-all-btn {
-  font-size: 24rpx;
+  font-size: 28rpx;
   font-weight: 500;
   background-color: var(--primary-color);
   color: var(--text-inverse);
@@ -152,7 +152,7 @@ function handleViewAll() {
 }
 
 .instructor-name {
-  font-size: 28rpx;
+  font-size: 32rpx;
   line-height: 1.3;
   text-align: center;
   white-space: nowrap;
@@ -160,7 +160,7 @@ function handleViewAll() {
 }
 
 .instructor-title {
-  font-size: 20rpx;
+  font-size: 24rpx;
   line-height: 1.3;
   text-align: center;
   white-space: nowrap;
