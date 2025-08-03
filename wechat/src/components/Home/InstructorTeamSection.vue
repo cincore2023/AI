@@ -60,7 +60,7 @@ function handleViewAll() {
 <template>
   <view class="instructor-section">
     <view class="section-header mb-4 flex items-center justify-between">
-      <text class="section-title text-xl font-bold">讲师团队</text>
+      <text class="section-title text-lg font-bold">讲师团队</text>
       <view class="view-all-btn rounded-full px-3 py-1 text-sm" @click="handleViewAll">
         查看全部
       </view>

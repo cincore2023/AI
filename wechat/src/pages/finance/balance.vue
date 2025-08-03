@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
+import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 
 interface WithdrawalRecord {
   id: string
@@ -112,18 +113,18 @@ function formatAmount(amount: number) {
     <!-- 筛选器 -->
     <view class="filter-section">
       <view class="filter-row">
-<!--        <sar-select-->
-<!--          v-model="filters.status"-->
-<!--          :options="statusOptions"-->
-<!--          placeholder="提现状态"-->
-<!--          class="filter-item"-->
-<!--        />-->
-<!--        <sar-select-->
-<!--          v-model="filters.applyTime"-->
-<!--          :options="timeOptions"-->
-<!--          placeholder="申请时间"-->
-<!--          class="filter-item"-->
-<!--        />-->
+        <sar-dropdown
+          v-model="filters.status"
+          :options="statusOptions"
+          placeholder="提现状态"
+          class="filter-item"
+        />
+        <sar-dropdown
+          v-model="filters.applyTime"
+          :options="timeOptions"
+          placeholder="申请时间"
+          class="filter-item"
+        />
       </view>
     </view>
     
@@ -228,10 +229,20 @@ function formatAmount(amount: number) {
   border-bottom: 1px solid var(--border-primary);
 }
 
+.status-section {
+  display: flex;
+  align-items: center;
+}
+
+.amount-section {
+  display: flex;
+  align-items: center;
+}
+
 .amount-text {
   font-size: 32rpx;
   font-weight: bold;
-  color: var(--error-color);
+  color: var(--text-primary);
 }
 
 .record-content {

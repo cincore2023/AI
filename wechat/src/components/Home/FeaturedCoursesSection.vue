@@ -58,7 +58,7 @@ function handleCourseClick(course: Course) {
 <template>
   <view class="featured-section">
     <view class="section-header mb-4">
-      <text class="section-title text-xl font-bold">精选课程</text>
+      <text class="section-title text-lg font-bold">精选课程</text>
     </view>
 
     <view class="courses-grid grid grid-cols-2 gap-3">

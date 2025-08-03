@@ -170,18 +170,18 @@ function formatAmount(amount: number, type: string) {
       </view>
       
       <view class="filter-row">
-<!--        <sar-select-->
-<!--          v-model="searchForm.transactionType"-->
-<!--          :options="transactionTypeOptions"-->
-<!--          placeholder="交易类型"-->
-<!--          class="filter-item"-->
-<!--        />-->
-<!--        <sar-select-->
-<!--          v-model="searchForm.entryTime"-->
-<!--          :options="timeOptions"-->
-<!--          placeholder="入账时间"-->
-<!--          class="filter-item"-->
-<!--        />-->
+        <sar-dropdown
+          v-model="searchForm.transactionType"
+          :options="transactionTypeOptions"
+          placeholder="交易类型"
+          class="filter-item"
+        />
+        <sar-dropdown
+          v-model="searchForm.entryTime"
+          :options="timeOptions"
+          placeholder="入账时间"
+          class="filter-item"
+        />
       </view>
     </view>
     
