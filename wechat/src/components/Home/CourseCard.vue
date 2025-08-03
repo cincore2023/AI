@@ -14,7 +14,7 @@ defineProps<{
 </script>
 
 <template>
-  <view class="course-card h-full overflow-hidden rounded-lg bg-[var(--bg-primary)]">
+  <view class="course-card h-full overflow-hidden rounded-lg bg-[var(--bg-primary)]" @click="$emit('click', course)">
     <!-- 课程图片 -->
     <view class="course-image relative">
       <image :src="course.image" class="h-32 w-full object-cover" />

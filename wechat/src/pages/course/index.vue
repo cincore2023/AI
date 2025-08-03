@@ -96,9 +96,9 @@ function handleSearch(value: string) {
 // 课程点击处理
 function handleCourseClick(course: Course) {
   uni.navigateTo({
-    url: `/pages/course-management/detail?id=${course.id}`,
+    url: `/pages/course/detail?id=${course.id}`,
   })
-}
+};
 
 </script>
 

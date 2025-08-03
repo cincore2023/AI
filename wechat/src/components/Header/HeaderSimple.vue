@@ -95,7 +95,7 @@ function handleBack() {
 
 .back-icon {
   font-size: 32rpx;
-  color: var(--text-inverse);
+  color: var(--text-primary);
   font-weight: bold;
 }
 
@@ -109,7 +109,7 @@ function handleBack() {
 .header-title {
   font-size: 36rpx;
   font-weight: bold;
-  color: var(--text-inverse);
+  color: var(--text-primary);
   text-align: center;
 }
 

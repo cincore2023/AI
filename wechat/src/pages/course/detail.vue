@@ -1,179 +1,5 @@
-<template>
-  <view class="course-detail">
-    <!-- 头部 -->
-    <HeaderSimple 
-      title="课程详情" 
-      :show-back="true"
-      :show-right="false"
-    />
-    
-    <!-- 课程图片 -->
-    <view class="course-image-container">
-      <image 
-        :src="courseDetail.image" 
-        mode="aspectFill" 
-        class="course-image"
-      />
-      <view class="course-price-badge">
-        {{ isMember ? '会员免费' : '¥' + courseDetail.price }}
-      </view>
-    </view>
-
-    <!-- 课程信息 -->
-    <view class="course-info">
-      <view class="course-title">
-        {{ courseDetail.title }}
-      </view>
-      <view class="course-stats">
-        已学习: {{ courseDetail.studentCount }}人
-      </view>
-      
-      <!-- 会员状态提示 -->
-      <view v-if="!isMember" class="member-notice member-notice-non">
-        <view class="notice-content">
-          <text class="notice-icon">☆</text>
-          <text class="notice-text">成为会员可免费观看该课程</text>
-          <text class="notice-arrow">→</text>
-        </view>
-      </view>
-      
-      <view v-else class="member-notice member-notice-member">
-        <view class="notice-content">
-          <text class="notice-icon">☆</text>
-          <text class="notice-text">您是会员，可免费观看</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 标签页 -->
-    <view class="tab-container">
-      <view class="tab-list">
-        <view 
-          v-for="(tab, index) in tabs" 
-          :key="tab.key"
-          :class="[
-            'tab-item',
-            activeTab === tab.key ? 'tab-active' : 'tab-inactive'
-          ]"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.name }}
-        </view>
-      </view>
-    </view>
-
-    <!-- 标签页内容 -->
-    <view class="tab-content">
-      <!-- 预览/详情内容 -->
-      <view v-if="activeTab === 'preview'" class="content-section">
-        <view v-if="!isMember" class="preview-limit">
-          <view class="limit-text">非会员用户，无详情，仅可查看预览内容</view>
-          <view class="limit-subtext">开通会员后可查看完整课程内容</view>
-        </view>
-        <view v-else class="content-detail">
-          <view class="content-card">
-            <view class="card-title">课程简介</view>
-            <view class="card-content">
-              {{ courseDetail.description }}
-            </view>
-          </view>
-          <view class="content-card">
-            <view class="card-title">课程大纲</view>
-            <view class="chapter-list">
-              <view 
-                v-for="(chapter, index) in courseDetail.chapters" 
-                :key="index"
-                class="chapter-item"
-              >
-                <view class="chapter-number">
-                  {{ index + 1 }}
-                </view>
-                <text class="chapter-title">{{ chapter.title }}</text>
-                <text class="chapter-duration">{{ chapter.duration }}</text>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 讲师信息 -->
-      <view v-if="activeTab === 'instructor'" class="content-section">
-        <view class="instructor-info">
-          <image 
-            :src="courseDetail.instructor.avatar" 
-            class="instructor-avatar"
-          />
-          <view class="instructor-details">
-            <view class="instructor-name">{{ courseDetail.instructor.name }}</view>
-            <view class="instructor-title">{{ courseDetail.instructor.title }}</view>
-          </view>
-        </view>
-        <view class="instructor-bio">
-          {{ courseDetail.instructor.bio }}
-        </view>
-      </view>
-
-      <!-- 资料下载 -->
-      <view v-if="activeTab === 'materials'" class="content-section">
-        <view class="material-list">
-          <view 
-            v-for="(material, index) in courseDetail.materials" 
-            :key="index"
-            class="material-item"
-          >
-            <view class="material-info">
-              <view class="material-icon">📄</view>
-              <view class="material-details">
-                <view class="material-name">{{ material.name }}</view>
-                <view class="material-size">{{ material.size }}</view>
-              </view>
-            </view>
-            <button 
-              :class="[
-                'material-download-btn',
-                isMember ? 'download-active' : 'download-disabled'
-              ]"
-              :disabled="!isMember"
-              @click="downloadMaterial(material)"
-            >
-              {{ isMember ? '下载' : '会员专享' }}
-            </button>
-          </view>
-        </view>
-      </view>
-    </view>
-
-    <!-- 底部操作栏 -->
-    <view class="bottom-actions">
-      <view class="action-buttons">
-        <button class="action-btn">
-          <view class="action-icon">🏠</view>
-          <view class="action-text">首页</view>
-        </button>
-        <button class="action-btn">
-          <view class="action-icon">⭐</view>
-          <view class="action-text">收藏</view>
-        </button>
-        <button class="action-btn">
-          <view class="action-icon">📤</view>
-          <view class="action-text">分享</view>
-        </button>
-        <button 
-          :class="[
-            'main-action-btn',
-            isMember ? 'member-btn' : 'non-member-btn'
-          ]"
-          @click="handleAction"
-        >
-          {{ isMember ? '您是会员，可免费观看' : '开通会员，免费看' }}
-        </button>
-      </view>
-    </view>
-  </view>
-</template>
-
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useMemberStore } from '@/store/member'
 
 interface Chapter {
@@ -214,7 +40,7 @@ const activeTab = ref('preview')
 const tabs = ref([
   { key: 'preview', name: '预览' },
   { key: 'instructor', name: '讲师' },
-  { key: 'materials', name: '资料' }
+  { key: 'materials', name: '资料' },
 ])
 
 // 模拟课程详情数据
@@ -231,30 +57,31 @@ const courseDetail = ref<CourseDetail>({
     { title: 'Vue.js 框架实战', duration: '60分钟' },
     { title: '后端API设计', duration: '90分钟' },
     { title: '数据库设计与优化', duration: '75分钟' },
-    { title: '项目部署与运维', duration: '45分钟' }
+    { title: '项目部署与运维', duration: '45分钟' },
   ],
   instructor: {
     name: '张教授',
     title: '资深软件工程师',
     avatar: '/static/images/avatar.jpg',
-    bio: '拥有10年软件开发经验，曾在多家知名互联网公司担任技术负责人。专注于前端架构设计和后端系统优化，参与过多个大型项目的技术架构设计。'
+    bio: '拥有10年软件开发经验，曾在多家知名互联网公司担任技术负责人。专注于前端架构设计和后端系统优化，参与过多个大型项目的技术架构设计。',
   },
   materials: [
     { name: '课程大纲.pdf', size: '2.3MB', url: '#' },
     { name: '代码示例.zip', size: '15.7MB', url: '#' },
-    { name: '学习资料.docx', size: '8.1MB', url: '#' }
-  ]
+    { name: '学习资料.docx', size: '8.1MB', url: '#' },
+  ],
 })
 
 // 处理底部按钮点击
-const handleAction = () => {
+function handleAction() {
   if (isMember.value) {
     // 会员用户直接观看
     uni.showToast({
       title: '开始学习',
-      icon: 'success'
+      icon: 'success',
     })
-  } else {
+  }
+  else {
     // 非会员用户跳转会员购买
     uni.showModal({
       title: '开通会员',
@@ -263,43 +90,43 @@ const handleAction = () => {
         if (res.confirm) {
           memberStore.activateMember()
         }
-      }
+      },
     })
   }
 }
 
 // 下载资料
-const downloadMaterial = (material: Material) => {
+function downloadMaterial(material: Material) {
   if (!isMember.value) {
     uni.showToast({
       title: '会员专享功能',
-      icon: 'none'
+      icon: 'none',
     })
     return
   }
-  
+
   uni.showLoading({
-    title: '下载中...'
+    title: '下载中...',
   })
-  
+
   setTimeout(() => {
     uni.hideLoading()
     uni.showToast({
       title: '下载成功',
-      icon: 'success'
+      icon: 'success',
     })
   }, 2000)
 }
 
 // 检查是否为iOS设备
-const checkIOSPayment = () => {
+function checkIOSPayment() {
   // #ifdef APP-PLUS
   const systemInfo = uni.getSystemInfoSync()
   if (systemInfo.platform === 'ios') {
     uni.showModal({
       title: '绑定确认',
       content: '非常抱歉，苹果用户暂不支持购买',
-      showCancel: false
+      showCancel: false,
     })
   }
   // #endif
@@ -327,6 +154,216 @@ onMounted(async () => {
   checkIOSPayment()
 })
 </script>
+
+<template>
+  <view class="course-detail">
+    <!-- 头部 -->
+    <HeaderSimple
+      title="课程详情"
+      :show-back="true"
+      :show-right="false"
+    />
+
+    <!-- 课程图片 -->
+    <view class="course-image-container">
+      <image
+        :src="courseDetail.image"
+        mode="aspectFill"
+        class="course-image"
+      />
+      <view class="course-price-badge">
+        {{ isMember ? '会员免费' : `¥${courseDetail.price}` }}
+      </view>
+    </view>
+
+    <!-- 课程信息 -->
+    <view class="course-info">
+      <view class="course-title">
+        {{ courseDetail.title }}
+      </view>
+      <view class="course-stats">
+        已学习: {{ courseDetail.studentCount }}人
+      </view>
+
+      <!-- 会员状态提示 -->
+      <view v-if="!isMember" class="member-notice member-notice-non">
+        <view class="notice-content">
+          <text class="notice-icon">☆</text>
+          <text class="notice-text">成为会员可免费观看该课程</text>
+          <text class="notice-arrow">→</text>
+        </view>
+      </view>
+
+      <view v-else class="member-notice member-notice-member">
+        <view class="notice-content">
+          <text class="notice-icon">☆</text>
+          <text class="notice-text">您是会员，可免费观看</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 标签页 -->
+    <view class="tab-container">
+      <view class="tab-list">
+        <view
+          v-for="(tab, index) in tabs"
+          :key="tab.key"
+          class="tab-item" :class="[
+            activeTab === tab.key ? 'tab-active' : 'tab-inactive',
+          ]"
+          @click="activeTab = tab.key"
+        >
+          {{ tab.name }}
+        </view>
+      </view>
+    </view>
+
+    <!-- 标签页内容 -->
+    <view class="tab-content">
+      <!-- 预览/详情内容 -->
+      <view v-if="activeTab === 'preview'" class="content-section">
+        <view v-if="!isMember" class="preview-limit">
+          <view class="limit-text">
+            非会员用户，无详情，仅可查看预览内容
+          </view>
+          <view class="limit-subtext">
+            开通会员后可查看完整课程内容
+          </view>
+        </view>
+        <view v-else class="content-detail">
+          <view class="content-card">
+            <view class="card-title">
+              课程简介
+            </view>
+            <view class="card-content">
+              {{ courseDetail.description }}
+            </view>
+          </view>
+          <view class="content-card">
+            <view class="card-title">
+              课程大纲
+            </view>
+            <view class="chapter-list">
+              <view
+                v-for="(chapter, index) in courseDetail.chapters"
+                :key="index"
+                class="chapter-item"
+              >
+                <view class="chapter-number">
+                  {{ index + 1 }}
+                </view>
+                <text class="chapter-title">{{ chapter.title }}</text>
+                <text class="chapter-duration">{{ chapter.duration }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 讲师信息 -->
+      <view v-if="activeTab === 'instructor'" class="content-section">
+        <view class="instructor-info">
+          <image
+            :src="courseDetail.instructor.avatar"
+            class="instructor-avatar"
+          />
+          <view class="instructor-details">
+            <view class="instructor-name">
+              {{ courseDetail.instructor.name }}
+            </view>
+            <view class="instructor-title">
+              {{ courseDetail.instructor.title }}
+            </view>
+          </view>
+        </view>
+        <view class="instructor-bio">
+          {{ courseDetail.instructor.bio }}
+        </view>
+      </view>
+
+      <!-- 资料下载 -->
+      <view v-if="activeTab === 'materials'" class="content-section">
+        <view class="material-list">
+          <view
+            v-for="(material, index) in courseDetail.materials"
+            :key="index"
+            class="material-item"
+          >
+            <view class="material-info">
+              <view class="material-icon">
+                📄
+              </view>
+              <view class="material-details">
+                <view class="material-name">
+                  {{ material.name }}
+                </view>
+                <view class="material-size">
+                  {{ material.size }}
+                </view>
+              </view>
+            </view>
+            <button
+              class="material-download-btn" :class="[
+                isMember ? 'download-active' : 'download-disabled',
+              ]"
+              :disabled="!isMember"
+              @click="downloadMaterial(material)"
+            >
+              {{ isMember ? '下载' : '会员专享' }}
+            </button>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="bottom-actions">
+      <view class="action-buttons">
+        <button class="action-btn">
+          <view class="action-icon">
+            🏠
+          </view>
+          <view class="action-text">
+            首页
+          </view>
+        </button>
+        <button class="action-btn">
+          <view class="action-icon">
+            ⭐
+          </view>
+          <view class="action-text">
+            收藏
+          </view>
+        </button>
+        <button class="action-btn">
+          <view class="action-icon">
+            📤
+          </view>
+          <view class="action-text">
+            分享
+          </view>
+        </button>
+        <button
+          class="main-action-btn" :class="[
+            isMember ? 'member-btn' : 'non-member-btn',
+          ]"
+          @click="handleAction"
+        >
+          {{ isMember ? '您是会员，可免费观看' : '开通会员，免费看' }}
+        </button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<route lang="jsonc" type="page">
+{
+  "style": {
+    "navigationStyle": "custom",
+    "navigationBarTitleText": "课程详情"
+  }
+}
+</route>
 
 <style lang="scss" scoped>
 .course-detail {
@@ -683,4 +720,4 @@ onMounted(async () => {
     background: var(--primary-color);
   }
 }
-</style> 
+</style>

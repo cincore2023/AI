@@ -39,7 +39,7 @@ export const tabbarList: FgTabBarItem[] = [
   {
     iconPath: 'static/tabbar/example.png',
     selectedIconPath: 'static/tabbar/exampleHL.png',
-    pagePath: 'pages/course-management/index',
+    pagePath: 'pages/course/index',
     text: '课程管理',
     icon: 'i-carbon-book',
     // 注意 unocss 图标需要如下处理：（二选一）
