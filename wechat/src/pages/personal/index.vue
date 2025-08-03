@@ -264,8 +264,9 @@ onMounted(async () => {
   </view>
 </template>
 
-<route lang="jsonc" type="page">
+<route lang="jsonc" type="home">
 {
+  "layout": "tabbar",
   "style": {
     "navigationStyle": "custom",
     "navigationBarTitleText": "个人中心"
