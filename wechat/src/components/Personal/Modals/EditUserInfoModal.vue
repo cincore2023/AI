@@ -68,14 +68,7 @@ function handleSelectAvatar() {
 </script>
 
 <template>
-  <sar-popup
-    :visible="show"
-    position="center"
-    :close-on-click-overlay="true"
-    round
-    safe-area-inset-bottom
-    @update:visible="(value) => emit('update:show', value)"
-  >
+  <sar-popup :visible="show" effect="zoom" @update:visible="(value) => emit('update:show', value)">
     <view class="w-[90vw] overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- 头部区域 -->
       <view class="relative p-6 text-center text-white">

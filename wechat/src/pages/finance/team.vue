@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
+import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 
 interface TeamMember {
   id: string
@@ -124,6 +125,9 @@ function handleRenewMember(member: TeamMember) {
     },
   })
 }
+
+const value1 = ref('1')
+const value2 = ref('1')
 </script>
 
 <template>
@@ -137,24 +141,20 @@ function handleRenewMember(member: TeamMember) {
       :show-scrollbar="false"
       enhanced="true"
     >
-      <!-- 标签页 -->
-      <view class="tab-container">
-        <sar-tabs v-model:current="activeTab" :list="[{ title: '我的团队' }]" />
-      </view>
-
       <!-- 搜索和筛选 -->
       <view class="search-section">
         <view class="search-row">
-          <sar-input
-            v-model="searchForm.keyword"
-            placeholder="用户"
-            class="search-input"
-          >
-            <template #suffix>
+          <sar-input v-model="searchForm.keyword" placeholder="用户" class="search-input">
+            <template #prepend>
               <text class="search-icon">🔍</text>
             </template>
           </sar-input>
         </view>
+
+        <sar-dropdown class="filter-row">
+          <sar-dropdown-item v-model="searchForm.registerTime" placeholder="注册时间" :options="timeOptions" />
+          <sar-dropdown-item v-model="searchForm.activationMethod" placeholder="开通方式" :options="activationOptions" />
+        </sar-dropdown>
 
         <view class="button-row">
           <sar-button type="solid" size="small" theme="primary" @click="handleSearch">
@@ -163,21 +163,6 @@ function handleRenewMember(member: TeamMember) {
           <sar-button type="outline" size="small" theme="default" @click="handleReset">
             重置
           </sar-button>
-        </view>
-
-        <view class="filter-row">
-          <!--        <sar-select -->
-          <!--          v-model="searchForm.registerTime" -->
-          <!--          :options="timeOptions" -->
-          <!--          placeholder="注册时间" -->
-          <!--          class="filter-item" -->
-          <!--        /> -->
-          <!--        <sar-select -->
-          <!--          v-model="searchForm.activationMethod" -->
-          <!--          :options="activationOptions" -->
-          <!--          placeholder="开通方式" -->
-          <!--          class="filter-item" -->
-          <!--        /> -->
         </view>
       </view>
 
@@ -201,22 +186,20 @@ function handleRenewMember(member: TeamMember) {
                 :theme="member.isMember ? 'success' : 'default'"
                 size="small"
               >
-                {{ member.isMember ? '会员' : '非会员' }}
+                {{ member.isMember ? '会员' : '普通用户' }}
               </sar-tag>
             </view>
           </view>
 
           <view class="member-content">
             <view class="info-row">
-              <text class="info-label">会员到期时间:</text>
-              <text class="info-value">
-                {{ member.isMember ? member.memberExpireTime : '该用户还不是会员' }}
-              </text>
-            </view>
-
-            <view class="info-row">
               <text class="info-label">注册时间:</text>
               <text class="info-value">{{ member.registerTime }}</text>
+            </view>
+
+            <view v-if="member.isMember" class="info-row">
+              <text class="info-label">会员到期:</text>
+              <text class="info-value">{{ member.memberExpireTime }}</text>
             </view>
 
             <view v-if="member.activationMethod" class="info-row">
@@ -236,13 +219,13 @@ function handleRenewMember(member: TeamMember) {
               开通会员
             </sar-button>
             <sar-button
-              v-if="member.isMember"
+              v-else
               type="outline"
               size="small"
               theme="primary"
               @click="handleRenewMember(member)"
             >
-              会员续费
+              续费会员
             </sar-button>
           </view>
         </view>
@@ -252,19 +235,12 @@ function handleRenewMember(member: TeamMember) {
 </template>
 
 <style lang="scss" scoped>
-.tab-container {
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-primary);
-}
-
 .search-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-md) 0;
 }
 
 .search-row {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .search-input {
@@ -278,8 +254,8 @@ function handleRenewMember(member: TeamMember) {
 
 .button-row {
   display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
 }
 
 .filter-row {
@@ -289,10 +265,6 @@ function handleRenewMember(member: TeamMember) {
 
 .filter-item {
   flex: 1;
-}
-
-.team-list {
-  padding: var(--spacing-md);
 }
 
 .member-item {
@@ -309,7 +281,6 @@ function handleRenewMember(member: TeamMember) {
   align-items: center;
   margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--border-primary);
 }
 
 .user-info {
@@ -340,6 +311,11 @@ function handleRenewMember(member: TeamMember) {
   color: var(--text-secondary);
 }
 
+.member-status {
+  display: flex;
+  align-items: center;
+}
+
 .member-content {
   display: flex;
   flex-direction: column;
@@ -366,16 +342,15 @@ function handleRenewMember(member: TeamMember) {
 .member-actions {
   display: flex;
   justify-content: flex-end;
-  gap: var(--spacing-sm);
 }
 </style>
 
 <route lang="jsonc" type="page">
 {
-  "layout": "default",
-  "style": {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "我的团队"
-  }
+"layout": "default",
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "我的团队"
+}
 }
 </route>
