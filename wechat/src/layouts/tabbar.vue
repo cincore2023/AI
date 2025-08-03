@@ -5,9 +5,9 @@ import FgTabBar from './fg-tabbar/fg-tabbar.vue'
 <template>
   <view class="layout-container">
     <view class="layout-content">
-      <slot/>
+      <slot />
     </view>
-    <FgTabBar/>
+    <FgTabBar />
   </view>
 </template>
 
@@ -20,7 +20,7 @@ import FgTabBar from './fg-tabbar/fg-tabbar.vue'
 
   .layout-content {
     flex: 1;
-    padding: 0 30rpx;
+    //padding: 0 30rpx;
     overflow: scroll;
   }
 }

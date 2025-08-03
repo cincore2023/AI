@@ -39,6 +39,17 @@ export const tabbarList: FgTabBarItem[] = [
   {
     iconPath: 'static/tabbar/example.png',
     selectedIconPath: 'static/tabbar/exampleHL.png',
+    pagePath: 'pages/course-management/index',
+    text: '课程管理',
+    icon: 'i-carbon-book',
+    // 注意 unocss 图标需要如下处理：（二选一）
+    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见代码第三行）
+    // 2）配置到 unocss.config.ts 的 safelist 中
+    iconType: 'unocss',
+  },
+  {
+    iconPath: 'static/tabbar/example.png',
+    selectedIconPath: 'static/tabbar/exampleHL.png',
     pagePath: 'pages/about/about',
     text: '关于',
     icon: 'i-carbon-code',

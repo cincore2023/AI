@@ -34,11 +34,6 @@ const headerStyle = computed(() => ({
   paddingTop: `${safeAreaInsets.value?.top}px` || '0px',
 }))
 
-// 方法
-function setActiveToggle(type: 'dots' | 'target') {
-  activeToggle.value = type
-}
-
 function handleCompleteInfo() {
   // #ifdef MP-WEIXIN
   uni.getUserProfile({
@@ -69,16 +64,8 @@ function handleCompleteInfo() {
   // #endif
 }
 
-function handleSearch() {
-  if (!searchText.value.trim()) {
-    uni.showToast({
-      title: '请输入搜索内容',
-      icon: 'none',
-    })
-    return
-  }
-
-  console.log('搜索内容:', searchText.value)
+function handleSearch(value: string) {
+  console.log('搜索内容:', value)
   // 这里可以添加搜索逻辑
   uni.showToast({
     title: '搜索功能开发中',
@@ -97,7 +84,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <view class="header" :style="headerStyle">
+  <view class="header" :style="headerStyle" >
 
     <!-- 头部内容 -->
     <view class="header-content">
@@ -112,19 +99,11 @@ onMounted(() => {
 
     <!-- 搜索框 -->
     <view class="search-section">
-      <view class="search-bar">
-        <view class="search-input-wrapper">
-          <text class="search-icon">🔍</text>
-          <input
-            v-model="searchText"
-            class="search-input"
-            placeholder="搜课程名称/智能体"
-            @confirm="handleSearch"
-          >
-        </view>
-        <view class="search-divider" />
-        <text class="search-btn" @click="handleSearch">搜索</text>
-      </view>
+      <SearchBar
+        v-model="searchText"
+        placeholder="搜课程名称/智能体"
+        @search="handleSearch"
+      />
     </view>
   </view>
 </template>
@@ -133,10 +112,6 @@ onMounted(() => {
 .header {
   position: relative;
   z-index: 100;
-}
-
-.status-bar {
-  //width: 100%;
 }
 
 .header-content {
@@ -176,50 +151,5 @@ onMounted(() => {
 .search-section {
   padding-top: 20rpx;
   padding-bottom: 12rpx;
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background: var(--bg-primary);
-  border-radius: var(--radius-lg);
-  padding: 20rpx;
-  border: 1rpx solid var(--border-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-.search-input-wrapper {
-  flex: 1;
-  display: flex;
-  align-items: center;
-}
-
-.search-icon {
-  font-size: 28rpx;
-  color: var(--text-tertiary);
-  margin-right: 16rpx;
-}
-
-.search-input {
-  flex: 1;
-  font-size: 28rpx;
-  color: var(--text-primary);
-
-  &::placeholder {
-    color: var(--text-tertiary);
-  }
-}
-
-.search-divider {
-  width: 1rpx;
-  height: 40rpx;
-  background: var(--border-primary);
-  margin: 0 20rpx;
-}
-
-.search-btn {
-  font-size: 28rpx;
-  color: var(--text-secondary);
-  padding: 10rpx 20rpx;
 }
 </style>

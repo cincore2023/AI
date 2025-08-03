@@ -36,6 +36,14 @@
       {
         "iconPath": "static/tabbar/example.png",
         "selectedIconPath": "static/tabbar/exampleHL.png",
+        "pagePath": "pages/course-management/index",
+        "text": "课程管理",
+        "icon": "i-carbon-book",
+        "iconType": "unocss"
+      },
+      {
+        "iconPath": "static/tabbar/example.png",
+        "selectedIconPath": "static/tabbar/exampleHL.png",
         "pagePath": "pages/about/about",
         "text": "关于",
         "icon": "i-carbon-code",
@@ -75,6 +83,20 @@
       "layout": "default",
       "style": {
         "navigationBarTitleText": "Vue Query 请求演示"
+      }
+    },
+    {
+      "path": "pages/course-management/detail",
+      "type": "page"
+    },
+    {
+      "path": "pages/course-management/index",
+      "type": "page",
+      "layout": "tabbar",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "课程管理",
+        "backgroundColor": "#f5f5f5"
       }
     }
   ],

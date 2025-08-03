@@ -29,7 +29,7 @@ const themeStore = useThemeStore()
 </script>
 
 <template>
-  <view class="home-content">
+  <view class="home-content px-4">
     <!-- 头部组件 -->
     <HeaderWithSearch />
 
