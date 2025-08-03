@@ -1,0 +1,176 @@
+<script setup lang="ts">
+interface Instructor {
+  id: string
+  name: string
+  title: string
+  avatar: string
+}
+
+// 讲师数据
+const instructors = ref<Instructor[]>([
+  {
+    id: '1',
+    name: '张教授',
+    title: '抖迅AI商学院院长',
+    avatar: 'https://picsum.photos/100/100?random=10',
+  },
+  {
+    id: '2',
+    name: '张教授',
+    title: '抖迅AI商学院院长',
+    avatar: 'https://picsum.photos/100/100?random=11',
+  },
+  {
+    id: '3',
+    name: '张教授',
+    title: '抖迅AI商学院院长',
+    avatar: 'https://picsum.photos/100/100?random=12',
+  },
+  {
+    id: '4',
+    name: '张教授',
+    title: '抖迅AI商学院院长',
+    avatar: 'https://picsum.photos/100/100?random=13',
+  },
+  {
+    id: '5',
+    name: '李教授',
+    title: '资深技术专家',
+    avatar: 'https://picsum.photos/100/100?random=14',
+  },
+])
+
+function handleInstructorClick(instructor: Instructor) {
+  console.log('点击讲师:', instructor.name)
+  uni.showToast({
+    title: `查看讲师: ${instructor.name}`,
+    icon: 'none',
+  })
+}
+
+function handleViewAll() {
+  console.log('查看全部讲师')
+  uni.showToast({
+    title: '查看全部讲师',
+    icon: 'none',
+  })
+}
+</script>
+
+<template>
+  <view class="instructor-section">
+    <view class="section-header mb-4 flex items-center justify-between">
+      <text class="section-title text-lg font-bold">讲师团队</text>
+      <view class="view-all-btn rounded-full px-3 py-1 text-xs" @click="handleViewAll">
+        查看全部
+      </view>
+    </view>
+
+    <scroll-view
+      class="instructors-scroll"
+      :scroll-x="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
+      <view class="instructors-container flex">
+        <view
+          v-for="instructor in instructors"
+          :key="instructor.id"
+          class="instructor-item mr-6 min-w-20 flex flex-col items-center"
+          @click="handleInstructorClick(instructor)"
+        >
+          <!-- 讲师头像 -->
+          <view class="instructor-avatar mb-2">
+            <image
+              :src="instructor.avatar"
+              class="h-16 w-16 rounded-full object-cover"
+            />
+          </view>
+
+          <!-- 讲师信息 -->
+          <view class="instructor-info flex flex-col text-center">
+            <text class="instructor-name text-sm font-medium">{{ instructor.name }}</text>
+            <text class="instructor-title mt-1">{{ instructor.title }}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</template>
+
+<style lang="scss" scoped>
+.instructor-section {
+  padding-bottom: 40rpx;
+}
+
+.section-title {
+  font-size: 36rpx;
+  color: var(--text-primary);
+}
+
+.view-all-btn {
+  font-size: 24rpx;
+  font-weight: 500;
+  background-color: var(--primary-color);
+  color: var(--text-inverse);
+  transition: all 0.3s ease;
+
+  &:active {
+    transform: scale(0.95);
+    background-color: var(--primary-dark);
+  }
+}
+
+.instructors-scroll {
+  // 隐藏滚动条
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.instructors-container {
+  display: flex;
+  align-items: center;
+}
+
+.instructor-item {
+  // 点击效果
+  transition: transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.instructor-avatar {
+  position: relative;
+}
+
+.instructor-info {
+  min-width: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80rpx;
+}
+
+.instructor-name {
+  font-size: 28rpx;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-primary);
+}
+
+.instructor-title {
+  font-size: 20rpx;
+  line-height: 1.3;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+</style>

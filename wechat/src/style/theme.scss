@@ -1,0 +1,172 @@
+// 主题色值配置
+:root {
+  // 主色调
+  --primary-color: #007aff;
+  --primary-light: #4da6ff;
+  --primary-dark: #0056cc;
+
+  // 文字颜色
+  --text-primary: #2c2c2c;
+  --text-secondary: #5a5a5a;
+  --text-tertiary: #8a8a8a;
+  --text-inverse: #ffffff;
+
+  // 背景颜色
+  --bg-primary: #ffffff;
+  --bg-secondary: #fafafa;
+  --bg-tertiary: #f0f0f0;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+
+  // 边框颜色
+  --border-primary: #e5e5e5;
+  --border-secondary: #f0f0f0;
+
+  // 阴影
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.15);
+
+  // 状态颜色
+  --success-color: #52c41a;
+  --warning-color: #faad14;
+  --error-color: #ff4757;
+  --info-color: #1890ff;
+
+  // 圆角
+  --radius-sm: 8rpx;
+  --radius-md: 12rpx;
+  --radius-lg: 16rpx;
+  --radius-xl: 24rpx;
+
+  // 间距
+  --spacing-xs: 8rpx;
+  --spacing-sm: 16rpx;
+  --spacing-md: 24rpx;
+  --spacing-lg: 32rpx;
+  --spacing-xl: 48rpx;
+
+  // 渐变背景
+  --gradient-app: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  --gradient-header: linear-gradient(
+    to bottom,
+    var(--primary-light) 0%,
+    var(--primary-color) 15%,
+    var(--bg-primary) 30%,
+    var(--bg-primary) 100%
+  );
+  --gradient-primary: linear-gradient(
+    to bottom,
+    var(--primary-light) 0%,
+    var(--primary-color) 15%,
+    var(--bg-primary) 30%,
+    var(--bg-primary) 100%
+  );
+}
+
+// 深色主题
+[data-theme='dark'] {
+  --primary-color: #4da6ff;
+  --primary-light: #80bfff;
+  --primary-dark: #0056cc;
+
+  --text-primary: #ffffff;
+  --text-secondary: #e0e0e0;
+  --text-tertiary: #b0b0b0;
+  --text-inverse: #333333;
+
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #2d2d2d;
+  --bg-tertiary: #404040;
+  --bg-overlay: rgba(0, 0, 0, 0.7);
+
+  --border-primary: #404040;
+  --border-secondary: #2d2d2d;
+
+  --shadow-sm: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4rpx 16rpx rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8rpx 32rpx rgba(0, 0, 0, 0.5);
+
+  // 深色主题渐变背景
+  --gradient-app: linear-gradient(to bottom, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  --gradient-header: linear-gradient(
+    to bottom,
+    var(--primary-light) 0%,
+    var(--primary-color) 15%,
+    var(--bg-primary) 30%,
+    var(--bg-primary) 100%
+  );
+  --gradient-primary: linear-gradient(
+    to bottom,
+    var(--primary-light) 0%,
+    var(--primary-color) 15%,
+    var(--bg-primary) 30%,
+    var(--bg-primary) 100%
+  );
+}
+
+// 渐变背景工具类
+.gradient-primary {
+  background: var(--gradient-primary);
+}
+
+.gradient-app {
+  background: var(--gradient-app);
+}
+
+.gradient-header {
+  background: var(--gradient-header);
+}
+
+// 主题切换工具类
+.theme-light {
+  color-scheme: light;
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
+
+// 使用主题色的工具类
+.text-primary {
+  color: var(--text-primary);
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-tertiary {
+  color: var(--text-tertiary);
+}
+
+.bg-primary {
+  background-color: var(--bg-primary);
+}
+
+.bg-secondary {
+  background-color: var(--bg-secondary);
+}
+
+.bg-tertiary {
+  background-color: var(--bg-tertiary);
+}
+
+.border-primary {
+  border-color: var(--border-primary);
+}
+
+.border-secondary {
+  border-color: var(--border-secondary);
+}
+
+.shadow-sm {
+  box-shadow: var(--shadow-sm);
+}
+
+.shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+.shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
