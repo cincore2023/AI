@@ -28,18 +28,18 @@ function handleClose() {
     round
     safe-area-inset-bottom
   >
-    <view class="w-140 bg-white rounded-lg overflow-hidden">
-      <view class="bg-blue-500 text-white p-6 text-center">
-        <text class="text-xl font-bold">请绑定销售人</text>
+    <view class="w-130 bg-white rounded-lg overflow-hidden">
+      <view class="bg-blue-500 text-white p-5 text-center">
+        <text class="text-lg font-bold">请绑定销售人</text>
       </view>
 
-      <view class="p-6">
+      <view class="p-5">
         <text class="text-sm text-gray-700 leading-relaxed text-center block py-4">
           您还未绑定销售人，无法开通会员，请绑定推荐员后重试！
         </text>
       </view>
 
-      <view class="p-6 border-t border-gray-200">
+      <view class="p-5 border-t border-gray-200">
         <view
           class="w-full bg-blue-500 text-white py-3 rounded text-center"
           @click="handleConfirm"

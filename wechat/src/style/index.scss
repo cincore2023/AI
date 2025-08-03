@@ -27,3 +27,10 @@ page {
   width: 0;
   height: 0;
 }
+
+.default-layout-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

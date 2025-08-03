@@ -193,7 +193,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <view class="min-h-screen bg-gray-100">
+  <view class="default-layout-content">
     <!-- 头部 -->
     <HeaderSimple
       title="个人中心"
@@ -201,27 +201,34 @@ onMounted(async () => {
       :show-right="true"
     />
 
-    <!-- 用户信息区域 -->
-    <UserInfoSection
-      :user-info="userInfo"
-      @modify-nickname="handleModifyNickname"
-      @renew="handleRenew"
-    />
+    <scroll-view
+      class="no-scrollbar flex flex-1 flex-col"
+      :scroll-y="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
+      <!-- 用户信息区域 -->
+      <UserInfoSection
+        :user-info="userInfo"
+        @modify-nickname="handleModifyNickname"
+        @renew="handleRenew"
+      />
 
-    <!-- 我的服务 -->
-    <ServiceSection
-      :service-list="serviceList"
-      @service-click="handleServiceClick"
-      @bind-sales="handleBindSales"
-    />
+      <!-- 我的服务 -->
+      <ServiceSection
+        :service-list="serviceList"
+        @service-click="handleServiceClick"
+        @bind-sales="handleBindSales"
+      />
 
-    <!-- 合伙人中心 -->
-    <PartnerSection
-      :partner-info="partnerInfo"
-      @withdraw="handleWithdraw"
-      @income-details="handleIncomeDetails"
-      @generate-code="handleGenerateCode"
-    />
+      <!-- 合伙人中心 -->
+      <PartnerSection
+        :partner-info="partnerInfo"
+        @withdraw="handleWithdraw"
+        @income-details="handleIncomeDetails"
+        @generate-code="handleGenerateCode"
+      />
+    </scroll-view>
   </view>
 
   <!-- 绑定销售专员弹框 -->
