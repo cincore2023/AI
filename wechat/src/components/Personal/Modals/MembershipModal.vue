@@ -20,20 +20,20 @@ function handleClose() {
 
 <template>
   <sar-popup
-    :show="show"
-    @update:show="(value) => emit('update:show', value)"
+    :visible="show"
+    @update:visible="(value) => emit('update:show', value)"
     position="center"
     :close-on-click-overlay="true"
     :close-on-click-close-icon="true"
     round
     safe-area-inset-bottom
   >
-    <view class="w-150 bg-white rounded-lg overflow-hidden">
-      <view class="bg-blue-500 text-white p-5 text-center">
+    <view class="w-[85vw] bg-white rounded-lg overflow-hidden">
+      <view class="bg-gray-800 text-white p-5 text-center">
         <text class="text-lg font-bold">开通会员</text>
       </view>
 
-      <view class="p-5">
+      <view class="p-5 pb-0">
         <!-- 会员卡片 -->
         <view class="bg-gray-800 text-white p-4 rounded-lg mb-5">
           <view class="flex justify-between items-center">
@@ -48,7 +48,7 @@ function handleClose() {
         </view>
 
         <!-- VIP权益 -->
-        <view class="mb-5">
+        <view>
           <text class="text-base font-bold text-gray-800 block mb-4">VIP权益</text>
           <view class="space-y-3">
             <view class="flex items-start gap-3">
@@ -73,7 +73,7 @@ function handleClose() {
 
       <view class="p-5 border-t border-gray-200">
         <view
-          class="w-full bg-blue-500 text-white py-3 rounded text-center"
+          class="w-full bg-gray-900 text-white py-3 rounded text-center"
           @click="handleConfirm"
         >
           确认开通并支付
@@ -81,4 +81,4 @@ function handleClose() {
       </view>
     </view>
   </sar-popup>
-</template> 
+</template>
