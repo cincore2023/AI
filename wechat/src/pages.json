@@ -95,8 +95,7 @@
       "layout": "tabbar",
       "style": {
         "navigationStyle": "custom",
-        "navigationBarTitleText": "课程管理",
-        "backgroundColor": "#f5f5f5"
+        "navigationBarTitleText": "课程管理"
       }
     }
   ],

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 interface Course {
   id: string
   title: string
@@ -86,6 +87,7 @@ const courses = ref<Course[]>([
     createdAt: '2023-12-20',
   },
 ])
+
 // 搜索处理
 function handleSearch(value: string) {
   console.log('搜索关键词:', value)
@@ -98,9 +100,6 @@ function handleCourseClick(course: Course) {
   })
 }
 
-onMounted(() => {
-  console.log('课程管理页面加载完成')
-})
 </script>
 
 <template>
@@ -116,7 +115,7 @@ onMounted(() => {
         <sar-sidebar-item v-for="item in categoryOptions" :key="item.value" :name="item.value" :title="item.label" />
       </sar-sidebar>
 
-      <view class="mx-3 h-full flex flex-1 flex-col gap-3 bg-red">
+      <view class="mx-3 h-full flex flex-1 flex-col gap-3">
         <view class="tabs flex gap-2">
           <view
             v-for="(tab, idx) in tabList" :key="tab.title" class="b-rd-1 tab"
@@ -125,14 +124,14 @@ onMounted(() => {
             {{ tab.title }}
           </view>
         </view>
-        <view class="h-full flex-1 flex-col gap-3 overflow-hidden">
+        <view class="h-full flex-1 flex-col gap-3 overflow-y-auto">
           <sar-scroll-spy v-model:current="activeCategory.category">
             <view v-for="course in courses" :key="course.id" class="mb-2">
               <sar-scroll-spy-anchor :name="course.category">
                 <CourseCard :course="course" @click="handleCourseClick"/>
               </sar-scroll-spy-anchor>
             </view>
-            <view class="h-5 w-full"/>
+            <view class="h-40 w-full"/>
           </sar-scroll-spy>
         </view>
       </view>
