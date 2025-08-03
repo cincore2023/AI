@@ -5,9 +5,9 @@ import FgTabBar from './fg-tabbar/fg-tabbar.vue'
 <template>
   <view class="layout-container">
     <view class="layout-content">
-      <slot />
+      <slot/>
     </view>
-    <FgTabBar />
+    <FgTabBar/>
   </view>
 </template>
 

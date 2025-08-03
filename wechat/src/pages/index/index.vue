@@ -10,14 +10,14 @@
 </route>
 
 <script lang="ts" setup>
-import { HeaderWithSearch } from '@/components/Header'
-import {
-  FeaturedCoursesSection,
-  HomeSwiper,
-  IconSlider,
-  InstructorTeamSection,
-  RecommendedSection,
-} from '@/components/Home'
+import HeaderWithSearch from '@/components/Header/HeaderWithSearch.vue'
+
+import FeaturedCoursesSection from '@/components/Home/FeaturedCoursesSection.vue'
+import HomeSwiper from '@/components/Home/HomeSwiper.vue'
+import IconSlider from '@/components/Home/IconSlider.vue'
+import InstructorTeamSection from '@/components/Home/InstructorTeamSection.vue'
+import RecommendedSection from '@/components/Home/RecommendedSection.vue'
+
 import { useThemeStore } from '@/store'
 
 defineOptions({
@@ -34,7 +34,12 @@ const themeStore = useThemeStore()
     <HeaderWithSearch />
 
     <!-- 页面内容 -->
-    <scroll-view :show-scrollbar="false" :scroll-y="true" class="flex flex-1 flex-col overflow-scroll">
+    <scroll-view
+      class="no-scrollbar flex flex-1 flex-col"
+      :scroll-y="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
       <!-- 首页轮播图 -->
       <HomeSwiper />
 

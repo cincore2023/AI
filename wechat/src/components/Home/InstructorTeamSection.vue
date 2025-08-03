@@ -121,13 +121,6 @@ function handleViewAll() {
   }
 }
 
-.instructors-scroll {
-  // 隐藏滚动条
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 .instructors-container {
   display: flex;
   align-items: center;

@@ -100,11 +100,6 @@ function handleCourseClick(course: Course) {
 }
 
 .courses-scroll {
-  // 隐藏滚动条
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
   // 确保内容可以滚动
   white-space: nowrap;
 }

@@ -27,8 +27,8 @@ export const useThemeStore = defineStore(
       currentTheme.value = theme
 
       // 设置HTML的data-theme属性
-      const html = document.documentElement
-      html.setAttribute('data-theme', theme)
+      // const html = document.documentElement
+      // html.setAttribute('data-theme', theme)
 
       // 保存到本地存储
       uni.setStorageSync('theme', theme)

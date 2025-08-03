@@ -25,9 +25,11 @@ onHide(() => {
 <style lang="scss">
 @import 'sard-uniapp/index.scss';
 @import '@/style/theme.scss';
+@import '@/style/index.scss';
 
-#app {
-  background: linear-gradient(to bottom, #d4e6f1 0%, #d5e8d4 15%, var(--bg-primary) 30%, var(--bg-primary) 100%);
+#app,
+.layout-container {
   min-height: 100vh;
+  background-image: linear-gradient(to bottom, #d4e6f1 0%, #d5e8d4 15%, #ffffff 30%, #ffffff 100%);
 }
 </style>

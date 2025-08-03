@@ -98,8 +98,6 @@ onMounted(() => {
 
 <template>
   <view class="header" :style="headerStyle">
-    <!-- 状态栏占位 -->
-    <view class="status-bar" :style="{ height: `${safeAreaInsets?.top}px` }" />
 
     <!-- 头部内容 -->
     <view class="header-content">

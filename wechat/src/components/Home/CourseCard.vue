@@ -89,9 +89,9 @@ defineProps<{
   font-weight: 600;
   color: var(--success-color);
 
-  // 免费课程使用不同颜色
-  &:has-text('免费') {
-    color: var(--success-color);
-  }
+  //// 免费课程使用不同颜色
+  //&:has-text('free') {
+  //  color: var(--success-color);
+  //}
 }
 </style>
