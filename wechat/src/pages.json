@@ -101,6 +101,14 @@
         "navigationStyle": "custom",
         "navigationBarTitleText": "课程管理"
       }
+    },
+    {
+      "path": "pages/personal/index",
+      "type": "page",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "个人中心"
+      }
     }
   ],
   "subPackages": [

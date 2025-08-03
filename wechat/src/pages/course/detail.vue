@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useMemberStore } from '@/store/member'
+import {computed, onMounted, ref} from 'vue'
+import {useMemberStore} from '@/store/member'
 
 interface Chapter {
   title: string
@@ -24,7 +24,7 @@ interface CourseDetail {
   id: string
   title: string
   description: string
-  image: string
+  images: string[]
   price: number
   studentCount: number
   chapters: Chapter[]
@@ -32,15 +32,22 @@ interface CourseDetail {
   materials: Material[]
 }
 
+const systemInfo = uni.getWindowInfo()
+
 const courseId = ref('')
 const memberStore = useMemberStore()
 const isMember = computed(() => memberStore.isMember)
-const activeTab = ref('preview')
+const activeTab = ref(0)
 
-const tabs = ref([
-  { key: 'preview', name: '预览' },
-  { key: 'instructor', name: '讲师' },
-  { key: 'materials', name: '资料' },
+const BottomStyle = computed(() => ({
+  paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom}px` || '0px',
+  paddingTop: '20rpx',
+}))
+
+const tabList = ref([
+  {title: '预览'},
+  {title: '讲师'},
+  {title: '资料'},
 ])
 
 // 模拟课程详情数据
@@ -48,16 +55,20 @@ const courseDetail = ref<CourseDetail>({
   id: '1',
   title: '2023年软件开发工程师培训',
   description: '本课程将全面介绍现代软件开发的核心技术，包括前端开发、后端架构、数据库设计、DevOps实践等。通过实际项目案例，帮助学员掌握企业级应用开发技能。',
-  image: '/static/images/course1.jpg',
+  images: [
+    'https://picsum.photos/400/200?random=1',
+    'https://picsum.photos/400/200?random=2',
+    'https://picsum.photos/400/200?random=3',
+  ],
   price: 1299,
   studentCount: 3223,
   chapters: [
-    { title: '课程介绍与环境搭建', duration: '15分钟' },
-    { title: '前端开发基础', duration: '45分钟' },
-    { title: 'Vue.js 框架实战', duration: '60分钟' },
-    { title: '后端API设计', duration: '90分钟' },
-    { title: '数据库设计与优化', duration: '75分钟' },
-    { title: '项目部署与运维', duration: '45分钟' },
+    {title: '课程介绍与环境搭建', duration: '15分钟'},
+    {title: '前端开发基础', duration: '45分钟'},
+    {title: 'Vue.js 框架实战', duration: '60分钟'},
+    {title: '后端API设计', duration: '90分钟'},
+    {title: '数据库设计与优化', duration: '75分钟'},
+    {title: '项目部署与运维', duration: '45分钟'},
   ],
   instructor: {
     name: '张教授',
@@ -66,9 +77,9 @@ const courseDetail = ref<CourseDetail>({
     bio: '拥有10年软件开发经验，曾在多家知名互联网公司担任技术负责人。专注于前端架构设计和后端系统优化，参与过多个大型项目的技术架构设计。',
   },
   materials: [
-    { name: '课程大纲.pdf', size: '2.3MB', url: '#' },
-    { name: '代码示例.zip', size: '15.7MB', url: '#' },
-    { name: '学习资料.docx', size: '8.1MB', url: '#' },
+    {name: '课程大纲.pdf', size: '2.3MB', url: '#'},
+    {name: '代码示例.zip', size: '15.7MB', url: '#'},
+    {name: '学习资料.docx', size: '8.1MB', url: '#'},
   ],
 })
 
@@ -80,8 +91,7 @@ function handleAction() {
       title: '开始学习',
       icon: 'success',
     })
-  }
-  else {
+  } else {
     // 非会员用户跳转会员购买
     uni.showModal({
       title: '开通会员',
@@ -147,7 +157,7 @@ onMounted(async () => {
 
   // 根据会员状态调整标签页
   if (isMember.value) {
-    tabs.value[0].name = '详情'
+    tabList.value[0].title = '详情'
   }
 
   // 检查iOS支付限制
@@ -156,244 +166,211 @@ onMounted(async () => {
 </script>
 
 <template>
-  <view class="course-detail">
+  <view class="h-full flex flex-col">
     <!-- 头部 -->
-    <HeaderSimple
-      title="课程详情"
-      :show-back="true"
-      :show-right="false"
-    />
+    <HeaderSimple title="课程详情" :show-back="true"/>
+    <scroll-view class="flex flex-1 flex-col" :scroll-y="true" :show-scrollbar="false">
+      <!-- 课程图片轮播 -->
+      <HomeSwiper/>
 
-    <!-- 课程图片 -->
-    <view class="course-image-container">
-      <image
-        :src="courseDetail.image"
-        mode="aspectFill"
-        class="course-image"
-      />
-      <view class="course-price-badge">
-        {{ isMember ? '会员免费' : `¥${courseDetail.price}` }}
-      </view>
-    </view>
-
-    <!-- 课程信息 -->
-    <view class="course-info">
-      <view class="course-title">
-        {{ courseDetail.title }}
-      </view>
-      <view class="course-stats">
-        已学习: {{ courseDetail.studentCount }}人
-      </view>
-
-      <!-- 会员状态提示 -->
-      <view v-if="!isMember" class="member-notice member-notice-non">
-        <view class="notice-content">
-          <text class="notice-icon">☆</text>
-          <text class="notice-text">成为会员可免费观看该课程</text>
-          <text class="notice-arrow">→</text>
-        </view>
-      </view>
-
-      <view v-else class="member-notice member-notice-member">
-        <view class="notice-content">
-          <text class="notice-icon">☆</text>
-          <text class="notice-text">您是会员，可免费观看</text>
-        </view>
-      </view>
-    </view>
-
-    <!-- 标签页 -->
-    <view class="tab-container">
-      <view class="tab-list">
-        <view
-          v-for="(tab, index) in tabs"
-          :key="tab.key"
-          class="tab-item" :class="[
-            activeTab === tab.key ? 'tab-active' : 'tab-inactive',
-          ]"
-          @click="activeTab = tab.key"
-        >
-          {{ tab.name }}
-        </view>
-      </view>
-    </view>
-
-    <!-- 标签页内容 -->
-    <view class="tab-content">
-      <!-- 预览/详情内容 -->
-      <view v-if="activeTab === 'preview'" class="content-section">
-        <view v-if="!isMember" class="preview-limit">
-          <view class="limit-text">
-            非会员用户，无详情，仅可查看预览内容
+      <!-- 课程信息 -->
+      <view class="course-info">
+        <!-- 价格信息 -->
+        <view class="price-section flex items-center justify-between">
+          <view class="price-info">
+            <text class="price-label">价格:</text>
+            <text class="price-value">¥{{ courseDetail.price }}</text>
+            <text v-if="isMember" class="member-free">会员免费</text>
           </view>
-          <view class="limit-subtext">
-            开通会员后可查看完整课程内容
+          <view class="course-stats">
+            已学习: {{ courseDetail.studentCount }}人
           </view>
         </view>
-        <view v-else class="content-detail">
-          <view class="content-card">
-            <view class="card-title">
-              课程简介
+
+        <view class="course-title">
+          {{ courseDetail.title }}
+        </view>
+
+        <!-- 会员状态提示 -->
+        <view v-if="!isMember" class="member-notice member-notice-non">
+          <view class="notice-content">
+            <text class="notice-icon">☆</text>
+            <text class="notice-text">成为会员可免费观看该课程</text>
+            <text class="notice-arrow">→</text>
+          </view>
+        </view>
+
+        <view v-else class="member-notice member-notice-member">
+          <view class="notice-content">
+            <text class="notice-icon">☆</text>
+            <text class="notice-text">您是会员，可免费观看</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 标签页 -->
+      <view class="tab-container">
+        <sar-tabs
+            v-model:current="activeTab"
+            :list="tabList"
+            class="course-tabs"
+        />
+      </view>
+
+      <!-- 标签页内容 -->
+      <view class="tab-content">
+        <!-- 预览/详情内容 -->
+        <view v-if="activeTab === 0" class="content-section">
+          <view v-if="!isMember" class="preview-limit">
+            <view class="limit-text">
+              非会员用户，无详情，仅可查看预览内容
             </view>
-            <view class="card-content">
-              {{ courseDetail.description }}
+            <view class="limit-subtext">
+              开通会员后可查看完整课程内容
             </view>
           </view>
-          <view class="content-card">
-            <view class="card-title">
-              课程大纲
+          <view v-else class="content-detail">
+            <view class="content-card">
+              <view class="card-title">
+                课程简介
+              </view>
+              <view class="card-content">
+                {{ courseDetail.description }}
+              </view>
             </view>
-            <view class="chapter-list">
-              <view
-                v-for="(chapter, index) in courseDetail.chapters"
+            <view class="content-card">
+              <view class="card-title">
+                课程大纲
+              </view>
+              <view class="chapter-list">
+                <view
+                    v-for="(chapter, index) in courseDetail.chapters"
+                    :key="index"
+                    class="chapter-item"
+                >
+                  <view class="chapter-number">
+                    {{ index + 1 }}
+                  </view>
+                  <text class="chapter-title">{{ chapter.title }}</text>
+                  <text class="chapter-duration">{{ chapter.duration }}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <!-- 讲师信息 -->
+        <view v-if="activeTab === 1" class="content-section">
+          <view class="instructor-info">
+            <image
+                :src="courseDetail.instructor.avatar"
+                class="instructor-avatar"
+            />
+            <view class="instructor-details">
+              <view class="instructor-name">
+                {{ courseDetail.instructor.name }}
+              </view>
+              <view class="instructor-title">
+                {{ courseDetail.instructor.title }}
+              </view>
+            </view>
+          </view>
+          <view class="instructor-bio">
+            {{ courseDetail.instructor.bio }}
+          </view>
+        </view>
+
+        <!-- 资料下载 -->
+        <view v-if="activeTab === 2" class="content-section">
+          <view class="material-list">
+            <view
+                v-for="(material, index) in courseDetail.materials"
                 :key="index"
-                class="chapter-item"
-              >
-                <view class="chapter-number">
-                  {{ index + 1 }}
-                </view>
-                <text class="chapter-title">{{ chapter.title }}</text>
-                <text class="chapter-duration">{{ chapter.duration }}</text>
-              </view>
-            </view>
-          </view>
-        </view>
-      </view>
-
-      <!-- 讲师信息 -->
-      <view v-if="activeTab === 'instructor'" class="content-section">
-        <view class="instructor-info">
-          <image
-            :src="courseDetail.instructor.avatar"
-            class="instructor-avatar"
-          />
-          <view class="instructor-details">
-            <view class="instructor-name">
-              {{ courseDetail.instructor.name }}
-            </view>
-            <view class="instructor-title">
-              {{ courseDetail.instructor.title }}
-            </view>
-          </view>
-        </view>
-        <view class="instructor-bio">
-          {{ courseDetail.instructor.bio }}
-        </view>
-      </view>
-
-      <!-- 资料下载 -->
-      <view v-if="activeTab === 'materials'" class="content-section">
-        <view class="material-list">
-          <view
-            v-for="(material, index) in courseDetail.materials"
-            :key="index"
-            class="material-item"
-          >
-            <view class="material-info">
-              <view class="material-icon">
-                📄
-              </view>
-              <view class="material-details">
-                <view class="material-name">
-                  {{ material.name }}
-                </view>
-                <view class="material-size">
-                  {{ material.size }}
-                </view>
-              </view>
-            </view>
-            <button
-              class="material-download-btn" :class="[
-                isMember ? 'download-active' : 'download-disabled',
-              ]"
-              :disabled="!isMember"
-              @click="downloadMaterial(material)"
+                class="material-item"
             >
-              {{ isMember ? '下载' : '会员专享' }}
-            </button>
+              <view class="material-info">
+                <view class="material-icon">
+                  📄
+                </view>
+                <view class="material-details">
+                  <view class="material-name">
+                    {{ material.name }}
+                  </view>
+                  <view class="material-size">
+                    {{ material.size }}
+                  </view>
+                </view>
+              </view>
+              <button
+                  class="material-download-btn"
+                  :class="[
+                  isMember ? 'download-active' : 'download-disabled',
+                ]"
+                  :disabled="!isMember"
+                  @click="downloadMaterial(material)"
+              >
+                {{ isMember ? '下载' : '会员专享' }}
+              </button>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
 
     <!-- 底部操作栏 -->
-    <view class="bottom-actions">
+    <view class="bottom-actions" :style="BottomStyle">
       <view class="action-buttons">
-        <button class="action-btn">
-          <view class="action-icon">
-            🏠
+        <sar-button type="text">
+          <view class="action-btn">
+            <view class="action-icon">
+              🏠
+            </view>
+            <view class="action-text">
+              首页
+            </view>
           </view>
-          <view class="action-text">
-            首页
+        </sar-button>
+        <sar-button type="text">
+          <view class="action-btn">
+            <view class="action
+            papxicon">
+              ⭐
+            </view>
+            <view class="action-text">
+              收藏
+            </view>
           </view>
-        </button>
-        <button class="action-btn">
-          <view class="action-icon">
-            ⭐
+
+        </sar-button>
+        <sar-button type="text">
+          <view class="action-btn">
+            <view class="action-icon">
+              📤
+            </view>
+            <view class="action-text">
+              分享
+            </view>
           </view>
-          <view class="action-text">
-            收藏
-          </view>
-        </button>
-        <button class="action-btn">
-          <view class="action-icon">
-            📤
-          </view>
-          <view class="action-text">
-            分享
-          </view>
-        </button>
-        <button
-          class="main-action-btn" :class="[
-            isMember ? 'member-btn' : 'non-member-btn',
-          ]"
-          @click="handleAction"
-        >
-          {{ isMember ? '您是会员，可免费观看' : '开通会员，免费看' }}
-        </button>
+
+        </sar-button>
       </view>
+      <sar-button class="main-action-btn" round inline theme="secondary" @click="handleAction">
+        {{ isMember ? '您是会员，可免费观看' : '开通会员，免费看' }}
+      </sar-button>
     </view>
   </view>
 </template>
 
 <route lang="jsonc" type="page">
 {
-  "style": {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "课程详情"
-  }
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "课程详情"
+}
 }
 </route>
 
 <style lang="scss" scoped>
-.course-detail {
-  padding-bottom: 120rpx;
-  background-color: var(--bg-secondary);
-  min-height: 100vh;
-}
-
-.course-image-container {
-  position: relative;
-  width: 100%;
-  height: 320rpx;
-}
-
-.course-image {
-  width: 100%;
-  height: 100%;
-}
-
-.course-price-badge {
-  position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
-  background: rgba(0, 0, 0, 0.5);
-  color: var(--text-inverse);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--radius-sm);
-  font-size: 24rpx;
-}
-
 .course-info {
   padding: var(--spacing-md);
   background-color: var(--bg-primary);
@@ -410,7 +387,35 @@ onMounted(async () => {
 .course-stats {
   font-size: 26rpx;
   color: var(--text-secondary);
+}
+
+.price-section {
   margin-bottom: var(--spacing-md);
+}
+
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.price-label {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
+
+.price-value {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--error-color);
+}
+
+.member-free {
+  font-size: 24rpx;
+  color: var(--success-color);
+  background: rgba(82, 196, 26, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: var(--radius-sm);
 }
 
 .member-notice {
@@ -460,26 +465,11 @@ onMounted(async () => {
   border-top: 1px solid var(--border-primary);
 }
 
-.tab-list {
-  display: flex;
-}
-
-.tab-item {
-  flex: 1;
-  padding: var(--spacing-md) 0;
-  text-align: center;
-  font-size: 26rpx;
-  border-bottom: 2px solid transparent;
-  transition: all 0.3s ease;
-
-  &.tab-active {
-    color: var(--primary-color);
-    border-bottom-color: var(--primary-color);
-  }
-
-  &.tab-inactive {
-    color: var(--text-tertiary);
-  }
+.course-tabs {
+  --sar-tabs-item-color: var(--text-tertiary);
+  --sar-tabs-item-active-color: var(--primary-color);
+  --sar-tabs-item-active-font-weight: bold;
+  --sar-tabs-line-color: var(--primary-color);
 }
 
 .tab-content {
@@ -670,28 +660,23 @@ onMounted(async () => {
 }
 
 .bottom-actions {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   background-color: var(--bg-primary);
   border-top: 1px solid var(--border-primary);
-  padding: var(--spacing-md);
+  display: flex;
+  align-items: center;
+  gap: 26px;
 }
 
 .action-buttons {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-md);
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .action-btn {
-  flex: 1;
   padding: var(--spacing-sm) 0;
   text-align: center;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
+  color: var(--bg-inverse);
 }
 
 .action-icon {
@@ -704,20 +689,11 @@ onMounted(async () => {
 }
 
 .main-action-btn {
-  flex: 2;
-  padding: var(--spacing-md) 0;
-  border-radius: var(--radius-md);
+  width: 40%;
   font-size: 26rpx;
   font-weight: bold;
   border: none;
-  color: var(--text-inverse);
-
-  &.member-btn {
-    background: var(--text-primary);
-  }
-
-  &.non-member-btn {
-    background: var(--primary-color);
-  }
+  color: var(--text-primary);
+  background-color: var(--bg-inverse);
 }
 </style>
