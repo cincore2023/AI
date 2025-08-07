@@ -40,20 +40,59 @@ const instructors = ref<Instructor[]>([
   },
 ])
 
+/**
+ * 处理讲师点击事件
+ * @param instructor 讲师信息
+ */
 function handleInstructorClick(instructor: Instructor) {
-  console.log('点击讲师:', instructor.name)
-  uni.showToast({
-    title: `查看讲师: ${instructor.name}`,
-    icon: 'none',
-  })
+  try {
+    console.log('点击讲师:', instructor.name)
+    
+    // 跳转到讲师详情页
+    uni.navigateTo({
+      url: `/pages/instructor/detail?id=${instructor.id}`,
+      fail: (err) => {
+        console.error('跳转失败:', err)
+        uni.showToast({
+          title: '页面跳转失败',
+          icon: 'error',
+        })
+      },
+    })
+  } catch (err) {
+    console.error('讲师点击处理失败:', err)
+    uni.showToast({
+      title: '操作失败',
+      icon: 'error',
+    })
+  }
 }
 
+/**
+ * 处理查看全部讲师事件
+ */
 function handleViewAll() {
-  console.log('查看全部讲师')
-  uni.showToast({
-    title: '查看全部讲师',
-    icon: 'none',
-  })
+  try {
+    console.log('查看全部讲师')
+    
+    // 跳转到讲师列表页或搜索页
+    uni.navigateTo({
+      url: '/pages/instructor/list',
+      fail: (err) => {
+        console.error('跳转失败:', err)
+        uni.showToast({
+          title: '页面跳转失败',
+          icon: 'error',
+        })
+      },
+    })
+  } catch (err) {
+    console.error('查看全部讲师处理失败:', err)
+    uni.showToast({
+      title: '操作失败',
+      icon: 'error',
+    })
+  }
 }
 </script>
 

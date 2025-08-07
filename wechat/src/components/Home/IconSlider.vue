@@ -64,7 +64,7 @@ defineExpose({
         <view
           v-for="(item, index) in iconList"
           :key="index"
-          class="icon-item mr-8 min-w-16 flex flex-col items-center"
+          class="icon-item mr-4 min-w-16 flex flex-col items-center"
           @click="handleIconClick(item)"
         >
           <view class="icon-wrapper relative mb-2">

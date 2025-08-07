@@ -136,6 +136,15 @@
       }
     },
     {
+      "path": "pages/instructor/detail",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "讲师详情"
+      }
+    },
+    {
       "path": "pages/personal/index",
       "type": "page",
       "layout": "tabbar",

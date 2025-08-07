@@ -198,10 +198,6 @@ function formatAmount(amount: number) {
   flex: 1;
 }
 
-.records-list {
-  padding: var(--spacing-md);
-}
-
 .record-item {
   background-color: var(--bg-primary);
   border-radius: var(--radius-md);

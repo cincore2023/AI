@@ -25,7 +25,7 @@ function handleBindSales() {
 </script>
 
 <template>
-  <view class="mb-0 bg-white p-6 pb-0">
+  <view class="mb-0 bg-white p-4 pb-0">
     <view class="mb-6 flex items-center justify-between">
       <text class="text-lg text-gray-800 font-bold">我的服务</text>
       <view class="flex items-center">

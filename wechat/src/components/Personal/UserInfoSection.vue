@@ -55,7 +55,7 @@ function handleRenew() {
 </script>
 
 <template>
-  <view class="p-3">
+  <view class="p-4">
     <view class="mb-6 flex items-center">
       <image :src="userInfo.avatar" class="mr-4 h-20 w-20 rounded-full" />
       <view class="flex-1">
