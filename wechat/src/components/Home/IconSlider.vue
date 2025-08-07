@@ -74,7 +74,7 @@ defineExpose({
               {{ item.icon }}
             </view>
           </view>
-          <text class="icon-text text-sm">{{ item.text }}</text>
+          <text class="icon-text text-xs">{{ item.text }}</text>
         </view>
       </view>
     </scroll-view>

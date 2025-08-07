@@ -25,13 +25,13 @@ function handleBindSales() {
 </script>
 
 <template>
-  <view class="bg-white p-6 mb-4">
-    <view class="flex justify-between items-center mb-6">
-      <text class="text-lg font-bold text-gray-800">我的服务</text>
+  <view class="mb-0 bg-white p-6 pb-0">
+    <view class="mb-6 flex items-center justify-between">
+      <text class="text-lg text-gray-800 font-bold">我的服务</text>
       <view class="flex items-center">
-        <text class="text-xs text-gray-500 mr-3">销售专员:</text>
+        <text class="mr-3 text-xs text-gray-500">销售专员:</text>
         <view
-          class="bg-blue-500 text-white px-4 py-2 rounded text-sm"
+          class="rounded bg-blue-500 px-4 py-2 text-sm text-white"
           @click="handleBindSales"
         >
           <text class="mr-2">🔗</text>
@@ -44,12 +44,14 @@ function handleBindSales() {
       <view
         v-for="(service, index) in serviceList"
         :key="index"
-        class="bg-gray-100 p-5 rounded-lg text-center"
+        class="rounded-lg bg-gray-100 p-5 text-center"
         @click="handleServiceClick(service)"
       >
-        <view class="text-3xl mb-3">{{ service.icon }}</view>
-        <text class="text-sm text-gray-700 whitespace-nowrap">{{ service.title }}</text>
+        <view class="mb-3 text-3xl">
+          {{ service.icon }}
+        </view>
+        <text class="whitespace-nowrap text-xs text-gray-700">{{ service.title }}</text>
       </view>
     </view>
   </view>
-</template> 
+</template>

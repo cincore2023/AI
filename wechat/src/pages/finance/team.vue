@@ -157,7 +157,7 @@ const value2 = ref('1')
         </sar-dropdown>
 
         <view class="button-row">
-          <sar-button type="solid" size="small" theme="primary" @click="handleSearch">
+          <sar-button size="small" theme="primary" @click="handleSearch">
             查询
           </sar-button>
           <sar-button type="outline" size="small" theme="default" @click="handleReset">
@@ -167,7 +167,7 @@ const value2 = ref('1')
       </view>
 
       <!-- 团队成员列表 -->
-      <view class="team-list">
+      <view class="team-list pb-10">
         <view
           v-for="member in teamMembers"
           :key="member.id"

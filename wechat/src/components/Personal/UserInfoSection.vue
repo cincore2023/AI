@@ -36,11 +36,11 @@ function handleModifyNickname() {
 function handleConfirmEdit(userInfo: any) {
   // 这里可以调用API更新用户信息
   console.log('更新用户信息:', userInfo)
-  
+
   showEditModal.value = false
   uni.showToast({
     title: '更新成功',
-    icon: 'success'
+    icon: 'success',
   })
 }
 
@@ -60,9 +60,9 @@ function handleRenew() {
       <image :src="userInfo.avatar" class="mr-4 h-20 w-20 rounded-full" />
       <view class="flex-1">
         <view class="mb-3 flex items-center justify-between">
-          <text class="text-lg font-bold text-gray-800">{{ userInfo.nickname }}</text>
+          <text class="text-lg text-gray-800 font-bold">{{ userInfo.nickname }}</text>
           <view
-            class="bg-blue-500 text-white px-4 py-2 rounded text-sm"
+            class="rounded bg-blue-500 px-4 py-2 text-sm text-white"
             @click="handleModifyNickname"
           >
             <text class="mr-2">✏️</text>
@@ -84,20 +84,20 @@ function handleRenew() {
           您的会员有效期至{{ userInfo.memberExpireDate }}
         </view>
       </view>
-      <view class="rounded bg-orange-500 px-4 py-2 text-sm text-white" @click="handleRenew">
+      <view class="rounded bg-orange-500 px-4 py-2 text-xs text-white" @click="handleRenew">
         <text class="mr-2">⭐</text>
         <text>立即续费</text>
       </view>
     </view>
 
     <!-- 非会员状态 -->
-    <view v-else class="bg-blue-500 text-white p-5 rounded-lg relative mt-3">
-      <view class="flex items-center mb-3">
-        <text class="text-xl mr-3">🔒</text>
-        <text class="text-base font-bold flex-1">开通会员享受更多权益</text>
+    <view v-else class="relative mt-3 rounded-lg bg-blue-500 p-5 text-white">
+      <view class="mb-3 flex items-center">
+        <text class="mr-3 text-xl">🔒</text>
+        <text class="flex-1 text-base font-bold">开通会员享受更多权益</text>
       </view>
       <view
-        class="absolute right-5 top-1/2 transform -translate-y-1/2 bg-white text-blue-500 px-4 py-2 rounded text-sm"
+        class="absolute right-5 top-1/2 transform rounded bg-white px-4 py-2 text-sm text-blue-500 -translate-y-1/2"
         @click="handleRenew"
       >
         <text class="mr-2">🚀</text>

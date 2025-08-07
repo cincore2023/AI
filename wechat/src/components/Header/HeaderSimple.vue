@@ -32,7 +32,11 @@ const headerStyle = computed(() => ({
 }))
 
 function handleBack() {
-  uni.navigateBack()
+  try {
+    uni.navigateBack()
+  } catch (e) {
+    uni.switchTab({ url: '/pages/index/index' })
+  }
 }
 </script>
 
