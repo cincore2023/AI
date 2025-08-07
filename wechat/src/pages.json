@@ -110,7 +110,12 @@
     },
     {
       "path": "pages/finance/balance",
-      "type": "page"
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "账户余额管理"
+      }
     },
     {
       "path": "pages/finance/team",
@@ -123,7 +128,12 @@
     },
     {
       "path": "pages/finance/transactions",
-      "type": "page"
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "入账明细"
+      }
     },
     {
       "path": "pages/personal/index",

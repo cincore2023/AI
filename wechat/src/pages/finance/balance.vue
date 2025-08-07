@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 
 interface WithdrawalRecord {
@@ -100,94 +100,84 @@ function formatAmount(amount: number) {
 }
 </script>
 
+<route lang="jsonc" type="page">
+{
+"layout": "default",
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "账户余额管理"
+}
+}
+</route>
+
 <template>
-  <view class="balance-page">
+  <view class="default-layout-content">
     <!-- 头部 -->
     <HeaderSimple title="账户余额管理" :show-back="true" />
-    
-    <!-- 标签页 -->
-    <view class="tab-container">
-      <sar-tabs v-model:current="activeTab" :list="[{ title: '提现' }]" />
-    </view>
-    
+
     <!-- 筛选器 -->
-    <view class="filter-section">
-      <view class="filter-row">
-        <sar-dropdown
-          v-model="filters.status"
-          :options="statusOptions"
-          placeholder="提现状态"
-          class="filter-item"
-        />
-        <sar-dropdown
-          v-model="filters.applyTime"
-          :options="timeOptions"
-          placeholder="申请时间"
-          class="filter-item"
-        />
-      </view>
-    </view>
-    
-    <!-- 记录列表 -->
-    <view class="records-list">
-      <view
-        v-for="record in withdrawalRecords"
-        :key="record.id"
-        class="record-item"
-      >
-        <view class="record-header">
-          <view class="status-section">
-            <sar-tag :theme="getStatusColor(record.status)" size="small">
-              {{ record.statusText }}
-            </sar-tag>
+    <scroll-view
+      class="no-scrollbar flex flex-1 flex-col"
+      :scroll-y="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
+      <!-- 记录列表 -->
+      <view class="records-list mb-10">
+        <view
+          v-for="record in withdrawalRecords"
+          :key="record.id"
+          class="record-item"
+        >
+          <view class="record-header">
+            <view class="status-section">
+              <sar-tag :theme="getStatusColor(record.status)" size="small">
+                {{ record.statusText }}
+              </sar-tag>
+            </view>
+            <view class="amount-section">
+              <text class="amount-text">{{ formatAmount(record.amount) }}</text>
+            </view>
           </view>
-          <view class="amount-section">
-            <text class="amount-text">{{ formatAmount(record.amount) }}</text>
-          </view>
-        </view>
-        
-        <view class="record-content">
-          <view class="info-row">
-            <text class="info-label">申请时间:</text>
-            <text class="info-value">{{ record.applyTime }}</text>
-          </view>
-          
-          <view class="info-row">
-            <text class="info-label">提现后余额:</text>
-            <text class="info-value">{{ record.balanceAfter }}</text>
-          </view>
-          
-          <view class="info-row">
-            <text class="info-label">详情:</text>
-            <text class="info-value">提现申请</text>
-          </view>
-          
-          <view v-if="record.actualAmount" class="info-row">
-            <text class="info-label">实际到账:</text>
-            <text class="info-value">{{ record.actualAmount }}</text>
-          </view>
-          
-          <view v-if="record.completeTime" class="info-row">
-            <text class="info-label">完成时间:</text>
-            <text class="info-value">{{ record.completeTime }}</text>
-          </view>
-          
-          <view v-if="record.errorReason" class="info-row">
-            <text class="info-label">拒绝原因:</text>
-            <text class="info-value error-text">{{ record.errorReason }}</text>
+
+          <view class="record-content">
+            <view class="info-row">
+              <text class="info-label">申请时间:</text>
+              <text class="info-value">{{ record.applyTime }}</text>
+            </view>
+
+            <view class="info-row">
+              <text class="info-label">提现后余额:</text>
+              <text class="info-value">{{ record.balanceAfter }}</text>
+            </view>
+
+            <view class="info-row">
+              <text class="info-label">详情:</text>
+              <text class="info-value">提现申请</text>
+            </view>
+
+            <view v-if="record.actualAmount" class="info-row">
+              <text class="info-label">实际到账:</text>
+              <text class="info-value">{{ record.actualAmount }}</text>
+            </view>
+
+            <view v-if="record.completeTime" class="info-row">
+              <text class="info-label">完成时间:</text>
+              <text class="info-value">{{ record.completeTime }}</text>
+            </view>
+
+            <view v-if="record.errorReason" class="info-row">
+              <text class="info-label">拒绝原因:</text>
+              <text class="info-value error-text">{{ record.errorReason }}</text>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
 <style lang="scss" scoped>
-.balance-page {
-  min-height: 100vh;
-  background-color: var(--bg-secondary);
-}
-
 .tab-container {
   background-color: var(--bg-primary);
   border-bottom: 1px solid var(--border-primary);
@@ -270,4 +260,4 @@ function formatAmount(amount: number) {
 .error-text {
   color: var(--error-color);
 }
-</style> 
+</style>

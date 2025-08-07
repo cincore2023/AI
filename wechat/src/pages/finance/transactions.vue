@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 
 interface Transaction {
@@ -134,134 +134,113 @@ function formatAmount(amount: number, type: string) {
   const sign = type === 'income' ? '+' : '-'
   return `${sign}${amount.toFixed(2)}`
 }
+
+const value1 = ref('1')
+const value2 = ref('1')
 </script>
 
 <template>
-  <view class="transactions-page">
+  <view class="default-layout-content">
     <!-- 头部 -->
     <HeaderSimple title="入账明细" :show-back="true" />
-    
-    <!-- 标签页 -->
-    <view class="tab-container">
-      <sar-tabs v-model:current="activeTab" :list="[{ title: '收支明细' }]" />
-    </view>
-    
-    <!-- 搜索和筛选 -->
-    <view class="search-section">
-      <view class="search-row">
-        <sar-input
-          v-model="searchForm.keyword"
-          placeholder="交易编号、用户"
-          class="search-input"
+
+    <scroll-view
+      class="no-scrollbar flex flex-1 flex-col"
+      :scroll-y="true"
+      :show-scrollbar="false"
+      enhanced="true"
+    >
+      <!-- 搜索和筛选 -->
+      <view class="search-section">
+        <view class="search-row">
+          <sar-input v-model="searchForm.keyword" placeholder="交易编号、用户" class="search-input">
+            <template #prepend>
+              <text class="search-icon">🔍</text>
+            </template>
+          </sar-input>
+        </view>
+
+        <sar-dropdown class="filter-row">
+          <sar-dropdown-item v-model="searchForm.transactionType" placeholder="交易类型" :options="transactionTypeOptions" />
+          <sar-dropdown-item v-model="searchForm.entryTime" placeholder="入账时间" :options="timeOptions" />
+        </sar-dropdown>
+
+        <view class="button-row">
+          <sar-button size="small" theme="primary" @click="handleSearch">
+            查询
+          </sar-button>
+          <sar-button size="small" theme="default" @click="handleReset">
+            重置
+          </sar-button>
+        </view>
+      </view>
+
+      <!-- 交易列表 -->
+      <view class="transactions-list pb-10">
+        <view
+          v-for="transaction in transactions"
+          :key="transaction.id"
+          class="transaction-item"
         >
-          <template #suffix>
-            <text class="search-icon">🔍</text>
-          </template>
-        </sar-input>
-      </view>
-      
-      <view class="button-row">
-        <sar-button type="solid" size="small" theme="primary" @click="handleSearch">
-          查询
-        </sar-button>
-        <sar-button type="outline" size="small" theme="default" @click="handleReset">
-          重置
-        </sar-button>
-      </view>
-      
-      <view class="filter-row">
-        <sar-dropdown
-          v-model="searchForm.transactionType"
-          :options="transactionTypeOptions"
-          placeholder="交易类型"
-          class="filter-item"
-        />
-        <sar-dropdown
-          v-model="searchForm.entryTime"
-          :options="timeOptions"
-          placeholder="入账时间"
-          class="filter-item"
-        />
-      </view>
-    </view>
-    
-    <!-- 交易列表 -->
-    <view class="transactions-list">
-      <view
-        v-for="transaction in transactions"
-        :key="transaction.id"
-        class="transaction-item"
-      >
-        <view class="transaction-header">
-          <view class="user-info">
-            <image :src="transaction.userAvatar" class="user-avatar" />
-            <view class="user-details">
-              <text class="user-name">{{ transaction.userName }}</text>
-              <text class="user-id">(id:{{ transaction.userId }})</text>
+          <view class="transaction-header">
+            <view class="user-info">
+              <image :src="transaction.userAvatar" class="user-avatar" />
+              <view class="user-details">
+                <text class="user-name">{{ transaction.userName }}</text>
+                <text class="user-id">(id:{{ transaction.userId }})</text>
+              </view>
+            </view>
+            <view class="amount-section">
+              <text class="amount-text" :class="transaction.type">
+                {{ formatAmount(transaction.amount, transaction.type) }}
+              </text>
             </view>
           </view>
-          <view class="amount-section">
-            <text class="amount-text" :class="transaction.type">
-              {{ formatAmount(transaction.amount, transaction.type) }}
-            </text>
-          </view>
-        </view>
-        
-        <view class="transaction-content">
-          <view class="info-row">
-            <text class="info-label">交易编号:</text>
-            <view class="transaction-id">
-              <text class="id-text">{{ transaction.transactionId }}</text>
-              <sar-button 
-                type="text" 
-                size="small" 
-                theme="primary"
-                @click="copyTransactionId(transaction.transactionId)"
-              >
-                复制
-              </sar-button>
+
+          <view class="transaction-content">
+            <view class="info-row">
+              <text class="info-label">交易编号:</text>
+              <view class="transaction-id">
+                <text class="id-text">{{ transaction.transactionId }}</text>
+                <sar-button
+                  type="text"
+                  size="small"
+                  theme="primary"
+                  @click="copyTransactionId(transaction.transactionId)"
+                >
+                  复制
+                </sar-button>
+              </view>
             </view>
-          </view>
-          
-          <view class="info-row">
-            <text class="info-label">交易时间:</text>
-            <text class="info-value">{{ transaction.time }}</text>
-          </view>
-          
-          <view class="info-row">
-            <text class="info-label">交易描述:</text>
-            <text class="info-value">{{ transaction.description }}</text>
-          </view>
-          
-          <view v-if="transaction.remark" class="info-row">
-            <text class="info-label">备注:</text>
-            <text class="info-value remark-text">{{ transaction.remark }}</text>
+
+            <view class="info-row">
+              <text class="info-label">交易时间:</text>
+              <text class="info-value">{{ transaction.time }}</text>
+            </view>
+
+            <view class="info-row">
+              <text class="info-label">交易描述:</text>
+              <text class="info-value">{{ transaction.description }}</text>
+            </view>
+
+            <view v-if="transaction.remark" class="info-row">
+              <text class="info-label">备注:</text>
+              <text class="info-value remark-text">{{ transaction.remark }}</text>
+            </view>
           </view>
         </view>
       </view>
-    </view>
+    </scroll-view>
   </view>
 </template>
 
 <style lang="scss" scoped>
-.transactions-page {
-  min-height: 100vh;
-  background-color: var(--bg-secondary);
-}
-
-.tab-container {
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-primary);
-}
-
 .search-section {
-  background-color: var(--bg-primary);
-  padding: var(--spacing-md);
-  border-bottom: 1px solid var(--border-primary);
+  padding: var(--spacing-md) 0;
 }
 
 .search-row {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
 }
 
 .search-input {
@@ -275,21 +254,17 @@ function formatAmount(amount: number, type: string) {
 
 .button-row {
   display: flex;
-  gap: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
 }
 
 .filter-row {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm);
 }
 
 .filter-item {
   flex: 1;
-}
-
-.transactions-list {
-  padding: var(--spacing-md);
 }
 
 .transaction-item {
@@ -304,9 +279,8 @@ function formatAmount(amount: number, type: string) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: var(--spacing-md);
   padding-bottom: var(--spacing-sm);
-  border-bottom: 1px solid var(--border-primary);
+  border-bottom: 1px dashed var(--border-primary);
 }
 
 .user-info {
@@ -340,11 +314,11 @@ function formatAmount(amount: number, type: string) {
 .amount-text {
   font-size: 32rpx;
   font-weight: bold;
-  
+
   &.income {
     color: var(--success-color);
   }
-  
+
   &.expense {
     color: var(--error-color);
   }
@@ -387,4 +361,14 @@ function formatAmount(amount: number, type: string) {
   color: var(--text-tertiary);
   font-style: italic;
 }
-</style> 
+</style>
+
+<route lang="jsonc" type="page">
+{
+"layout": "default",
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "入账明细"
+}
+}
+</route>

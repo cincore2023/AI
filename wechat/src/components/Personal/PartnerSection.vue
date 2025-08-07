@@ -62,8 +62,8 @@ function handleGenerateCode() {
           </view>
           <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.withdrawableIncome }}</text>
           <view
-            class="w-full rounded bg-red-500 py-3 text-center text-sm text-white"
-            @click="handleWithdraw"
+              class="w-full rounded bg-red-500 py-3 text-center text-sm text-white"
+              @click="handleWithdraw"
           >
             <text class="mr-2">💳</text>
             <text>提现</text>
@@ -77,8 +77,8 @@ function handleGenerateCode() {
           </view>
           <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.totalIncome }}</text>
           <view
-            class="w-full rounded bg-blue-400 py-3 text-center text-sm text-white"
-            @click="handleIncomeDetails"
+              class="w-full rounded bg-blue-400 py-3 text-center text-sm text-white"
+              @click="handleIncomeDetails"
           >
             <text class="mr-2">📊</text>
             <text>收支明细</text>
@@ -95,7 +95,9 @@ function handleGenerateCode() {
           <text class="mb-2 block text-xs text-gray-600">我的团队</text>
           <text class="text-lg font-bold">{{ partnerInfo.teamCount }}人</text>
         </view>
-        <view class="rounded-lg bg-gray-100 p-5 text-center">
+        <view
+          class="rounded-lg bg-gray-100 p-5 text-center"
+          @click="uni.navigateTo({ url: '/pages/finance/balance' })">
           <text class="mb-3 block text-2xl">⏳</text>
           <text class="mb-2 block text-xs text-gray-600">提现中</text>
           <text class="text-lg font-bold">¥{{ partnerInfo.withdrawing }}</text>
@@ -107,8 +109,8 @@ function handleGenerateCode() {
           <text class="mb-3 block text-2xl">🎫</text>
           <text class="mb-2 block text-xs text-gray-600">推广码</text>
           <view
-            class="mx-auto whitespace-nowrap rounded bg-green-500 px-4 py-2 text-center text-sm text-white"
-            @click="handleGenerateCode"
+              class="mx-auto whitespace-nowrap rounded bg-green-500 px-4 py-2 text-center text-sm text-white"
+              @click="handleGenerateCode"
           >
             <text>生成推广码</text>
           </view>
