@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SearchBar from '@/components/SearchBar/SearchBar.vue'
 import { computed, onMounted, ref } from 'vue'
 
 // 响应式数据

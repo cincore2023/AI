@@ -25,13 +25,13 @@ function handleBindSales() {
 </script>
 
 <template>
-  <view class="mb-0 bg-white p-4 pb-0">
+  <view class="bg-white p-4">
     <view class="mb-6 flex items-center justify-between">
       <text class="text-lg text-gray-800 font-bold">我的服务</text>
       <view class="flex items-center">
         <text class="mr-3 text-xs text-gray-500">销售专员:</text>
         <view
-          class="rounded bg-blue-500 px-4 py-2 text-sm text-white"
+          class="rounded bg-blue-500 px-3 py-1 text-3 text-white"
           @click="handleBindSales"
         >
           <text class="mr-2">🔗</text>

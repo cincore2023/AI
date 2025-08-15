@@ -38,7 +38,7 @@ const hasBoundSales = ref(false) // 模拟是否已绑定销售专员
 
 // 我的服务列表
 const serviceList = ref<ServiceItem[]>([
-  { icon: '📊', title: '我的活动', path: '/pages/activity/index' },
+  { icon: '📊', title: '我的活动', path: '/pages/activities/index' },
   { icon: '📚', title: '我的课程', path: '/pages/course/index' },
   { icon: '📁', title: '我的素材', path: '/pages/material/index' },
   { icon: '🤖', title: '我的智能体', path: '/pages/ai/index' },
@@ -155,21 +155,6 @@ function handleBindSalesFromRequired() {
   showBindSalesModal.value = true
 }
 
-// 提现
-function handleWithdraw() {
-  uni.showModal({
-    title: '提现',
-    content: `确认提现 ${partnerInfo.value.withdrawableIncome} 元？`,
-    success: (res) => {
-      if (res.confirm) {
-        uni.showToast({
-          title: '提现申请已提交',
-          icon: 'success',
-        })
-      }
-    },
-  })
-}
 
 // 收支明细
 function handleIncomeDetails() {
@@ -224,7 +209,6 @@ onMounted(async () => {
       <!-- 合伙人中心 -->
       <PartnerSection
         :partner-info="partnerInfo"
-        @withdraw="handleWithdraw"
         @income-details="handleIncomeDetails"
         @generate-code="handleGenerateCode"
       />

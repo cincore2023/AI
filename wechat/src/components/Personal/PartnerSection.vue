@@ -21,7 +21,7 @@ const emit = defineEmits<{
 }>()
 
 function handleWithdraw() {
-  emit('withdraw')
+  uni.navigateTo({url: '/pages/withdrawal/index'})
 }
 
 function handleIncomeDetails() {
@@ -96,8 +96,8 @@ function handleGenerateCode() {
           <text class="text-lg font-bold">{{ partnerInfo.teamCount }}人</text>
         </view>
         <view
-          class="rounded-lg bg-gray-100 p-5 text-center"
-          @click="uni.navigateTo({ url: '/pages/finance/balance' })">
+            class="rounded-lg bg-gray-100 p-5 text-center"
+            @click="uni.navigateTo({ url: '/pages/finance/balance' })">
           <text class="mb-3 block text-2xl">⏳</text>
           <text class="mb-2 block text-xs text-gray-600">提现中</text>
           <text class="text-lg font-bold">¥{{ partnerInfo.withdrawing }}</text>

@@ -15,14 +15,42 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-my:before {
-  content: '\e78c';
+.icon-more:before {
+  content: "\e6b9";
 }
 
-.icon-package:before {
-  content: '\e9c2';
+.icon-target:before {
+  content: "\e6ba";
 }
 
-.icon-chat:before {
-  content: '\e600';
+.icon-arrow-right:before {
+  content: "\e6bb";
+}
+
+.icon-arrow-left:before {
+  content: "\e6bc";
+}
+
+.icon-close:before {
+  content: "\e6bd";
+}
+
+.icon-check:before {
+  content: "\e6be";
+}
+
+.icon-warning:before {
+  content: "\e6bf";
+}
+
+.icon-info:before {
+  content: "\e6c0";
+}
+
+.icon-success:before {
+  content: "\e6c1";
+}
+
+.icon-error:before {
+  content: "\e6c2";
 }

@@ -30,6 +30,6 @@ onHide(() => {
 #app,
 .layout-container {
   min-height: 100vh;
-  background-image: linear-gradient(to bottom, #d4e6f1 0%, #d5e8d4 15%, #ffffff 30%, #ffffff 100%);
+  background-image: linear-gradient(to bottom, #d4e6f1 0%, #d5e8d4 15%, #F6F6F6 30%, #F6F6F6 100%);
 }
 </style>

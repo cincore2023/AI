@@ -92,6 +92,15 @@
       }
     },
     {
+      "path": "pages/activities/index",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的活动"
+      }
+    },
+    {
       "path": "pages/course/detail",
       "type": "page",
       "style": {
@@ -151,6 +160,24 @@
       "style": {
         "navigationStyle": "custom",
         "navigationBarTitleText": "个人中心"
+      }
+    },
+    {
+      "path": "pages/withdrawal/bind-account",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "绑定账号"
+      }
+    },
+    {
+      "path": "pages/withdrawal/index",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "提现"
       }
     }
   ],

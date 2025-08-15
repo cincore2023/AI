@@ -62,7 +62,7 @@ function handleRenew() {
         <view class="mb-3 flex items-center justify-between">
           <text class="text-lg text-gray-800 font-bold">{{ userInfo.nickname }}</text>
           <view
-            class="rounded bg-blue-500 px-4 py-2 text-sm text-white"
+            class="rounded bg-blue-500 px-3 py-1 text-3 text-white"
             @click="handleModifyNickname"
           >
             <text class="mr-2">✏️</text>
@@ -74,14 +74,16 @@ function handleRenew() {
     </view>
 
     <!-- VIP状态 -->
-    <view v-if="isMember" class="flex items-center justify-between rounded-lg bg-black p-5 text-white">
-      <view class="grid gap-2">
-        <view class="flex items-center">
-          <text class="mr-3 text-xl">👑</text>
-          <text class="text-base font-bold">尊敬的VIP用户</text>
-        </view>
-        <view class="text-sm opacity-80">
-          您的会员有效期至{{ userInfo.memberExpireDate }}
+    <view v-if="isMember" class="flex items-center justify-between rounded-lg bg-black p-3 text-white">
+      <view class="flex items-center gap-3">
+        <text class="text-4">👑</text>
+        <view class="grid gap-1">
+          <view class="flex items-center">
+            <text class="text-base font-bold">尊敬的VIP用户</text>
+          </view>
+          <view class="text-3 opacity-80">
+            您的会员有效期至{{ userInfo.memberExpireDate }}
+          </view>
         </view>
       </view>
       <view class="rounded bg-orange-500 px-4 py-2 text-xs text-white" @click="handleRenew">
