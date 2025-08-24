@@ -1,12 +1,14 @@
 <script setup lang="ts">
-interface Props {
-  title: string
-  price: number
-  studentCount: number
-  isMember: boolean
-}
+import type { WxCourseDetailItem } from '@/api/types/course'
+import { useUserStore } from '@/store/user'
 
 defineProps<Props>()
+
+const { isMember } = useUserStore()
+
+interface Props {
+  detail: WxCourseDetailItem
+}
 </script>
 
 <template>
@@ -15,16 +17,16 @@ defineProps<Props>()
     <view class="price-section flex items-center justify-between">
       <view class="price-info">
         <text class="price-label">价格:</text>
-        <text class="price-value">¥{{ price }}</text>
-        <text v-if="isMember" class="member-free">会员免费</text>
+        <text class="price-value">¥{{ detail?.price }}</text>
+        <text class="member-free">会员免费</text>
       </view>
       <view class="course-stats">
-        已学习: {{ studentCount }}人
+        已学习: {{ detail?.apprenticeCount || 0 }}人
       </view>
     </view>
 
     <view class="course-title">
-      {{ title }}
+      {{ detail?.courseTitle }}
     </view>
 
     <!-- 会员状态提示 -->
@@ -46,7 +48,6 @@ defineProps<Props>()
 </template>
 
 <style lang="scss" scoped>
-
 .course-title {
   font-size: 36rpx;
   font-weight: bold;
@@ -130,4 +131,4 @@ defineProps<Props>()
   font-size: 32rpx;
   color: var(--text-secondary);
 }
-</style> 
+</style>

@@ -1,37 +1,15 @@
 <script setup lang="ts">
-interface Chapter {
-  title: string
-  duration: string
-}
+import type { WxCourseDetailItem } from '@/api/types/course'
+import { useUserStore } from '@/store/user'
 
-interface Instructor {
-  name: string
-  title: string
-  avatar: string
-  bio: string
-}
+defineProps<Props>()
 
-interface Material {
-  name: string
-  size: string
-  url: string
-}
+const { isMember } = useUserStore()
 
 interface Props {
   activeTab: number
-  isMember: boolean
-  description: string
-  chapters: Chapter[]
-  instructor: Instructor
-  materials: Material[]
+  detail: WxCourseDetailItem
 }
-
-interface Emits {
-  (e: 'download', material: Material): void
-}
-
-defineProps<Props>()
-defineEmits<Emits>()
 </script>
 
 <template>
@@ -39,9 +17,7 @@ defineEmits<Emits>()
     <!-- 预览/详情内容 -->
     <view v-if="activeTab === 0" class="content-section">
       <view v-if="!isMember" class="preview-limit">
-        <view class="limit-text">
-          非会员用户，无详情，仅可查看预览内容
-        </view>
+        <view v-html="detail?.viewDetails" />
         <view class="limit-subtext">
           开通会员后可查看完整课程内容
         </view>
@@ -52,25 +28,7 @@ defineEmits<Emits>()
             课程简介
           </view>
           <view class="card-content">
-            {{ description }}
-          </view>
-        </view>
-        <view class="content-card">
-          <view class="card-title">
-            课程大纲
-          </view>
-          <view class="chapter-list">
-            <view
-              v-for="(chapter, index) in chapters"
-              :key="index"
-              class="chapter-item"
-            >
-              <view class="chapter-number">
-                {{ index + 1 }}
-              </view>
-              <text class="chapter-title">{{ chapter.title }}</text>
-              <text class="chapter-duration">{{ chapter.duration }}</text>
-            </view>
+            <view v-html="detail?.courseDetails" />
           </view>
         </view>
       </view>
@@ -79,32 +37,25 @@ defineEmits<Emits>()
     <!-- 讲师信息 -->
     <view v-if="activeTab === 1" class="content-section">
       <view class="instructor-info">
-        <image
-          :src="instructor.avatar"
-          class="instructor-avatar"
-        />
+        <image class="instructor-avatar" :src="detail.teacherInfo?.avatar" />
         <view class="instructor-details">
           <view class="instructor-name">
-            {{ instructor.name }}
+            {{ detail.teacherInfo?.name }}
           </view>
           <view class="instructor-title">
-            {{ instructor.title }}
+            {{ detail.teacherInfo?.description }}
           </view>
         </view>
       </view>
       <view class="instructor-bio">
-        {{ instructor.bio }}
+        <view v-html="detail?.teacherInfo?.introduction" />
       </view>
     </view>
 
     <!-- 资料下载 -->
     <view v-if="activeTab === 2" class="content-section">
       <view class="material-list">
-        <view
-          v-for="(material, index) in materials"
-          :key="index"
-          class="material-item"
-        >
+        <view v-for="(material, index) in []" :key="index" class="material-item">
           <view class="material-info">
             <view class="material-icon">
               📄
@@ -118,14 +69,7 @@ defineEmits<Emits>()
               </view>
             </view>
           </view>
-          <button
-            class="material-download-btn"
-            :class="[
-              isMember ? 'download-active' : 'download-disabled',
-            ]"
-            :disabled="!isMember"
-            @click="$emit('download', material)"
-          >
+          <button class="material-download-btn" :class="[isMember ? 'download-active' : 'download-disabled']" :disabled="!isMember" @click="$emit('download', material)">
             {{ isMember ? '下载' : '会员专享' }}
           </button>
         </view>
@@ -178,6 +122,7 @@ defineEmits<Emits>()
   font-size: 26rpx;
   color: var(--text-secondary);
   line-height: 1.6;
+  margin-top: 20rpx;
 }
 
 .chapter-list {
@@ -316,4 +261,4 @@ defineEmits<Emits>()
     color: var(--text-inverse);
   }
 }
-</style> 
+</style>

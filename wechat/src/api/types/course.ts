@@ -32,6 +32,35 @@ export interface WxCourseListResponse {
   pageSize: number
 }
 
+// 课程详情接口类型
+export interface WxCourseDetailItem {
+  id: number
+  courseTitle: string
+  coverImage: string
+  type: string // 'img' | 'video'
+  price: number
+  originalPrice: number
+  onSale: boolean
+  hot: boolean
+  exquisite: boolean
+  sort: number
+  viewDetails: string
+  apprenticeCount: number
+  teacher: number
+  category: number
+  courseDetails: string // 课程详情内容
+  teacherInfo?: WxCourseTeacherInfo // 讲师信息（可选）
+}
+
+// 课程详情中的讲师信息
+export interface WxCourseTeacherInfo {
+  id: number
+  avatar: string
+  name: string
+  description: string
+  introduction: string
+}
+
 // 微信小程序分类相关类型定义
 export interface WxCategoryItem {
   id: number

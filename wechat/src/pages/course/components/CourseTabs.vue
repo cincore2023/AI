@@ -2,17 +2,16 @@
 interface Props {
   activeTab: number
   tabList: Array<{ title: string }>
-  isMember: boolean
 }
 
 interface Emits {
   (e: 'update:activeTab', value: number): void
 }
 
-const props = defineProps<Props>()
+defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-const updateActiveTab = (index: number) => {
+function updateActiveTab(index: number) {
   emit('update:activeTab', index)
 }
 </script>
@@ -39,4 +38,4 @@ const updateActiveTab = (index: number) => {
   --sar-tabs-item-active-font-weight: bold;
   --sar-tabs-line-color: var(--primary-color);
 }
-</style> 
+</style>

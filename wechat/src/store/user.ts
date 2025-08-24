@@ -20,6 +20,10 @@ export const useUserStore = defineStore(
     const token = ref<string>('')
     const isLoggedIn = ref<boolean>(false)
 
+    const isMember = computed(() => {
+      return !!wechatUser.value.membershipExpiryDate
+    })
+
     // 设置微信用户信息
     const setWechatUser = (user: IWechatUser) => {
       console.log('设置微信用户信息', user)
@@ -131,6 +135,7 @@ export const useUserStore = defineStore(
       setWechatUser,
       setToken,
       removeUserInfo,
+      isMember
     }
   },
   {

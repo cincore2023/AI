@@ -5,6 +5,7 @@ import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -171,4 +172,50 @@ func (courseService *CourseService) GetCoursePublic(page, pageSize int, hot, exq
 
 	err = db.Find(&courses).Error
 	return courses, total, err
+}
+
+// GetCourseDetailPublic 获取微信小程序课程详情
+func (courseService *CourseService) GetCourseDetailPublic(id uint) (course system.Course, err error) {
+	// 查询已上架的课程详情
+	err = global.GVA_DB.Where("id = ? AND on_sale = ?", id, true).First(&course).Error
+	return
+}
+
+// CourseDetailWithTeacher 课程详情及讲师信息结构体
+type CourseDetailWithTeacher struct {
+	Course  system.Course   `json:"course"`
+	Teacher *system.Teacher `json:"teacher"`
+}
+
+// GetCourseDetailWithTeacher 获取课程详情及讲师信息
+func (courseService *CourseService) GetCourseDetailWithTeacher(id uint) (*CourseDetailWithTeacher, error) {
+	var course system.Course
+	var teacher system.Teacher
+
+	// 查询已上架的课程详情
+	err := global.GVA_DB.Where("id = ? AND on_sale = ?", id, true).First(&course).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 查询对应的讲师信息（如果存在）
+	var teacherPtr *system.Teacher = nil
+	if course.Teacher != nil {
+		err = global.GVA_DB.Where("id = ?", *course.Teacher).First(&teacher).Error
+		if err == nil {
+			teacherPtr = &teacher
+		}
+		// 讲师不存在不影响课程详情的返回，只记录日志
+		if err != nil && err.Error() != "record not found" {
+			global.GVA_LOG.Warn("获取课程讲师信息失败",
+				zap.Uint("courseId", id),
+				zap.Int("teacherId", *course.Teacher),
+				zap.Error(err))
+		}
+	}
+
+	return &CourseDetailWithTeacher{
+		Course:  course,
+		Teacher: teacherPtr,
+	}, nil
 }
