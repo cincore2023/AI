@@ -89,7 +89,48 @@ func (teacherService *TeacherService) GetTeacherInfoList(ctx context.Context, in
 	err = db.Find(&teachers).Error
 	return teachers, total, err
 }
-func (teacherService *TeacherService) GetTeacherPublic(ctx context.Context) {
-	// 此方法为获取数据源定义的数据
-	// 请自行实现
+
+func (teacherService *TeacherService) GetTeacherPublic() ([]system.Teacher, error) {
+	db := global.GVA_DB.Model(&system.Teacher{})
+	var teachers []system.Teacher
+
+	// 如果是要按 sort 字段降序排序
+	err := db.Order("sort DESC").Find(&teachers).Error
+
+	if err != nil {
+		return nil, err
+	}
+
+	return teachers, nil
+}
+
+// TeacherDetailWithCourses 讲师详情及其课程结构体
+type TeacherDetailWithCourses struct {
+	Teacher system.Teacher   `json:"teacher"`
+	Courses []system.Course  `json:"courses"`
+}
+
+// GetTeacherDetailWithCourses 获取讲师详情及其所有课程
+func (teacherService *TeacherService) GetTeacherDetailWithCourses(teacherID string) (*TeacherDetailWithCourses, error) {
+	var teacher system.Teacher
+	var courses []system.Course
+	
+	// 获取讲师详情
+	err := global.GVA_DB.Where("id = ?", teacherID).First(&teacher).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	// 获取该讲师的所有课程（只获取上架的课程）
+	err = global.GVA_DB.Where("teacher = ? AND on_sale = ?", teacherID, true).
+		Order("sort ASC, created_at DESC").
+		Find(&courses).Error
+	if err != nil {
+		return nil, err
+	}
+	
+	return &TeacherDetailWithCourses{
+		Teacher: teacher,
+		Courses: courses,
+	}, nil
 }

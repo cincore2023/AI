@@ -173,16 +173,25 @@ func (bannerApi *BannerApi) GetBannerList(c *gin.Context) {
 // @Summary 不需要鉴权的轮播管理接口
 // @Accept application/json
 // @Produce application/json
+// @Param data query systemReq.BannerSearch true "分页获取轮播管理列表"
 // @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
 // @Router /banner/getBannerPublic [get]
 func (bannerApi *BannerApi) GetBannerPublic(c *gin.Context) {
 	// 创建业务用Context
 	ctx := c.Request.Context()
-
-	// 此接口不需要鉴权
-	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
-	bannerService.GetBannerPublic(ctx)
+	
+	// 获取查询参数
+	bannerType := c.DefaultQuery("type", "home") // 默认获取home类型的轮播图
+	
+	// 调用bannerService获取轮播图数据
+	banners, err := bannerService.GetBannerPublic(ctx, bannerType)
+	if err != nil {
+		global.GVA_LOG.Error("获取轮播图失败!", zap.Error(err))
+		response.FailWithMessage("获取轮播图失败: "+err.Error(), c)
+		return
+	}
+	
 	response.OkWithDetailed(gin.H{
-		"info": "不需要鉴权的轮播管理接口信息",
+		"banners": banners,
 	}, "获取成功", c)
 }

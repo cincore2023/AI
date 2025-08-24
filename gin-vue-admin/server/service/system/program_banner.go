@@ -87,7 +87,25 @@ func (bannerService *BannerService) GetBannerInfoList(ctx context.Context, info 
 	err = db.Find(&banners).Error
 	return banners, total, err
 }
-func (bannerService *BannerService) GetBannerPublic(ctx context.Context) {
-	// 此方法为获取数据源定义的数据
-	// 请自行实现
+
+// GetBannerPublic 获取公开的轮播图列表
+func (bannerService *BannerService) GetBannerPublic(ctx context.Context, bannerType string) (banners []system.Banner, err error) {
+	// 创建查询条件：只获取启用状态的轮播图
+	db := global.GVA_DB.Model(&system.Banner{})
+
+	// 只获取启用状态的轮播图 (status = 1)
+	status := 1
+	db = db.Where("status = ?", status)
+
+	// 如果指定了类型，则按类型过滤
+	if bannerType != "" {
+		db = db.Where("type = ?", bannerType)
+	}
+
+	// 按order字段升序排列，如果order为空则按创建时间排序
+	db = db.Order(`COALESCE("order", 999999) ASC, created_at ASC`)
+
+	// 执行查询
+	err = db.Find(&banners).Error
+	return banners, err
 }

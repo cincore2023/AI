@@ -1,6 +1,8 @@
 package system
 
-import api "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+import (
+	api "github.com/flipped-aurora/gin-vue-admin/server/api/v1"
+)
 
 type RouterGroup struct {
 	ApiRouter
@@ -26,7 +28,6 @@ type RouterGroup struct {
 	BenefitRouter
 	CourseRouter
 	WechatUserRouter
-	WechatRouter
 	CodeRouter
 	ActivitiesRouter
 }
@@ -58,7 +59,6 @@ var (
 	benefitApi          = api.ApiGroupApp.SystemApiGroup.BenefitApi
 	courseApi           = api.ApiGroupApp.SystemApiGroup.CourseApi
 	wxUserApi           = api.ApiGroupApp.SystemApiGroup.WechatUserApi
-	wechatApi           = api.ApiGroupApp.SystemApiGroup.WechatApi
 	codeApi             = api.ApiGroupApp.SystemApiGroup.CodeApi
 	activitiesApi       = api.ApiGroupApp.SystemApiGroup.ActivitiesApi
 )

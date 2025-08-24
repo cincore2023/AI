@@ -6,9 +6,11 @@ import api "github.com/flipped-aurora/gin-vue-admin/server/api/v1/wechat"
 type RouterGroup struct {
 	WechatRouter
 	WechatBannerRouter
+	WechatTeacherRouter
 }
 
 var (
-	wechatApi       = api.ApiGroupApp.WechatApi
-	wechatBannerApi = api.ApiGroupApp.WechatBannerApi
+	wechatApi        = api.ApiGroupApp.WechatApi
+	wechatBannerApi  = api.ApiGroupApp.WechatBannerApi
+	wechatTeacherApi = api.ApiGroupApp.WechatTeacherApi
 )

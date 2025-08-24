@@ -42,8 +42,13 @@ type WxBannerItem struct {
 func (w *WechatBannerApi) WxGetBanners(c *gin.Context) {
 	ctx := c.Request.Context()
 
+	// 获取查询参数
+	bannerType := c.DefaultQuery("type", "home") // 默认获取home类型的轮播图
+
+	global.GVA_LOG.Info("获取微信轮播图", zap.String("type", bannerType))
+
 	// 调用bannerService获取轮播图数据
-	banners, err := bannerService.GetBannerPublic(ctx, "")
+	banners, err := bannerService.GetBannerPublic(ctx, bannerType)
 	if err != nil {
 		global.GVA_LOG.Error("获取轮播图失败!", zap.Error(err))
 		response.FailWithMessage("获取轮播图失败: "+err.Error(), c)

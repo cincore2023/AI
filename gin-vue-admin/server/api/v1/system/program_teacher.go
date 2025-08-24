@@ -181,12 +181,9 @@ func (teacherApi *TeacherApi) GetTeacherList(c *gin.Context) {
 // @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
 // @Router /teacher/getTeacherPublic [get]
 func (teacherApi *TeacherApi) GetTeacherPublic(c *gin.Context) {
-	// 创建业务用Context
-	ctx := c.Request.Context()
 
-	// 此接口不需要鉴权
 	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
-	teacherService.GetTeacherPublic(ctx)
+	teacherService.GetTeacherPublic()
 	response.OkWithDetailed(gin.H{
 		"info": "不需要鉴权的讲师管理接口信息",
 	}, "获取成功", c)

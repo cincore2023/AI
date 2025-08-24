@@ -1,6 +1,8 @@
 package system
 
-import "github.com/flipped-aurora/gin-vue-admin/server/service"
+import (
+	"github.com/flipped-aurora/gin-vue-admin/server/service"
+)
 
 type ApiGroup struct {
 	DBApi
@@ -29,7 +31,6 @@ type ApiGroup struct {
 	BenefitApi
 	CourseApi
 	WechatUserApi
-	WechatApi
 	CodeApi
 	ActivitiesApi
 }
