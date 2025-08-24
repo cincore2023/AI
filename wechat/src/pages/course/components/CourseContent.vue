@@ -2,22 +2,50 @@
 import type { WxCourseDetailItem } from '@/api/types/course'
 import { useUserStore } from '@/store/user'
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
+const activeTab = ref(0)
 const { isMember } = useUserStore()
+const tabList = ref([
+  { title: '预览' },
+  { title: '讲师' },
+  { title: '资料' },
+])
 
 interface Props {
   activeTab: number
   detail: WxCourseDetailItem
 }
+
+function viewTeacherDetail() {
+  if (props.detail.teacherInfo) {
+    uni.navigateTo({
+      url: `/pages/instructor/detail?id=${props.detail.teacherInfo.id}`,
+    })
+  }
+}
+
+function updateActiveTab(index: number) {
+  activeTab.value = index
+}
+
+onMounted(() => {
+  // 根据会员状态调整标签页
+  if (isMember) {
+    tabList.value[0].title = '详情'
+  }
+})
 </script>
 
 <template>
+  <view class="tab-container pb-4">
+    <sar-tabs v-model:current="activeTab" :list="tabList" class="course-tabs" @change="updateActiveTab"/>
+  </view>
   <view class="tab-content">
     <!-- 预览/详情内容 -->
     <view v-if="activeTab === 0" class="content-section">
       <view v-if="!isMember" class="preview-limit">
-        <view v-html="detail?.viewDetails" />
+        <view v-html="detail?.viewDetails"/>
         <view class="limit-subtext">
           开通会员后可查看完整课程内容
         </view>
@@ -28,7 +56,7 @@ interface Props {
             课程简介
           </view>
           <view class="card-content">
-            <view v-html="detail?.courseDetails" />
+            <view v-html="detail?.courseDetails"/>
           </view>
         </view>
       </view>
@@ -36,8 +64,8 @@ interface Props {
 
     <!-- 讲师信息 -->
     <view v-if="activeTab === 1" class="content-section">
-      <view class="instructor-info">
-        <image class="instructor-avatar" :src="detail.teacherInfo?.avatar" />
+      <view class="instructor-info" @click="viewTeacherDetail">
+        <image class="instructor-avatar" :src="detail.teacherInfo?.avatar"/>
         <view class="instructor-details">
           <view class="instructor-name">
             {{ detail.teacherInfo?.name }}
@@ -48,7 +76,7 @@ interface Props {
         </view>
       </view>
       <view class="instructor-bio">
-        <view v-html="detail?.teacherInfo?.introduction" />
+        <view v-html="detail?.teacherInfo?.introduction"/>
       </view>
     </view>
 
@@ -69,7 +97,8 @@ interface Props {
               </view>
             </view>
           </view>
-          <button class="material-download-btn" :class="[isMember ? 'download-active' : 'download-disabled']" :disabled="!isMember" @click="$emit('download', material)">
+          <button class="material-download-btn" :class="[isMember ? 'download-active' : 'download-disabled']"
+                  :disabled="!isMember" @click="$emit('download', material)">
             {{ isMember ? '下载' : '会员专享' }}
           </button>
         </view>
@@ -260,5 +289,16 @@ interface Props {
     background: var(--text-tertiary);
     color: var(--text-inverse);
   }
+}
+
+.tab-container {
+  border-top: 1px solid var(--border-primary);
+}
+
+.course-tabs {
+  --sar-tabs-item-color: var(--text-tertiary);
+  --sar-tabs-item-active-color: var(--primary-color);
+  --sar-tabs-item-active-font-weight: bold;
+  --sar-tabs-line-color: var(--primary-color);
 }
 </style>

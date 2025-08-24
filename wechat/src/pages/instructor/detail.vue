@@ -10,17 +10,16 @@
 </route>
 
 <script setup lang="ts">
-import type { ICourseItem, ITeacherDetailItem } from '@/api/types/teacher'
+import type { ITeacherDetailItem } from '@/api/types/teacher'
 import { getTeacherDetail } from '@/api/teacher'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 import CourseList from '@/components/Instructor/CourseList.vue'
 import InstructorBio from '@/components/Instructor/InstructorBio.vue'
 
 import InstructorProfile from '@/components/Instructor/InstructorProfile.vue'
-import InstructorTabs from '@/components/Instructor/InstructorTabs.vue'
 
 // 响应式数据
-const activeTab = ref<'courses' | 'bio'>('courses')
+const activeTab = ref<number>(0)
 const loading = ref(false)
 const error = ref<string | null>(null)
 
@@ -29,37 +28,16 @@ const instructorData = ref<ITeacherDetailItem>()
 
 // 计算属性
 const tabList = computed(() => [
-  { title: '课程', value: 'courses' },
-  { title: '简介', value: 'bio' },
+  { title: '课程', value: 0 },
+  { title: '简介', value: 1 },
 ])
-
-// 方法定义
-/**
- * 处理课程点击事件
- * @param course 课程信息
- */
-function handleCourseClick(course: ICourseItem) {
-  console.log('点击课程:', course)
-
-  // 跳转到课程详情页
-  uni.navigateTo({
-    url: `/pages/course/detail?id=${course.id}`,
-    fail: (err) => {
-      console.error('跳转失败:', err)
-      uni.showToast({
-        title: '页面跳转失败',
-        icon: 'error',
-      })
-    },
-  })
-}
 
 /**
  * 处理标签页切换
  * @param value 标签页值
  */
-function handleTabChange(value: string) {
-  activeTab.value = value as 'courses' | 'bio'
+function handleTabChange(value: number) {
+  activeTab.value = value
 }
 
 /**
@@ -68,7 +46,6 @@ function handleTabChange(value: string) {
 async function loadInstructorData(id: string) {
   loading.value = true
   const { data } = await getTeacherDetail(id)
-  console.log(data.teacher)
   instructorData.value = data.teacher
   loading.value = false
 }
@@ -103,19 +80,17 @@ onLoad((options: any) => {
         <InstructorProfile :instructor="instructorData" class="instructor-profile" />
 
         <!-- 标签页 -->
-        <InstructorTabs
-          v-model:current="activeTab"
-          :list="tabList"
-          @change="handleTabChange"
-        />
+        <view class="tab-container pb-4">
+          <sar-tabs v-model:current="activeTab" :list="tabList" class="course-tabs" @change="handleTabChange" />
+        </view>
 
         <!-- 标签页内容 -->
         <view class="tab-content">
           <!-- 课程列表 -->
-          <CourseList v-if="activeTab === 'courses'" :courses="instructorData.courses"/>
+          <CourseList v-if="activeTab === 0" :courses="instructorData?.courses" />
 
           <!-- 讲师简介 -->
-          <InstructorBio v-else-if="activeTab === 'bio'" :instructor="instructorData"/>
+          <InstructorBio v-else-if="activeTab === 1" :instructor="instructorData" />
         </view>
       </scroll-view>
     </template>
@@ -141,5 +116,16 @@ onLoad((options: any) => {
 .tab-content {
   padding: var(--spacing-md) 0;
   min-height: 400rpx;
+}
+
+.tab-container {
+  border-top: 1px solid var(--border-primary);
+}
+
+.course-tabs {
+  --sar-tabs-item-color: var(--text-tertiary);
+  --sar-tabs-item-active-color: var(--primary-color);
+  --sar-tabs-item-active-font-weight: bold;
+  --sar-tabs-line-color: var(--primary-color);
 }
 </style>

@@ -14,19 +14,14 @@ import { getWxCourseDetail } from '@/api/course'
 import type { WxCourseDetailItem } from "@/api/types/course";
 
 import CourseInfo from './components/CourseInfo.vue'
-import CourseTabs from './components/CourseTabs.vue'
 import CourseContent from './components/CourseContent.vue'
 import CourseActions from './components/CourseActions.vue'
 
 const courseId = ref('')
 const { isMember } = useUserStore()
-const activeTab = ref(0)
 
-const tabList = ref([
-  { title: '预览' },
-  { title: '讲师' },
-  { title: '资料' },
-])
+
+
 
 const courseDetail = ref<WxCourseDetailItem | null>(null)
 const loading = ref(false)
@@ -46,20 +41,6 @@ async function getCourseDetail(id: string) {
     })
   } finally {
     loading.value = false
-  }
-}
-
-// 查看讲师详情
-function viewTeacherDetail() {
-  if (courseDetail.value?.teacherInfo?.id) {
-    uni.navigateTo({
-      url: `/pages/teacher/detail?id=${courseDetail.value.teacherInfo.id}`
-    })
-  } else {
-    uni.showToast({
-      title: '讲师信息不存在',
-      icon: 'none'
-    })
   }
 }
 
@@ -103,11 +84,6 @@ function checkIOSPayment() {
 onMounted(async () => {
   // 检查会员状态
 
-  // 根据会员状态调整标签页
-  if (isMember) {
-    tabList.value[0].title = '详情'
-  }
-
   // 检查iOS支付限制
   checkIOSPayment()
 })
@@ -137,15 +113,12 @@ onLoad((options) => {
         <!-- 课程信息 -->
         <CourseInfo :detail="courseDetail"/>
 
-        <!-- 标签页 -->
-        <CourseTabs v-model:active-tab="activeTab" :tab-list="tabList"/>
-
         <!-- 标签页内容 -->
-        <CourseContent :active-tab="activeTab" :detail="courseDetail"/>
+        <CourseContent :detail="courseDetail"/>
       </view>
 
     </scroll-view>
     <!-- 底部操作栏 -->
-    <CourseActions :is-member="isMember" @action="handleAction"/>
+    <CourseActions :is-member="isMember"/>
   </view>
 </template>
