@@ -18,7 +18,7 @@ const updateActiveTab = (index: number) => {
 </script>
 
 <template>
-  <view class="tab-container">
+  <view class="tab-container pb-4">
     <sar-tabs
       v-model:current="activeTab"
       :list="tabList"
@@ -30,7 +30,6 @@ const updateActiveTab = (index: number) => {
 
 <style lang="scss" scoped>
 .tab-container {
-  background-color: var(--bg-primary);
   border-top: 1px solid var(--border-primary);
 }
 

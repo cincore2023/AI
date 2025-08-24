@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
-import { useMemberStore } from '@/store/member'
+import {computed, onMounted, ref} from 'vue'
+import {useMemberStore} from '@/store/member'
 
 import CourseInfo from './components/CourseInfo.vue'
 import CourseTabs from './components/CourseTabs.vue'
@@ -44,11 +44,10 @@ const isMember = computed(() => memberStore.isMember)
 const activeTab = ref(0)
 
 
-
 const tabList = ref([
-  { title: '预览' },
-  { title: '讲师' },
-  { title: '资料' },
+  {title: '预览'},
+  {title: '讲师'},
+  {title: '资料'},
 ])
 
 // 模拟课程详情数据
@@ -64,12 +63,12 @@ const courseDetail = ref<CourseDetail>({
   price: 1299,
   studentCount: 3223,
   chapters: [
-    { title: '课程介绍与环境搭建', duration: '15分钟' },
-    { title: '前端开发基础', duration: '45分钟' },
-    { title: 'Vue.js 框架实战', duration: '60分钟' },
-    { title: '后端API设计', duration: '90分钟' },
-    { title: '数据库设计与优化', duration: '75分钟' },
-    { title: '项目部署与运维', duration: '45分钟' },
+    {title: '课程介绍与环境搭建', duration: '15分钟'},
+    {title: '前端开发基础', duration: '45分钟'},
+    {title: 'Vue.js 框架实战', duration: '60分钟'},
+    {title: '后端API设计', duration: '90分钟'},
+    {title: '数据库设计与优化', duration: '75分钟'},
+    {title: '项目部署与运维', duration: '45分钟'},
   ],
   instructor: {
     name: '张教授',
@@ -78,9 +77,9 @@ const courseDetail = ref<CourseDetail>({
     bio: '拥有10年软件开发经验，曾在多家知名互联网公司担任技术负责人。专注于前端架构设计和后端系统优化，参与过多个大型项目的技术架构设计。',
   },
   materials: [
-    { name: '课程大纲.pdf', size: '2.3MB', url: '#' },
-    { name: '代码示例.zip', size: '15.7MB', url: '#' },
-    { name: '学习资料.docx', size: '8.1MB', url: '#' },
+    {name: '课程大纲.pdf', size: '2.3MB', url: '#'},
+    {name: '代码示例.zip', size: '15.7MB', url: '#'},
+    {name: '学习资料.docx', size: '8.1MB', url: '#'},
   ],
 })
 
@@ -169,42 +168,45 @@ onMounted(async () => {
 <template>
   <view class="h-[100vh] flex flex-col overflow-hidden">
     <!-- 头部 -->
-    <HeaderSimple title="课程详情" :show-back="true" />
+    <HeaderSimple title="课程详情" :show-back="true" class="px-[30rpx]"/>
 
     <scroll-view class="no-scrollbar flex flex-1 flex-col"
-      :scroll-y="true"
-      :show-scrollbar="false"
-      enhanced="true">
-      <!-- 课程图片轮播 -->
-      <HomeSwiper />
+                 :scroll-y="true"
+                 :show-scrollbar="false"
+                 enhanced="true">
+      <view class="px-[30rpx]">
 
-      <!-- 课程信息 -->
-      <CourseInfo
-        :title="courseDetail.title"
-        :price="courseDetail.price"
-        :student-count="courseDetail.studentCount"
-        :is-member="isMember"
-      />
+        <!-- 课程图片轮播 -->
+        <HomeSwiper/>
 
-      <!-- 标签页 -->
-      <CourseTabs
-        v-model:active-tab="activeTab"
-        :tab-list="tabList"
-        :is-member="isMember"
-      />
+        <!-- 课程信息 -->
+        <CourseInfo
+            :title="courseDetail.title"
+            :price="courseDetail.price"
+            :student-count="courseDetail.studentCount"
+            :is-member="isMember"
+        />
 
-      <!-- 标签页内容 -->
-      <CourseContent
-        :active-tab="activeTab"
-        :is-member="isMember"
-        :description="courseDetail.description"
-        :chapters="courseDetail.chapters"
-        :instructor="courseDetail.instructor"
-        :materials="courseDetail.materials"
-        @download="downloadMaterial"
-      />
+        <!-- 标签页 -->
+        <CourseTabs
+            v-model:active-tab="activeTab"
+            :tab-list="tabList"
+            :is-member="isMember"
+        />
+
+        <!-- 标签页内容 -->
+        <CourseContent
+            :active-tab="activeTab"
+            :is-member="isMember"
+            :description="courseDetail.description"
+            :chapters="courseDetail.chapters"
+            :instructor="courseDetail.instructor"
+            :materials="courseDetail.materials"
+            @download="downloadMaterial"
+        />
+      </view>
+
     </scroll-view>
-
     <!-- 底部操作栏 -->
     <CourseActions :is-member="isMember" @action="handleAction"/>
   </view>
@@ -212,9 +214,10 @@ onMounted(async () => {
 
 <route lang="jsonc" type="page">
 {
-  "style": {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "课程详情"
-  }
+"layout": "defaultV2",
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "课程详情"
+}
 }
 </route>

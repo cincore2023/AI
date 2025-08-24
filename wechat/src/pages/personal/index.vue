@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import BindRequiredModal from '@/components/Personal/Modals/BindRequiredModal.vue'
-
 import BindSalesModal from '@/components/Personal/Modals/BindSalesModal.vue'
 import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
+import PromotionPosterModal from '@/components/Personal/Modals/PromotionPosterModal.vue'
 import PartnerSection from '@/components/Personal/PartnerSection.vue'
 import ServiceSection from '@/components/Personal/ServiceSection.vue'
 import UserInfoSection from '@/components/Personal/UserInfoSection.vue'
@@ -35,6 +35,9 @@ const bindSalesPhone = ref('')
 const showMembershipModal = ref(false)
 const showBindSalesRequiredModal = ref(false)
 const hasBoundSales = ref(false) // 模拟是否已绑定销售专员
+
+// 推广码海报相关
+const showPromotionPosterModal = ref(false)
 
 // 我的服务列表
 const serviceList = ref<ServiceItem[]>([
@@ -165,9 +168,36 @@ function handleIncomeDetails() {
 
 // 生成推广码
 function handleGenerateCode() {
-  uni.showToast({
-    title: '推广码已生成',
-    icon: 'success',
+  showPromotionPosterModal.value = true
+}
+
+// 下载推广海报
+function handleDownloadPoster(poster: any) {
+  // 这里可以实现保存图片到相册的逻辑
+  uni.showModal({
+    title: '保存海报',
+    content: `确定要保存"${poster.name}"海报到相册吗？`,
+    success: (res) => {
+      if (res.confirm) {
+        // 调用保存图片到相册的API
+        uni.saveImageToPhotosAlbum({
+          filePath: poster.preview,
+          success: () => {
+            uni.showToast({
+              title: '保存成功',
+              icon: 'success',
+            })
+            showPromotionPosterModal.value = false
+          },
+          fail: () => {
+            uni.showToast({
+              title: '保存失败',
+              icon: 'none',
+            })
+          },
+        })
+      }
+    },
   })
 }
 
@@ -233,6 +263,12 @@ onMounted(async () => {
   <BindRequiredModal
     v-model:show="showBindSalesRequiredModal"
     @confirm="handleBindSalesFromRequired"
+  />
+
+  <!-- 推广码海报弹窗 -->
+  <PromotionPosterModal
+    v-model:visible="showPromotionPosterModal"
+    @download="handleDownloadPoster"
   />
 </template>
 

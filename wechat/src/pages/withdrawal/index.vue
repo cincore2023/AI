@@ -9,13 +9,7 @@
 </route>
 
 <script lang="ts" setup>
-import {ref, computed, onMounted} from 'vue'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
-
-defineOptions({
-  name: 'WithdrawalPage',
-})
-
 // 响应式数据
 const withdrawalAmount = ref('')
 const selectedMethod = ref('alipay')
@@ -228,7 +222,7 @@ onMounted(() => {
       </view>
 
       <!-- 温馨提示 -->
-      <view class="section mb-10">
+      <view class="section mb-0!">
         <view class="section-header">
           <text class="section-title">温馨提示:</text>
         </view>
@@ -259,28 +253,29 @@ onMounted(() => {
 .section {
   padding: 20rpx;
   background: var(--bg-primary);
-  border-radius: 24rpx;
+  border-radius: 20rpx;
   box-shadow: var(--shadow-sm);
+  margin-bottom: 16rpx;
 
   .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30rpx;
+    margin-bottom: 20rpx;
 
     .section-title {
-      font-size: 32rpx;
+      font-size: 30rpx;
       font-weight: bold;
       color: var(--text-primary);
     }
 
     .balance-info {
-      font-size: 24rpx;
+      font-size: 22rpx;
       color: var(--text-tertiary);
     }
 
     .bind-link {
-      font-size: 28rpx;
+      font-size: 26rpx;
       color: var(--primary-color);
     }
   }
@@ -289,18 +284,18 @@ onMounted(() => {
 .amount-input {
   display: flex;
   align-items: center;
-  margin-bottom: 20rpx;
+  margin-bottom: 16rpx;
 
   .currency-symbol {
-    font-size: 60rpx;
+    font-size: 56rpx;
     font-weight: bold;
     color: var(--text-primary);
-    margin-right: 20rpx;
+    margin-right: 16rpx;
   }
 
   .amount-field {
     flex: 1;
-    font-size: 48rpx;
+    font-size: 44rpx;
     font-weight: bold;
     color: var(--text-primary);
     border: none;
@@ -309,12 +304,12 @@ onMounted(() => {
 }
 
 .rules {
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
 
   .rule-text {
-    font-size: 24rpx;
+    font-size: 22rpx;
     color: var(--text-tertiary);
-    line-height: 1.5;
+    line-height: 1.4;
   }
 }
 
@@ -323,15 +318,15 @@ onMounted(() => {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20rpx;
+    margin-bottom: 12rpx;
 
     .limit-label {
-      font-size: 26rpx;
+      font-size: 24rpx;
       color: var(--text-secondary);
     }
 
     .limit-value {
-      font-size: 26rpx;
+      font-size: 24rpx;
       color: var(--text-primary);
       font-weight: 500;
     }
@@ -342,7 +337,7 @@ onMounted(() => {
   .method-item {
     display: flex;
     align-items: center;
-    padding: 30rpx 0;
+    padding: 20rpx 0;
     border-bottom: 2rpx solid var(--border-secondary);
 
     &:last-child {
@@ -350,25 +345,25 @@ onMounted(() => {
     }
 
     .method-radio {
-      width: 40rpx;
-      height: 40rpx;
+      width: 36rpx;
+      height: 36rpx;
       border: 4rpx solid var(--border-primary);
       border-radius: 50%;
-      margin-right: 30rpx;
+      margin-right: 24rpx;
       display: flex;
       align-items: center;
       justify-content: center;
 
       .radio-inner {
-        width: 20rpx;
-        height: 20rpx;
+        width: 18rpx;
+        height: 18rpx;
         background: var(--primary-color);
         border-radius: 50%;
       }
     }
 
     .method-name {
-      font-size: 30rpx;
+      font-size: 28rpx;
       color: var(--text-primary);
     }
 
@@ -385,11 +380,11 @@ onMounted(() => {
   align-items: center;
 
   .account-avatar {
-    margin-right: 30rpx;
+    margin-right: 24rpx;
 
     .avatar-img {
-      width: 80rpx;
-      height: 80rpx;
+      width: 70rpx;
+      height: 70rpx;
       border-radius: 50%;
     }
   }
@@ -397,16 +392,16 @@ onMounted(() => {
   .account-details {
     display: flex;
     flex-direction: column;
-    gap: 10rpx;
+    gap: 8rpx;
 
     .account-name {
-      font-size: 30rpx;
+      font-size: 28rpx;
       color: var(--text-primary);
       font-weight: 500;
     }
 
     .account-phone {
-      font-size: 26rpx;
+      font-size: 24rpx;
       color: var(--text-tertiary);
     }
   }
@@ -415,30 +410,30 @@ onMounted(() => {
 .verification-section {
   display: flex;
   align-items: center;
-  gap: 30rpx;
+  gap: 24rpx;
 
   .verification-input {
     flex: 1;
-    height: 80rpx;
-    padding: 0 30rpx;
+    height: 70rpx;
+    padding: 0 24rpx;
     border: 2rpx solid var(--border-primary);
-    border-radius: 16rpx;
-    font-size: 28rpx;
+    border-radius: 14rpx;
+    font-size: 26rpx;
     color: var(--text-primary);
     background: var(--bg-primary);
   }
 
   .verification-btn {
-    width: 200rpx;
-    height: 80rpx;
+    width: 180rpx;
+    height: 70rpx;
     background: var(--primary-color);
-    border-radius: 16rpx;
+    border-radius: 14rpx;
     display: flex;
     align-items: center;
     justify-content: center;
 
     .btn-text {
-      font-size: 26rpx;
+      font-size: 24rpx;
       color: var(--text-inverse);
     }
 
@@ -450,9 +445,9 @@ onMounted(() => {
 
 .tips-content {
   .tips-text {
-    font-size: 26rpx;
+    font-size: 24rpx;
     color: var(--text-tertiary);
-    line-height: 1.6;
+    line-height: 1.5;
   }
 }
 
@@ -461,19 +456,22 @@ onMounted(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  padding: 40rpx;
+  padding: 32rpx;
   background: var(--bg-primary);
   box-shadow: var(--shadow-lg);
 
   .submit-btn {
     width: 100%;
-    height: 100rpx;
+    height: 90rpx;
     background: var(--bg-inverse);
     color: var(--text-inverse);
     border: none;
-    border-radius: 16rpx;
-    font-size: 32rpx;
+    border-radius: 14rpx;
+    font-size: 30rpx;
     font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     &.disabled {
       background: var(--bg-tertiary);
@@ -485,4 +483,4 @@ onMounted(() => {
     }
   }
 }
-</style> 
+</style>

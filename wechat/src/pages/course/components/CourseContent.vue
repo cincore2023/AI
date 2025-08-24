@@ -136,12 +136,7 @@ defineEmits<Emits>()
 
 <style lang="scss" scoped>
 .tab-content {
-  background-color: var(--bg-primary);
   min-height: 400rpx;
-}
-
-.content-section {
-  padding: var(--spacing-md);
 }
 
 .preview-limit {

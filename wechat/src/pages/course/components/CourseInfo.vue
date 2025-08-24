@@ -10,7 +10,7 @@ defineProps<Props>()
 </script>
 
 <template>
-  <view class="py-4">
+  <view class="py-4 pb-0">
     <!-- 价格信息 -->
     <view class="price-section flex items-center justify-between">
       <view class="price-info">

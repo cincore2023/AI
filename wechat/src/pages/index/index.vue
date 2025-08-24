@@ -20,10 +20,6 @@ import RecommendedSection from '@/components/Home/RecommendedSection.vue'
 
 import { useThemeStore } from '@/store'
 
-defineOptions({
-  name: 'Home',
-})
-
 // 使用主题store
 const themeStore = useThemeStore()
 </script>

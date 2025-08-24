@@ -21,7 +21,7 @@ const emit = defineEmits<{
 }>()
 
 function handleWithdraw() {
-  uni.navigateTo({url: '/pages/withdrawal/index'})
+  uni.navigateTo({ url: '/pages/withdrawal/index' })
 }
 
 function handleIncomeDetails() {
@@ -44,8 +44,8 @@ function handleGenerateCode() {
 </script>
 
 <template>
-  <view class="mt-6 rounded-t-2xl bg-gray-800 p-6 text-white">
-    <view class="mb-6">
+  <view class="mt-4 rounded-t-2xl bg-gray-800 p-4 text-white">
+    <view class="mb-4">
       <text class="flex items-center text-xl font-bold">
         <text class="mr-3">👑</text>
         合伙人中心
@@ -53,33 +53,29 @@ function handleGenerateCode() {
     </view>
 
     <!-- 收入概览 -->
-    <view class="mb-6">
-      <view class="grid grid-cols-2 gap-5">
-        <view class="rounded-lg bg-white/20 p-5">
-          <view class="mb-3 flex items-center">
+    <view class="mb-4">
+      <view class="grid grid-cols-2 gap-4">
+        <view class="flex flex-col items-center gap-2 rounded-lg bg-white/20 p-4" @click="handleWithdraw">
+          <view>
             <text class="mr-2 text-lg">💰</text>
             <text class="text-sm opacity-90">可提现收入</text>
           </view>
-          <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.withdrawableIncome }}</text>
+          <text class="text-xl font-bold">¥{{ partnerInfo.withdrawableIncome }}</text>
           <view
-              class="w-full rounded bg-red-500 py-3 text-center text-sm text-white"
-              @click="handleWithdraw"
+            class="w-full rounded bg-red-500 py-3 text-center text-sm text-white"
           >
             <text class="mr-2">💳</text>
             <text>提现</text>
           </view>
         </view>
 
-        <view class="rounded-lg bg-white/20 p-5">
-          <view class="mb-3 flex items-center">
+        <view class="flex flex-col items-center gap-2 rounded-lg bg-white/20 p-4" @click="handleIncomeDetails">
+          <view>
             <text class="mr-2 text-lg">📈</text>
             <text class="text-sm opacity-90">累计收入</text>
           </view>
-          <text class="mb-4 text-xl font-bold">¥{{ partnerInfo.totalIncome }}</text>
-          <view
-              class="w-full rounded bg-blue-400 py-3 text-center text-sm text-white"
-              @click="handleIncomeDetails"
-          >
+          <text class="text-xl font-bold">¥{{ partnerInfo.totalIncome }}</text>
+          <view class="w-full rounded bg-blue-400 py-3 text-center text-sm text-white">
             <text class="mr-2">📊</text>
             <text>收支明细</text>
           </view>
@@ -88,30 +84,28 @@ function handleGenerateCode() {
     </view>
 
     <!-- 详细统计 -->
-    <view class="rounded-xl bg-white p-6 text-gray-800">
-      <view class="grid grid-cols-2 mb-5 gap-5">
+    <view class="rounded-xl bg-white p-4 text-gray-800">
+      <view class="grid grid-cols-2 mb-4 gap-4">
         <view class="rounded-lg bg-gray-100 p-5 text-center" @click="handleMyTeam">
           <text class="mb-3 block text-2xl">👥</text>
           <text class="mb-2 block text-xs text-gray-600">我的团队</text>
           <text class="text-lg font-bold">{{ partnerInfo.teamCount }}人</text>
         </view>
         <view
-            class="rounded-lg bg-gray-100 p-5 text-center"
-            @click="uni.navigateTo({ url: '/pages/finance/balance' })">
+          class="rounded-lg bg-gray-100 p-5 text-center"
+          @click="uni.navigateTo({ url: '/pages/finance/balance' })"
+        >
           <text class="mb-3 block text-2xl">⏳</text>
           <text class="mb-2 block text-xs text-gray-600">提现中</text>
           <text class="text-lg font-bold">¥{{ partnerInfo.withdrawing }}</text>
         </view>
       </view>
 
-      <view class="grid grid-cols-2 mb-5 gap-5">
-        <view class="rounded-lg bg-gray-100 p-5 text-center">
+      <view class="grid grid-cols-2 mb-4 gap-4">
+        <view class="rounded-lg bg-gray-100 p-5 text-center" @click="handleGenerateCode">
           <text class="mb-3 block text-2xl">🎫</text>
           <text class="mb-2 block text-xs text-gray-600">推广码</text>
-          <view
-              class="mx-auto whitespace-nowrap rounded bg-green-500 px-4 py-2 text-center text-sm text-white"
-              @click="handleGenerateCode"
-          >
+          <view class="mx-auto whitespace-nowrap rounded bg-green-500 px-4 py-2 text-center text-sm text-white">
             <text>生成推广码</text>
           </view>
         </view>
@@ -122,8 +116,11 @@ function handleGenerateCode() {
         </view>
       </view>
 
-      <view class="grid grid-cols-2 gap-5">
-        <view class="rounded-lg bg-gray-100 p-5 text-center">
+      <view class="grid grid-cols-2 gap-4">
+        <view
+          class="rounded-lg bg-gray-100 p-5 text-center"
+          @click="uni.navigateTo({ url: '/pages/finance/exchange-code' })"
+        >
           <text class="mb-3 block text-2xl">👑</text>
           <text class="mb-2 block text-xs text-gray-600">会员兑换码</text>
           <text class="text-lg font-bold">{{ partnerInfo.memberCode }}</text>

@@ -15,10 +15,9 @@ defineEmits<Emits>()
 const systemInfo = uni.getWindowInfo()
 
 const BottomStyle = computed(() => ({
-  paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom + 5 }px` || '0px',
+  paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom + 5}px` || '0px',
   paddingTop: '20rpx',
 }))
-
 </script>
 
 <template>
@@ -63,12 +62,12 @@ const BottomStyle = computed(() => ({
 
 <style lang="scss" scoped>
 .bottom-actions {
-  background-color: var(--bg-primary);
-  border-top: 1px solid var(--border-primary);
-  padding-top: 20rpx;
+  background: var(--bg-primary);
   display: flex;
   align-items: center;
   gap: 26px;
+  padding: 32rpx;
+  box-shadow: var(--shadow-lg);
 }
 
 .action-buttons {
