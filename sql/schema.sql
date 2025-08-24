@@ -223,7 +223,9 @@ CREATE TABLE public.core_courses (
     apprentice_count bigint,
     created_by bigint,
     updated_by bigint,
-    deleted_by bigint
+    deleted_by bigint,
+    hot boolean DEFAULT false,
+    exquisite boolean DEFAULT false
 );
 
 
