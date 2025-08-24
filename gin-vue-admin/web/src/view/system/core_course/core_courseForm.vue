@@ -34,6 +34,13 @@
         <el-form-item label="上架状态:" prop="onSale">
     <el-switch v-model="formData.onSale" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
 </el-form-item>
+        <el-form-item label="是否推荐:" prop="hot">
+    <el-switch v-model="formData.hot" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
+</el-form-item>
+        <el-form-item label="精品推荐:" prop="exquisite">
+    <el-switch v-model="formData.exquisite" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
+</el-form-item>
+
         <el-form-item label="排序:" prop="sort">
     <el-input v-model.number="formData.sort" :clearable="false" placeholder="请输入排序" />
 </el-form-item>
@@ -94,6 +101,8 @@ const formData = ref({
             sort: 0,
             viewDetails: '',
             courseDetails: '',
+             hot: false,
+            exquisite: false,
         })
 // 验证规则
 const rule = reactive({

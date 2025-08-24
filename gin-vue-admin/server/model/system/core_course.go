@@ -20,6 +20,8 @@ type Course struct {
 	ViewDetails     *string  `json:"viewDetails" form:"viewDetails" gorm:"comment:试看详情;column:view_details;type:text;"`                             //试看详情
 	CourseDetails   *string  `json:"courseDetails" form:"courseDetails" gorm:"comment:课程介绍等内容;column:course_details;type:text;" binding:"required"` //课程详情
 	ApprenticeCount *int     `json:"apprenticeCount" form:"apprenticeCount" gorm:"comment:虚拟人数;column:apprentice_count;"`                           //展示学习人数
+	Hot             *bool    `json:"hot" form:"hot" gorm:"default:false;column:hot;"`                                                               //是否推荐
+	Exquisite       *bool    `json:"exquisite" form:"exquisite" gorm:"default:false;column:exquisite;"`                                             //精品推荐
 	CreatedBy       uint     `gorm:"column:created_by;comment:创建者"`
 	UpdatedBy       uint     `gorm:"column:updated_by;comment:更新者"`
 	DeletedBy       uint     `gorm:"column:deleted_by;comment:删除者"`

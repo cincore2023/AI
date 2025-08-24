@@ -50,6 +50,22 @@
           </div>
         </el-form-item>
 
+        <el-form-item label="是否推荐" prop="hot">
+  <el-select v-model="searchInfo.hot" clearable placeholder="请选择">
+    <el-option key="true" label="是" value="true"></el-option>
+    <el-option key="false" label="否" value="false"></el-option>
+  </el-select>
+</el-form-item>
+
+
+<el-form-item label="精品推荐" prop="exquisite">
+  <el-select v-model="searchInfo.exquisite" clearable placeholder="请选择">
+    <el-option key="true" label="是" value="true"></el-option>
+    <el-option key="false" label="否" value="false"></el-option>
+  </el-select>
+</el-form-item>
+
+
         <template v-if="showAllQuery">
           <!-- 将需要控制显示状态的查询条件添加到此范围内 -->
         </template>
@@ -109,6 +125,13 @@
         <el-table-column align="left" label="上架状态" prop="onSale" width="120">
           <template #default="scope">{{ formatBoolean(scope.row.onSale) }}</template>
         </el-table-column>
+
+               <el-table-column align="left" label="是否推荐" prop="hot" width="120">
+    <template #default="scope">{{ formatBoolean(scope.row.hot) }}</template>
+</el-table-column>
+       <el-table-column align="left" label="精品推荐" prop="exquisite" width="120">
+    <template #default="scope">{{ formatBoolean(scope.row.exquisite) }}</template>
+</el-table-column>
 
         <el-table-column align="left" label="展示学习人数" prop="apprenticeCount" width="120"/>
         <el-table-column sortable align="left" label="创建日期" prop="CreatedAt" width="180">
@@ -181,6 +204,12 @@
             <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"/>
           </el-select>
         </el-form-item>
+          <el-form-item label="是否推荐:" prop="hot">
+    <el-switch v-model="formData.hot" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
+</el-form-item>
+     <el-form-item label="精品推荐:" prop="exquisite">
+    <el-switch v-model="formData.exquisite" active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" clearable ></el-switch>
+</el-form-item>
         <el-form-item label="价格:" prop="price">
           <el-input-number v-model="formData.price" style="width:100%" :precision="2" :clearable="false"/>
         </el-form-item>
@@ -239,6 +268,12 @@
         <el-descriptions-item label="上架状态">
           {{ detailFrom.onSale }}
         </el-descriptions-item>
+            <el-descriptions-item label="是否推荐">
+    {{ detailFrom.hot }}
+</el-descriptions-item>
+    <el-descriptions-item label="精品推荐">
+    {{ detailFrom.exquisite }}
+</el-descriptions-item>
         <el-descriptions-item label="排序">
           {{ detailFrom.sort }}
         </el-descriptions-item>
@@ -308,7 +343,9 @@ const formData = ref({
   sort: 0,
   viewDetails: '',
   courseDetails: '',
-  apprenticeCount: 100
+  apprenticeCount: 100,
+  hot: false,
+            exquisite: false,
 })
 const dataSource = ref([])
 const getDataSourceFunc = async () => {

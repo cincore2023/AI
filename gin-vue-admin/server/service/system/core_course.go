@@ -83,6 +83,12 @@ func (courseService *CourseService) GetCourseInfoList(ctx context.Context, info 
 	if info.Type != nil && *info.Type != "" {
 		db = db.Where("type = ?", *info.Type)
 	}
+	if info.Hot != nil {
+		db = db.Where("hot = ?", *info.Hot)
+	}
+	if info.Exquisite != nil {
+		db = db.Where("exquisite = ?", *info.Exquisite)
+	}
 	if info.StartPrice != nil && info.EndPrice != nil {
 		db = db.Where("price BETWEEN ? AND ? ", *info.StartPrice, *info.EndPrice)
 	}
