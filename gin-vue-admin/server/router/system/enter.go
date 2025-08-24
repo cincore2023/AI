@@ -26,6 +26,7 @@ type RouterGroup struct {
 	BenefitRouter
 	CourseRouter
 	WechatUserRouter
+	WechatRouter
 	CodeRouter
 	ActivitiesRouter
 }
@@ -57,6 +58,7 @@ var (
 	benefitApi          = api.ApiGroupApp.SystemApiGroup.BenefitApi
 	courseApi           = api.ApiGroupApp.SystemApiGroup.CourseApi
 	wxUserApi           = api.ApiGroupApp.SystemApiGroup.WechatUserApi
+	wechatApi           = api.ApiGroupApp.SystemApiGroup.WechatApi
 	codeApi             = api.ApiGroupApp.SystemApiGroup.CodeApi
 	activitiesApi       = api.ApiGroupApp.SystemApiGroup.ActivitiesApi
 )

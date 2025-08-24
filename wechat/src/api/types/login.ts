@@ -55,3 +55,24 @@ export interface IUpdatePassword {
   newPassword: string
   confirmPassword: string
 }
+
+/**
+ * 微信用户信息
+ */
+export interface IWechatUser {
+  id: number
+  openId?: string
+  nickname?: string
+  phone_number?: string
+  salesperson?: number
+  relationshipChannel?: number
+  benefitLevel?: number
+  withdrawableIncome?: number
+  cumulativeIncome?: number
+  membershipExpiryDate?: string
+  membershipRedemptionCode?: string
+  activityRedemptionCode?: string
+  isActive?: boolean
+  createdAt?: string
+  updatedAt?: string
+}

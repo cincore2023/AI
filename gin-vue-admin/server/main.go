@@ -19,6 +19,8 @@ import (
 // @Tag.Name        Base
 // @Tag.Name        SysUser
 // @Tag.Description 用户
+// @Tag.Name        WechatApi
+// @Tag.Description 微信小程序API
 
 // @title                       Gin-Vue-Admin Swagger API接口文档
 // @version                     v2.8.2

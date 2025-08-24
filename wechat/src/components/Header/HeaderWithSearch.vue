@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import SearchBar from '@/components/SearchBar/SearchBar.vue'
-import { computed, onMounted, ref } from 'vue'
+import { useUserStore } from '@/store/user'
 
 // 响应式数据
 const searchText = ref('')
-const activeToggle = ref('target')
 const safeAreaInsets = ref<any>(null)
+const { wechatUser } = useUserStore()
 
 // 获取屏幕边界到安全区域距离
 const systemInfo = uni.getWindowInfo()
@@ -28,8 +28,6 @@ const greeting = computed(() => {
     return '下午好'
   return '晚上好'
 })
-
-const userId = ref('0001')
 
 const headerStyle = computed(() => ({
   paddingTop: `${safeAreaInsets.value?.top}px` || '0px',
@@ -73,28 +71,18 @@ function handleSearch(value: string) {
     icon: 'none',
   })
 }
-
-onMounted(() => {
-  // 获取系统信息
-  uni.getSystemInfo({
-    success: (res) => {
-      console.log('系统信息:', res)
-    },
-  })
-})
 </script>
 
 <template>
-  <view class="header" :style="headerStyle" >
-
+  <view class="header" :style="headerStyle">
     <!-- 头部内容 -->
     <view class="header-content">
       <view class="left-section" @click="handleCompleteInfo">
         <view class="greeting">
           <text class="greeting-text">{{ greeting }}</text>
-          <text class="user-name">用户{{ userId }}</text>
+          <text class="user-name">{{ wechatUser?.nickname }}</text>
         </view>
-        <text class="complete-hint">点击完善您的信息</text>
+        <text v-if="!wechatUser?.phone_number" class="complete-hint">点击完善您的信息</text>
       </view>
     </view>
 

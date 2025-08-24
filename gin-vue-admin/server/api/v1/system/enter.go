@@ -29,6 +29,7 @@ type ApiGroup struct {
 	BenefitApi
 	CourseApi
 	WechatUserApi
+	WechatApi
 	CodeApi
 	ActivitiesApi
 }

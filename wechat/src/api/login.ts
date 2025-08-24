@@ -1,4 +1,4 @@
-import type { ICaptcha, IUpdateInfo, IUpdatePassword, IUserInfoVo, IUserLogin } from './types/login'
+import type { ICaptcha, IUpdateInfo, IUpdatePassword, IUserInfoVo, IUserLogin, IWechatUser } from './types/login'
 import { http } from '@/http/http'
 
 /**
@@ -70,14 +70,15 @@ export function getWxCode() {
 }
 
 /**
- * 微信登录参数
- */
-
-/**
  * 微信登录
- * @param params 微信登录参数，包含code
  * @returns Promise 包含登录结果
+ * @param data
  */
 export function wxLogin(data: { code: string }) {
-  return http.post<IUserLogin>('/user/wxLogin', data)
+  return http.post<{
+    isNewUser: boolean
+    user: IWechatUser
+    token: string
+    expiresAt: number
+  }>('/api/wxLogin', data)
 }

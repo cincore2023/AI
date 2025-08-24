@@ -1,65 +1,66 @@
-import type { IUserInfoVo } from '@/api/types/login'
+import type { IWechatUser } from '@/api/types/login'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import {
-  getUserInfo as _getUserInfo,
-  login as _login,
-  logout as _logout,
-  wxLogin as _wxLogin,
-  getWxCode,
-} from '@/api/login'
+import { wxLogin as _wxLogin, getWxCode } from '@/api/login'
 import { toast } from '@/utils/toast'
 
-// 初始化状态
-const userInfoState: IUserInfoVo = {
+// 初始化状态 - 改为微信用户结构
+const wechatUserState: IWechatUser = {
   id: 0,
-  username: '',
-  avatar: '/static/images/default-avatar.png',
-  token: '',
+  nickname: '',
+  openId: '',
+  isActive: true,
+}
+
+// 用户信息类型定义
+interface IUserState {
+  wechatUser: IWechatUser
+  token: string
+  isLoggedIn: boolean
 }
 
 export const useUserStore = defineStore(
   'user',
   () => {
     // 定义用户信息
-    const userInfo = ref<IUserInfoVo>({ ...userInfoState })
-    // 设置用户信息
-    const setUserInfo = (val: IUserInfoVo) => {
-      console.log('设置用户信息', val)
-      // 若头像为空 则使用默认头像
-      if (!val.avatar) {
-        val.avatar = userInfoState.avatar
-      }
-      else {
-        val.avatar = 'https://oss.laf.run/ukw0y1-site/avatar.jpg?feige'
-      }
-      userInfo.value = val
+    const wechatUser = ref<IWechatUser>({ ...wechatUserState })
+    const token = ref<string>('')
+    const isLoggedIn = ref<boolean>(false)
+
+    // 设置微信用户信息
+    const setWechatUser = (user: IWechatUser) => {
+      console.log('设置微信用户信息', user)
+      wechatUser.value = user
     }
-    const setUserAvatar = (avatar: string) => {
-      userInfo.value.avatar = avatar
-      console.log('设置用户头像', avatar)
-      console.log('userInfo', userInfo.value)
+
+    // 设置token
+    const setToken = (newToken: string) => {
+      token.value = newToken
+      isLoggedIn.value = !!newToken
     }
+
     // 删除用户信息
     const removeUserInfo = () => {
-      userInfo.value = { ...userInfoState }
-      uni.removeStorageSync('userInfo')
+      wechatUser.value = { ...wechatUserState }
+      token.value = ''
+      isLoggedIn.value = false
+      uni.removeStorageSync('wechatUser')
       uni.removeStorageSync('token')
     }
+
     /**
-     * 获取用户信息
+     * 获取用户信息（保留给后续扩展）
      */
     const getUserInfo = async () => {
-      const res = await _getUserInfo()
-      const userInfo = res.data
-      setUserInfo(userInfo)
-      uni.setStorageSync('userInfo', userInfo)
-      uni.setStorageSync('token', userInfo.token)
-      // TODO 这里可以增加获取用户路由的方法 根据用户的角色动态生成路由
-      return res
+      // 这里可以根据需要获取微信用户的详细信息
+      // 暂时直接返回当前用户信息
+      return {
+        data: wechatUser.value,
+      }
     }
+
     /**
-     * 用户登录
+     * 用户登录（传统登录，保留接口）
      * @param credentials 登录参数
      * @returns R<IUserLogin>
      */
@@ -69,40 +70,74 @@ export const useUserStore = defineStore(
       code: string
       uuid: string
     }) => {
-      const res = await _login(credentials)
-      console.log('登录信息', res)
-      toast.success('登录成功')
-      await getUserInfo()
-      return res
+      throw new Error('微信小程序不支持传统用户名密码登录，请使用微信登录')
     }
 
     /**
      * 退出登录 并 删除用户信息
      */
     const logout = async () => {
-      _logout()
+      // 微信用户没有后端注销接口，直接清理本地数据
       removeUserInfo()
+      toast.success('退出登录成功')
     }
+
     /**
      * 微信登录
      */
     const wxLogin = async () => {
-      // 获取微信小程序登录的code
-      const data = await getWxCode()
-      console.log('微信登录code', data)
+      try {
+        // 获取微信小程序登录的code
+        const codeData = await getWxCode()
+        console.log('微信登录code', codeData)
 
-      const res = await _wxLogin(data)
-      await getUserInfo()
-      return res
+        if (!codeData.code) {
+          throw new Error('获取微信登录code失败')
+        }
+
+        const res = await _wxLogin({ code: codeData.code })
+        console.log('微信登录响应', res)
+
+        // 检查响应数据结构
+        if (!res || !res.data) {
+          throw new Error('服务器响应数据为空')
+        }
+
+        if (!res.data.user) {
+          throw new Error('服务器返回的用户信息为空')
+        }
+
+        if (!res.data.token) {
+          throw new Error('服务器返回的token为空')
+        }
+
+        // 设置微信用户信息
+        setWechatUser(res.data.user)
+        setToken(res.data.token)
+
+        // 存储到本地
+        uni.setStorageSync('wechatUser', res.data.user)
+        uni.setStorageSync('token', res.data.token)
+
+        return res
+      }
+      catch (error) {
+        console.error('微信登录错误:', error)
+        throw error
+      }
     }
 
     return {
-      userInfo,
+      wechatUser,
+      token,
+      isLoggedIn,
       login,
       wxLogin,
       getUserInfo,
-      setUserAvatar,
       logout,
+      setWechatUser,
+      setToken,
+      removeUserInfo,
     }
   },
   {

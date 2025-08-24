@@ -229,6 +229,8 @@ system:
     use-redis: false
     use-mongo: false
     use-strict-auth: false
+    wx-app-id: "wx744280595dad2e3b"          # 微信小程序AppID，请填入真实的AppID
+    wx-app-secret: "60628154730cee23ac03c7c5d83b3512"      # 微信小程序AppSecret，请填入真实的AppSecret
 tencent-cos:
     bucket: xxxxx-10005608
     region: ap-shanghai

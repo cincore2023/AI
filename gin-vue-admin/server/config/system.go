@@ -11,4 +11,6 @@ type System struct {
 	UseRedis      bool   `mapstructure:"use-redis" json:"use-redis" yaml:"use-redis"`                   // 使用redis
 	UseMongo      bool   `mapstructure:"use-mongo" json:"use-mongo" yaml:"use-mongo"`                   // 使用mongo
 	UseStrictAuth bool   `mapstructure:"use-strict-auth" json:"use-strict-auth" yaml:"use-strict-auth"` // 使用树形角色分配模式
+	WxAppID       string `mapstructure:"wx-app-id" json:"wx-app-id" yaml:"wx-app-id"`                   // 微信小程序AppID
+	WxAppSecret   string `mapstructure:"wx-app-secret" json:"wx-app-secret" yaml:"wx-app-secret"`       // 微信小程序AppSecret
 }
