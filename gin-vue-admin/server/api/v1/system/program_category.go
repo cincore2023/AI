@@ -168,12 +168,9 @@ func (categoryApi *CategoryApi) GetCategoryList(c *gin.Context) {
 // @Success 200 {object} response.Response{data=object,msg=string} "获取成功"
 // @Router /category/getCategoryPublic [get]
 func (categoryApi *CategoryApi) GetCategoryPublic(c *gin.Context) {
-	// 创建业务用Context
-	ctx := c.Request.Context()
-
 	// 此接口不需要鉴权
 	// 示例为返回了一个固定的消息接口，一般本接口用于C端服务，需要自己实现业务逻辑
-	categoryService.GetCategoryPublic(ctx)
+	// 注意：这里不调用微信分类服务方法，因为它们的参数不同
 	response.OkWithDetailed(gin.H{
 		"info": "不需要鉴权的分类接口信息",
 	}, "获取成功", c)

@@ -3,6 +3,7 @@ package wechat
 import (
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"strconv"
@@ -10,13 +11,29 @@ import (
 
 type WechatCourseApi struct{}
 
+type WxCategoryResponse struct {
+	Categories []WxCategoryItem `json:"categories"` // 分类列表
+}
+
+// WxCategoryItem 微信分类项目
+type WxCategoryItem struct {
+	ID           uint             `json:"id"`           // 分类 ID
+	CategoryName string           `json:"categoryName"` // 分类名称
+	Status       bool             `json:"status"`       // 状态
+	SortOrder    int              `json:"sortOrder"`    // 排序
+	Type         string           `json:"type"`         // 分类类型
+	Children     []WxCategoryItem `json:"children"`     // 子分类
+	ParentID     int              `json:"parentID"`     // 父分类ID
+}
+
 // WxCourseRequest 微信课程查询请求参数
 type WxCourseRequest struct {
-	Page      int   `json:"page" form:"page"`           // 页码，默认为1
-	PageSize  int   `json:"pageSize" form:"pageSize"`   // 每页数量，默认为20
-	Hot       *bool `json:"hot" form:"hot"`             // 是否推荐
-	Exquisite *bool `json:"exquisite" form:"exquisite"` // 是否精品
-	Category  *int  `json:"category" form:"category"`   // 分类ID
+	Page      int    `json:"page" form:"page"`           // 页码，默认为1
+	PageSize  int    `json:"pageSize" form:"pageSize"`   // 每页数量，默认为20
+	Hot       *bool  `json:"hot" form:"hot"`             // 是否推荐
+	Exquisite *bool  `json:"exquisite" form:"exquisite"` // 是否精品
+	Category  *int   `json:"category" form:"category"`   // 分类ID
+	Keyword   string `json:"keyword" form:"keyword"`     // 标题搜索关键词
 }
 
 // WxCourseResponse 微信课程响应
@@ -56,6 +73,7 @@ type WxCourseListItem struct {
 // @Param    hot        query     bool                                                   false  "是否推荐"
 // @Param    exquisite  query     bool                                                   false  "是否精品"
 // @Param    category   query     int                                                    false  "分类ID"
+// @Param    keyword    query     string                                                 false  "标题搜索关键词"
 // @Success  200        {object}  response.Response{data=WxCourseResponse,msg=string}   "获取成功"
 // @Failure  400        {object}  response.Response{msg=string}                          "请求参数错误"
 // @Failure  500        {object}  response.Response{msg=string}                          "服务器内部错误"
@@ -99,15 +117,19 @@ func (w *WechatCourseApi) WxGetCourses(c *gin.Context) {
 		}
 	}
 
+	// 解析搜索关键词参数
+	req.Keyword = c.Query("keyword")
+
 	global.GVA_LOG.Info("获取微信课程列表",
 		zap.Int("page", req.Page),
 		zap.Int("pageSize", req.PageSize),
 		zap.Any("hot", req.Hot),
 		zap.Any("exquisite", req.Exquisite),
-		zap.Any("category", req.Category))
+		zap.Any("category", req.Category),
+		zap.String("keyword", req.Keyword))
 
 	// 调用courseService获取课程数据
-	courses, total, err := courseService.GetCoursePublic(req.Page, req.PageSize, req.Hot, req.Exquisite, req.Category)
+	courses, total, err := courseService.GetCoursePublic(req.Page, req.PageSize, req.Hot, req.Exquisite, req.Category, req.Keyword)
 	if err != nil {
 		global.GVA_LOG.Error("获取课程列表失败!", zap.Error(err))
 		response.FailWithMessage("获取课程列表失败: "+err.Error(), c)
@@ -184,4 +206,78 @@ func (w *WechatCourseApi) WxGetCourses(c *gin.Context) {
 		zap.Int("count", len(wxCourses)),
 		zap.Int64("total", total))
 	response.OkWithDetailed(wxCourseResponse, "获取成功", c)
+}
+
+// WxGetCategories 获取微信小程序课程分类列表
+// @Tags     WechatApi
+// @Summary  获取微信小程序课程分类列表
+// @Description 获取小程序课程分类列表，不需要鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    type       query     string                                                   false  "分类类型（course/activity等）"
+// @Success  200        {object}  response.Response{data=WxCategoryResponse,msg=string} "获取成功"
+// @Failure  400        {object}  response.Response{msg=string}                        "请求参数错误"
+// @Failure  500        {object}  response.Response{msg=string}                        "服务器内部错误"
+// @Router   /api/wxCategories [get]
+func (w *WechatCourseApi) WxGetCategories(c *gin.Context) {
+
+	// 调用categoryService获取分类数据
+	categories, err := categoryService.GetCategoryPublic()
+	if err != nil {
+		global.GVA_LOG.Error("获取分类列表失败!", zap.Error(err))
+		response.FailWithMessage("获取分类列表失败: "+err.Error(), c)
+		return
+	}
+
+	// 转换为微信接口响应格式
+	wxCategories := convertToWxCategories(categories)
+
+	// 构建响应数据
+	wxCategoryResponse := WxCategoryResponse{
+		Categories: wxCategories,
+	}
+
+	global.GVA_LOG.Info("分类列表获取成功",
+		zap.Int("count", len(wxCategories)))
+	response.OkWithDetailed(wxCategoryResponse, "获取成功", c)
+}
+
+// convertToWxCategories 转换分类数据为微信格式
+func convertToWxCategories(categories []*system.Category) []WxCategoryItem {
+	wxCategories := make([]WxCategoryItem, 0, len(categories))
+
+	for _, category := range categories {
+		wxCategory := WxCategoryItem{
+			ID:           category.ID,
+			CategoryName: "",
+			Status:       false,
+			SortOrder:    0,
+			Type:         "",
+			Children:     make([]WxCategoryItem, 0),
+			ParentID:     category.ParentID,
+		}
+
+		// 安全地获取指针值
+		if category.CategoryName != nil {
+			wxCategory.CategoryName = *category.CategoryName
+		}
+		if category.Status != nil {
+			wxCategory.Status = *category.Status
+		}
+		if category.SortOrder != nil {
+			wxCategory.SortOrder = *category.SortOrder
+		}
+		if category.Type != nil {
+			wxCategory.Type = *category.Type
+		}
+
+		// 递归处理子分类
+		if len(category.Children) > 0 {
+			wxCategory.Children = convertToWxCategories(category.Children)
+		}
+
+		wxCategories = append(wxCategories, wxCategory)
+	}
+
+	return wxCategories
 }

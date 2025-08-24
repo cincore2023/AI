@@ -19,6 +19,7 @@ function initData() {
   appStore.getTeacherList()
   courseStore.getHotCourse()
   courseStore.getExquisiteCourse()
+  courseStore.getCategory()
 }
 
 onLaunch(() => {

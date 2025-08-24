@@ -81,7 +81,20 @@ func (categoryService *CategoryService) GetCategoryInfoList(ctx context.Context)
 
 	return utils.BuildTree(categorys), err
 }
-func (categoryService *CategoryService) GetCategoryPublic(ctx context.Context) {
-	// 此方法为获取数据源定义的数据
-	// 请自行实现
+
+// GetCategoryPublic 获取微信小程序分类列表
+func (categoryService *CategoryService) GetCategoryPublic() (list []*system.Category, err error) {
+	// 创建db查询，只查询启用状态的分类
+	db := global.GVA_DB.Model(&system.Category{}).Where("status = ?", true)
+
+	var categories []*system.Category
+
+	// 按照sort_order升序排序，空值靠后
+	err = db.Order("sort_order ASC NULLS LAST, id ASC").Find(&categories).Error
+	if err != nil {
+		return nil, err
+	}
+
+	// 构建树形结构
+	return utils.BuildTree(categories), err
 }

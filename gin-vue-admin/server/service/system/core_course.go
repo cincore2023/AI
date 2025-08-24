@@ -130,55 +130,45 @@ func (courseService *CourseService) GetCourseDataSource(ctx context.Context) (re
 	return
 }
 
-// GetCoursePublic 获取微信小程序课程列
 // GetCoursePublic 获取微信小程序课程列表
-func (courseService *CourseService) GetCoursePublic(page, pageSize int, hot, exquisite *bool, category *int) (list []system.Course, total int64, err error) {
-	req := struct {
-		Page      int
-		PageSize  int
-		Hot       *bool
-		Exquisite *bool
-		Category  *int
-	}{
-		Page:      page,
-		PageSize:  pageSize,
-		Hot:       hot,
-		Exquisite: exquisite,
-		Category:  category,
-	}
-	limit := req.PageSize
+func (courseService *CourseService) GetCoursePublic(page, pageSize int, hot, exquisite *bool, category *int, keyword string) (list []system.Course, total int64, err error) {
+	limit := pageSize
+	offset := pageSize * (page - 1)
 
-	
 	// 创建db查询，只查询已上架的课程
+	db := global.GVA_DB.Model(&system.Course{}).Where("on_sale = ?", true)
 
-	
+	var courses []system.Course
 
-	
 	// 根据筛选条件添加查询条件
-	if req.Hot != nil {
-		db = db.Where("hot = ?", *req.Hot)
+	if hot != nil {
+		db = db.Where("hot = ?", *hot)
 	}
-	if req.Exquisite != nil {
-		db = db.Where("exquisite = ?", *req.Exquisite)
+	if exquisite != nil {
+		db = db.Where("exquisite = ?", *exquisite)
 	}
-	if req.Category != nil {
-		db = db.Where("category = ?", *req.Category)
+	if category != nil {
+		db = db.Where("category = ?", *category)
+	}
+	// 添加标题模糊搜索
+	if keyword != "" {
+		db = db.Where("course_title ILIKE ?", "%"+keyword+"%")
+	}
 
-	
 	// 获取总数
 	err = db.Count(&total).Error
 	if err != nil {
 		return
+	}
 
-	
 	// 排序：优先按照sort字段升序，然后按创建时间降序
+	db = db.Order("sort ASC, created_at DESC")
 
-	
 	// 分页
 	if limit != 0 {
 		db = db.Limit(limit).Offset(offset)
+	}
 
-	
 	err = db.Find(&courses).Error
 	return courses, total, err
 }

@@ -7,13 +7,14 @@ type ApiGroup struct {
 	WechatApi
 	WechatBannerApi
 	WechatTeacherApi
-	
+	WechatCourseApi
 }
 
 var ApiGroupApp = new(ApiGroup)
 
 var (
-	bannerService  = service.ServiceGroupApp.SystemServiceGroup.BannerService
-	teacherService = service.ServiceGroupApp.SystemServiceGroup.TeacherService
-	courseService  = service.ServiceGroupApp.SystemServiceGroup.CourseService
+	bannerService   = service.ServiceGroupApp.SystemServiceGroup.BannerService
+	teacherService  = service.ServiceGroupApp.SystemServiceGroup.TeacherService
+	courseService   = service.ServiceGroupApp.SystemServiceGroup.CourseService
+	categoryService = service.ServiceGroupApp.SystemServiceGroup.CategoryService
 )

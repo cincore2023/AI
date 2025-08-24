@@ -22,6 +22,7 @@ export interface WxCourseListParams {
   hot?: boolean
   exquisite?: boolean
   category?: number
+  keyword?: string // 标题搜索关键词
 }
 
 export interface WxCourseListResponse {
@@ -29,4 +30,23 @@ export interface WxCourseListResponse {
   total: number
   page: number
   pageSize: number
+}
+
+// 微信小程序分类相关类型定义
+export interface WxCategoryItem {
+  id: number
+  categoryName: string
+  status: boolean
+  sortOrder: number
+  type: string
+  children: WxCategoryItem[]
+  parentID: number
+}
+
+export interface WxCategoryListParams {
+  type?: string // 分类类型，如 course、activity 等
+}
+
+export interface WxCategoryListResponse {
+  categories: WxCategoryItem[]
 }
