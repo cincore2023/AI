@@ -2,14 +2,23 @@
 import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { usePageAuth } from '@/hooks/usePageAuth'
 import { useThemeStore } from '@/store'
+import { AppStore } from '@/store/app'
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 usePageAuth()
 
 // 初始化主题
 const themeStore = useThemeStore()
+const appStore = AppStore()
+
+// 初始化数据
+function initData() {
+  appStore.getBannerList()
+  appStore.getTeacherList()
+}
 
 onLaunch(() => {
+  initData()
   console.log('App Launch')
   // 初始化主题
   themeStore.initTheme()

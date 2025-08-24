@@ -1,106 +1,58 @@
 <!-- 讲师信息卡片组件 -->
 <script setup lang="ts">
-import { computed } from 'vue'
-
-// 定义讲师信息接口
-interface Instructor {
-  id: string
-  name: string
-  title: string
-  avatar: string
-  bio?: string
-  experience?: string
-  specialties?: string[]
-}
+import type { ITeacherDetailItem } from '@/api/types/teacher'
 
 // 定义组件Props，提供默认值
 interface Props {
-  instructor: Instructor
+  instructor: ITeacherDetailItem
   showSpecialties?: boolean
   showExperience?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   showSpecialties: true,
   showExperience: true,
 })
-
-// 定义组件Emits
-interface Emits {
-  (e: 'click', instructor: Instructor): void
-}
-
-const emit = defineEmits<Emits>()
-
-// 计算属性
-const hasSpecialties = computed(() => 
-  props.showSpecialties && props.instructor.specialties && props.instructor.specialties.length > 0
-)
-
-const hasExperience = computed(() => 
-  props.showExperience && props.instructor.experience
-)
-
-// 方法定义
-/**
- * 处理卡片点击事件
- */
-function handleCardClick() {
-  emit('click', props.instructor)
-}
-
-/**
- * 处理头像加载错误
- */
-function handleAvatarError() {
-  console.warn('讲师头像加载失败:', props.instructor.avatar)
-  // 可以设置默认头像
-}
 </script>
 
 <template>
-  <view class="instructor-profile-card" @click="handleCardClick">
+  <view class="instructor-profile-card">
     <!-- 背景装饰 -->
-    <view class="profile-background" />
-    
+    <view class="profile-background"/>
+
     <!-- 主要内容 -->
     <view class="profile-content">
       <!-- 讲师头像 -->
       <view class="avatar-section">
-        <image
-          :src="instructor.avatar"
-          class="instructor-avatar"
-          mode="aspectFill"
-          @error="handleAvatarError"
-        />
+        <image :src="instructor?.avatar" class="instructor-avatar" mode="aspectFill"/>
       </view>
-      
+
       <!-- 讲师基本信息 -->
       <view class="info-section">
-        <text class="instructor-name">{{ instructor.name }}</text>
-        <text class="instructor-title">{{ instructor.title }}</text>
-        
+        <text class="instructor-name">{{ instructor?.name }}</text>
+        <text class="instructor-title">{{ instructor?.description }}</text>
+
         <!-- 工作经验 -->
-        <view v-if="hasExperience" class="experience-section">
-          <text class="experience-label">工作经验:</text>
-          <text class="experience-value">{{ instructor.experience }}</text>
-        </view>
+        <!--        <view v-if="hasExperience" class="experience-section">-->
+        <!--          <text class="experience-label">工作经验:</text>-->
+        <!--          <text class="experience-value">{{ instructor.experience }}</text>-->
+        <!--        </view>-->
       </view>
-      
+
       <!-- 专业领域 -->
-      <view v-if="hasSpecialties" class="specialties-section">
-        <text class="specialties-label">专业领域:</text>
-        <view class="specialties-tags">
-          <sar-tag
-            v-for="specialty in instructor.specialties"
-            :key="specialty"
-            :text="specialty"
-            size="small"
-            theme="primary"
-            class="specialty-tag"
-          />
-        </view>
-      </view>
+      <!--      <view v-if="hasSpecialties" class="specialties-section">-->
+      <!--        <text class="specialties-label">专业领域:</text>-->
+      <!--        <view class="specialties-tags">-->
+      <!--          <sar-tag-->
+      <!--              v-for="specialty in instructor.specialties"-->
+      <!--              :key="specialty"-->
+      <!--              :text="specialty"-->
+      <!--              size="small"-->
+      <!--              theme="primary"-->
+      <!--              class="specialty-tag"-->
+      <!--          />-->
+      <!--        </view>-->
+      <!--      </view>-->
     </view>
   </view>
 </template>
@@ -114,10 +66,7 @@ function handleAvatarError() {
   padding: var(--spacing-lg);
   box-shadow: var(--shadow-sm);
   overflow: hidden;
-  
-  // 点击效果
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
+
   &:active {
     transform: scale(0.98);
     box-shadow: var(--shadow-md);
@@ -216,4 +165,4 @@ function handleAvatarError() {
 .specialty-tag {
   margin: 0;
 }
-</style> 
+</style>

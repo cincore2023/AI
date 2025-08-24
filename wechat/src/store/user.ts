@@ -12,13 +12,6 @@ const wechatUserState: IWechatUser = {
   isActive: true,
 }
 
-// 用户信息类型定义
-interface IUserState {
-  wechatUser: IWechatUser
-  token: string
-  isLoggedIn: boolean
-}
-
 export const useUserStore = defineStore(
   'user',
   () => {

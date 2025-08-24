@@ -1,98 +1,43 @@
 <script setup lang="ts">
-interface Instructor {
-  id: string
-  name: string
-  title: string
-  avatar: string
-}
+import type { ITeacherItem } from '@/api/types/teacher'
+import { AppStore } from '@/store/app'
+
+const appStore = AppStore()
 
 // 讲师数据
-const instructors = ref<Instructor[]>([
-  {
-    id: '1',
-    name: '张教授',
-    title: '抖迅AI商学院院长',
-    avatar: 'https://picsum.photos/100/100?random=10',
-  },
-  {
-    id: '2',
-    name: '张教授',
-    title: '抖迅AI商学院院长',
-    avatar: 'https://picsum.photos/100/100?random=11',
-  },
-  {
-    id: '3',
-    name: '张教授',
-    title: '抖迅AI商学院院长',
-    avatar: 'https://picsum.photos/100/100?random=12',
-  },
-  {
-    id: '4',
-    name: '张教授',
-    title: '抖迅AI商学院院长',
-    avatar: 'https://picsum.photos/100/100?random=13',
-  },
-  {
-    id: '5',
-    name: '李教授',
-    title: '资深技术专家',
-    avatar: 'https://picsum.photos/100/100?random=14',
-  },
-])
+const instructors = computed(() => appStore.teacher)
 
 /**
  * 处理讲师点击事件
  * @param instructor 讲师信息
  */
-function handleInstructorClick(instructor: Instructor) {
-  try {
-    console.log('点击讲师:', instructor.name)
-    
-    // 跳转到讲师详情页
-    uni.navigateTo({
-      url: `/pages/instructor/detail?id=${instructor.id}`,
-      fail: (err) => {
-        console.error('跳转失败:', err)
-        uni.showToast({
-          title: '页面跳转失败',
-          icon: 'error',
-        })
-      },
-    })
-  } catch (err) {
-    console.error('讲师点击处理失败:', err)
-    uni.showToast({
-      title: '操作失败',
-      icon: 'error',
-    })
-  }
+function handleInstructorClick(instructor: ITeacherItem) {
+  uni.navigateTo({
+    url: `/pages/instructor/detail?id=${instructor.id}`,
+    fail: (err) => {
+      console.error('跳转失败:', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'error',
+      })
+    },
+  })
 }
 
 /**
  * 处理查看全部讲师事件
  */
 function handleViewAll() {
-  try {
-    console.log('查看全部讲师')
-    
-    // 跳转到讲师列表页或搜索页
-    uni.navigateTo({
-      url: '/pages/instructor/list',
-      fail: (err) => {
-        console.error('跳转失败:', err)
-        uni.showToast({
-          title: '页面跳转失败',
-          icon: 'error',
-        })
-      },
-    })
-  } catch (err) {
-    console.error('查看全部讲师处理失败:', err)
-    uni.showToast({
-      title: '操作失败',
-      icon: 'error',
-    })
-  }
+  uni.navigateTo({
+    url: '/pages/instructor/list',
+    fail: (err) => {
+      console.error('跳转失败:', err)
+      uni.showToast({
+        title: '页面跳转失败',
+        icon: 'error',
+      })
+    },
+  })
 }
 </script>
 
@@ -120,16 +65,13 @@ function handleViewAll() {
         >
           <!-- 讲师头像 -->
           <view class="instructor-avatar mb-2">
-            <image
-              :src="instructor.avatar"
-              class="h-16 w-16 rounded-full object-cover"
-            />
+            <image :src="instructor.avatar" class="h-16 w-16 rounded-full object-cover" />
           </view>
 
           <!-- 讲师信息 -->
           <view class="instructor-info flex flex-col text-center">
             <text class="instructor-name text-base font-medium">{{ instructor.name }}</text>
-            <text class="instructor-title mt-1">{{ instructor.title }}</text>
+            <text class="instructor-title mt-1">{{ instructor.description }}</text>
           </view>
         </view>
       </view>

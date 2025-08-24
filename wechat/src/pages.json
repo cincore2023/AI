@@ -188,6 +188,14 @@
       }
     },
     {
+      "path": "pages/teacher/demo",
+      "type": "page"
+    },
+    {
+      "path": "pages/teacher/detail",
+      "type": "page"
+    },
+    {
       "path": "pages/withdrawal/bind-account",
       "type": "page",
       "layout": "default",
