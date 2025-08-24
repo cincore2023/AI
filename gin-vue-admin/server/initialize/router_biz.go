@@ -30,5 +30,6 @@ func initBizRouter(routers ...*gin.RouterGroup) {
 		wechatRouter.InitWechatRouter(privateGroup, publicGroup)        // 微信登录
 		wechatRouter.InitWechatBannerRouter(privateGroup, publicGroup)  // 微信轮播图
 		wechatRouter.InitWechatTeacherRouter(privateGroup, publicGroup) // 微信讲师
+		wechatRouter.InitWechatCourseRouter(privateGroup, publicGroup)  // 微信课程
 	}
 }

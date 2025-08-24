@@ -1,6 +1,0 @@
-export { default as CourseCard } from './CourseCard.vue'
-export { default as FeaturedCoursesSection } from './FeaturedCoursesSection.vue'
-export { default as HomeSwiper } from './HomeSwiper.vue'
-export { default as IconSlider } from './IconSlider.vue'
-export { default as InstructorTeamSection } from './InstructorTeamSection.vue'
-export { default as RecommendedSection } from './RecommendedSection.vue'

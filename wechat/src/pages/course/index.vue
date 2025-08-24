@@ -1,104 +1,113 @@
 <script setup lang="ts">
-
-interface Course {
-  id: string
-  title: string
-  description: string
-  price: number
-  studentCount: number
-  status: 'active' | 'inactive' | 'draft'
-  image: string
-  category: string
-  createdAt: string
-}
+import { getWxCourseList, type WxCourseItem, type WxCourseListParams } from '@/api/course'
 
 const searchKeyword = ref('')
 const activeCategory = reactive({
-  category: 'development',
+  category: '',
   type: 0,
 })
 
-const tabList = [{ title: '标签0' }, { title: '标签1' }, { title: '标签2' }]
+const loading = ref(false)
+const courses = ref<WxCourseItem[]>([])
+const total = ref(0)
+const currentPage = ref(1)
+const pageSize = ref(20)
 
-// 分类选项
+const tabList = [
+  { title: '全部', value: null },
+  { title: '推荐', value: 'hot' },
+  { title: '精品', value: 'exquisite' },
+]
+
+// 分类选项（可以从后端获取）
 const categoryOptions = ref([
-  { label: '软件开发', value: 'development' },
-  { label: 'AI赋能', value: 'ai' },
-  { label: '设计', value: 'design' },
-  { label: '营销', value: 'marketing' },
-  { label: '商业', value: 'business' },
+  { label: '全部', value: '' },
+  { label: '软件开发', value: '1' },
+  { label: 'AI赋能', value: '2' },
+  { label: '设计', value: '3' },
+  { label: '营销', value: '4' },
+  { label: '商业', value: '5' },
 ])
 
-// 模拟课程数据
-const courses = ref<Course[]>([
-  {
-    id: '1',
-    title: '2023年软件开发工程师培训',
-    description: '全面的软件开发技能培训，包含前端、后端、数据库等核心技术',
-    image: 'https://picsum.photos/400/200?random=1',
-    price: 399,
-    studentCount: 377,
-    status: 'active',
-    category: 'development',
-    createdAt: '2023-12-01',
-  },
-  {
-    id: '2',
-    title: 'AI赋能实战课程',
-    description: '学习AI技术在实际项目中的应用，提升工作效率',
-    image: 'https://picsum.photos/400/200?random=1',
-    price: 599,
-    studentCount: 245,
-    status: 'active',
-    category: 'ai',
-    createdAt: '2023-12-05',
-  },
-  {
-    id: '3',
-    title: '前端开发进阶课程',
-    description: '深入学习Vue、React等前端框架，掌握现代前端开发技术',
-    image: 'https://picsum.photos/400/200?random=1',
-    price: 299,
-    studentCount: 156,
-    status: 'draft',
-    category: 'development',
-    createdAt: '2023-12-10',
-  },
-  {
-    id: '4',
-    title: 'UI/UX设计实战',
-    description: '从零开始学习UI/UX设计，掌握设计思维和工具使用',
-    image: 'https://picsum.photos/400/200?random=1',
-    price: 499,
-    studentCount: 189,
-    status: 'active',
-    category: 'design',
-    createdAt: '2023-12-15',
-  },
-  {
-    id: '5',
-    title: '数字营销策略',
-    description: '学习现代数字营销策略，包括社交媒体、内容营销等',
-    image: 'https://picsum.photos/400/200?random=1',
-    price: 399,
-    studentCount: 267,
-    status: 'inactive',
-    category: 'marketing',
-    createdAt: '2023-12-20',
-  },
-])
+// 获取课程列表
+const getCourses = async (loadMore = false) => {
+  if (loading.value) return
+  
+  loading.value = true
+  
+  try {
+    const params: WxCourseListParams = {
+      page: loadMore ? currentPage.value + 1 : 1,
+      pageSize: pageSize.value,
+    }
+    
+    // 添加筛选条件
+    if (activeCategory.category) {
+      params.category = parseInt(activeCategory.category)
+    }
+    
+    // 添加推荐/精品筛选
+    const currentTab = tabList[activeCategory.type]
+    if (currentTab.value === 'hot') {
+      params.hot = true
+    } else if (currentTab.value === 'exquisite') {
+      params.exquisite = true
+    }
+    
+    const response = await getWxCourseList(params)
+    
+    if (response.code === 0) {
+      if (loadMore) {
+        courses.value.push(...response.data.courses)
+        currentPage.value = response.data.page
+      } else {
+        courses.value = response.data.courses
+        currentPage.value = 1
+      }
+      total.value = response.data.total
+    }
+  } catch (error) {
+    console.error('获取课程列表失败:', error)
+    uni.showToast({
+      title: '获取课程列表失败',
+      icon: 'none'
+    })
+  } finally {
+    loading.value = false
+  }
+}
 
 // 搜索处理
 function handleSearch(value: string) {
   console.log('搜索关键词:', value)
+  // TODO: 实现搜索功能
 }
 
 // 课程点击处理
-function handleCourseClick(course: Course) {
+function handleCourseClick(course: WxCourseItem) {
   uni.navigateTo({
     url: `/pages/course/detail?id=${course.id}`,
   })
-};
+}
+
+// 加载更多
+const onLoadMore = async () => {
+  if (courses.value.length >= total.value) return
+  await getCourses(true)
+}
+
+// 监听分类和标签改变
+watch(
+  () => [activeCategory.category, activeCategory.type],
+  () => {
+    getCourses()
+  }
+)
+
+// 初始化加载
+onMounted(() => {
+  getCourses()
+})
 
 </script>
 
@@ -125,14 +134,25 @@ function handleCourseClick(course: Course) {
           </view>
         </view>
         <view class="h-full flex-1 flex-col gap-3 overflow-y-auto">
-          <sar-scroll-spy v-model:current="activeCategory.category">
+          <view v-if="loading && courses.length === 0" class="loading text-center p-4">
+            加载中...
+          </view>
+          <view v-else-if="courses.length === 0" class="empty text-center p-4">
+            暂无课程数据
+          </view>
+          <view v-else class="courses-list">
             <view v-for="course in courses" :key="course.id" class="mb-2">
-              <sar-scroll-spy-anchor :name="course.category">
-                <CourseCard :course="course" @click="handleCourseClick"/>
-              </sar-scroll-spy-anchor>
+              <CourseCard :course="course" @click="handleCourseClick"/>
             </view>
+            
+            <!-- 加载更多 -->
+            <view v-if="courses.length < total" class="load-more text-center p-4">
+              <view v-if="loading" class="loading-text">加载中...</view>
+              <button v-else class="load-more-btn" @click="onLoadMore">加载更多</button>
+            </view>
+            
             <view class="h-40 w-full"/>
-          </sar-scroll-spy>
+          </view>
         </view>
       </view>
     </view>

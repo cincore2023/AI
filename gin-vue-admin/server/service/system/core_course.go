@@ -129,7 +129,56 @@ func (courseService *CourseService) GetCourseDataSource(ctx context.Context) (re
 	res["teacher"] = teacher
 	return
 }
-func (courseService *CourseService) GetCoursePublic(ctx context.Context) {
-	// 此方法为获取数据源定义的数据
-	// 请自行实现
+
+// GetCoursePublic 获取微信小程序课程列
+// GetCoursePublic 获取微信小程序课程列表
+func (courseService *CourseService) GetCoursePublic(page, pageSize int, hot, exquisite *bool, category *int) (list []system.Course, total int64, err error) {
+	req := struct {
+		Page      int
+		PageSize  int
+		Hot       *bool
+		Exquisite *bool
+		Category  *int
+	}{
+		Page:      page,
+		PageSize:  pageSize,
+		Hot:       hot,
+		Exquisite: exquisite,
+		Category:  category,
+	}
+	limit := req.PageSize
+
+	
+	// 创建db查询，只查询已上架的课程
+
+	
+
+	
+	// 根据筛选条件添加查询条件
+	if req.Hot != nil {
+		db = db.Where("hot = ?", *req.Hot)
+	}
+	if req.Exquisite != nil {
+		db = db.Where("exquisite = ?", *req.Exquisite)
+	}
+	if req.Category != nil {
+		db = db.Where("category = ?", *req.Category)
+
+	
+	// 获取总数
+	err = db.Count(&total).Error
+	if err != nil {
+		return
+
+	
+	// 排序：优先按照sort字段升序，然后按创建时间降序
+
+	
+	// 分页
+	if limit != 0 {
+		db = db.Limit(limit).Offset(offset)
+
+	
+	err = db.Find(&courses).Error
+	return courses, total, err
 }

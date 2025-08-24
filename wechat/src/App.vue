@@ -3,6 +3,7 @@ import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { usePageAuth } from '@/hooks/usePageAuth'
 import { useThemeStore } from '@/store'
 import { AppStore } from '@/store/app'
+import { CourseStore } from '@/store/course'
 import 'abortcontroller-polyfill/dist/abortcontroller-polyfill-only'
 
 usePageAuth()
@@ -10,11 +11,14 @@ usePageAuth()
 // 初始化主题
 const themeStore = useThemeStore()
 const appStore = AppStore()
+const courseStore = CourseStore()
 
 // 初始化数据
 function initData() {
   appStore.getBannerList()
   appStore.getTeacherList()
+  courseStore.getHotCourse()
+  courseStore.getExquisiteCourse()
 }
 
 onLaunch(() => {
