@@ -6,5 +6,5 @@ import { http } from '@/http/http'
  * @returns Promise<IBannerResponse> 轮播图数据
  */
 export function getBanners() {
-  return http.get<IBannerResponse>('/api/wxBanners')
+  return http.get<IBannerResponse>('/api/wx/Banners')
 }

@@ -57,20 +57,6 @@ export const useUserStore = defineStore(
     }
 
     /**
-     * 用户登录（传统登录，保留接口）
-     * @param credentials 登录参数
-     * @returns R<IUserLogin>
-     */
-    const login = async (credentials: {
-      username: string
-      password: string
-      code: string
-      uuid: string
-    }) => {
-      throw new Error('微信小程序不支持传统用户名密码登录，请使用微信登录')
-    }
-
-    /**
      * 退出登录 并 删除用户信息
      */
     const logout = async () => {
@@ -128,14 +114,13 @@ export const useUserStore = defineStore(
       wechatUser,
       token,
       isLoggedIn,
-      login,
       wxLogin,
       getUserInfo,
       logout,
       setWechatUser,
       setToken,
       removeUserInfo,
-      isMember
+      isMember,
     }
   },
   {

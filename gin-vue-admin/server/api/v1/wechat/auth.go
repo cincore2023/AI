@@ -198,3 +198,123 @@ func (w *WechatApi) generateWechatUserToken(wxUser *system.WechatUser) (string, 
 	expiresAt := claims.RegisteredClaims.ExpiresAt.Unix() * 1000
 	return token, expiresAt, nil
 }
+
+// WxBindSalespersonRequest 绑定销售员请求参数
+type WxBindSalespersonRequest struct {
+	SalespersonPhone string `json:"salespersonPhone" binding:"required"` // 销售员手机号
+}
+
+// WxBindSalespersonResponse 绑定销售员响应
+type WxBindSalespersonResponse struct {
+	Salesperson    WxSalespersonInfo `json:"salesperson"`    // 销售员信息
+	BindingSuccess bool              `json:"bindingSuccess"` // 绑定是否成功
+	Message        string            `json:"message"`        // 绑定结果消息
+}
+
+// WxSalespersonInfo 销售员信息
+type WxSalespersonInfo struct {
+	ID          uint   `json:"id"`          // 销售员ID
+	Nickname    string `json:"nickname"`    // 销售员昵称
+	PhoneNumber string `json:"phoneNumber"` // 销售员手机号
+}
+
+// WxBindSalesperson 绑定销售员
+// @Tags     WechatApi
+// @Summary  绑定销售员
+// @Description 通过手机号查找并绑定销售员，需要登录鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    data  body      WxBindSalespersonRequest                                           true  "销售员手机号"
+// @Success  200   {object}  response.Response{data=WxBindSalespersonResponse,msg=string}     "绑定成功"
+// @Failure  400   {object}  response.Response{msg=string}                                     "请求参数错误"
+// @Failure  401   {object}  response.Response{msg=string}                                     "未登录或登录已过期"
+// @Failure  404   {object}  response.Response{msg=string}                                     "没有该销售员"
+// @Failure  500   {object}  response.Response{msg=string}                                     "服务器内部错误"
+// @Router   /api/wx/BindSalesperson [post]
+func (w *WechatApi) WxBindSalesperson(c *gin.Context) {
+	// 获取当前用户ID
+	userID := utils.GetUserID(c)
+
+	var req WxBindSalespersonRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		global.GVA_LOG.Error("参数绑定失败!", zap.Error(err))
+		response.FailWithMessage("请求参数错误: "+err.Error(), c)
+		return
+	}
+
+	global.GVA_LOG.Info("绑定销售员请求",
+		zap.Uint("userID", userID),
+		zap.String("salespersonPhone", req.SalespersonPhone))
+
+	// 首先查找销售员信息
+	salesperson, err := wxUserService.GetSalespersonByPhone(c.Request.Context(), req.SalespersonPhone)
+	if err != nil {
+		global.GVA_LOG.Error("查找销售员失败!", zap.Error(err))
+		// 返回不成功的响应，但包含销售员信息为空
+		bindResponse := WxBindSalespersonResponse{
+			Salesperson:    WxSalespersonInfo{},
+			BindingSuccess: false,
+			Message:        err.Error(),
+		}
+		response.OkWithDetailed(bindResponse, "查找销售员失败", c)
+		return
+	}
+
+	// 绑定销售员
+	err = wxUserService.BindSalesperson(c.Request.Context(), userID, req.SalespersonPhone)
+	if err != nil {
+		global.GVA_LOG.Error("绑定销售员失败!", zap.Error(err))
+		// 返回不成功的响应，但包含销售员信息
+		salespersonInfo := WxSalespersonInfo{
+			ID: salesperson.ID,
+			Nickname: func() string {
+				if salesperson.Nickname != nil {
+					return *salesperson.Nickname
+				}
+				return ""
+			}(),
+			PhoneNumber: func() string {
+				if salesperson.PhoneNumber != nil {
+					return *salesperson.PhoneNumber
+				}
+				return ""
+			}(),
+		}
+		bindResponse := WxBindSalespersonResponse{
+			Salesperson:    salespersonInfo,
+			BindingSuccess: false,
+			Message:        "绑定失败: " + err.Error(),
+		}
+		response.OkWithDetailed(bindResponse, "绑定销售员失败", c)
+		return
+	}
+
+	// 绑定成功，返回销售员信息
+	salespersonInfo := WxSalespersonInfo{
+		ID: salesperson.ID,
+		Nickname: func() string {
+			if salesperson.Nickname != nil {
+				return *salesperson.Nickname
+			}
+			return ""
+		}(),
+		PhoneNumber: func() string {
+			if salesperson.PhoneNumber != nil {
+				return *salesperson.PhoneNumber
+			}
+			return ""
+		}(),
+	}
+
+	bindResponse := WxBindSalespersonResponse{
+		Salesperson:    salespersonInfo,
+		BindingSuccess: true,
+		Message:        "绑定成功",
+	}
+
+	global.GVA_LOG.Info("绑定销售员成功",
+		zap.Uint("userID", userID),
+		zap.Uint("salespersonID", salesperson.ID))
+	response.OkWithDetailed(bindResponse, "绑定成功", c)
+}

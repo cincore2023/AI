@@ -1,44 +1,54 @@
 <script setup lang="ts">
-interface Props {
-  show: boolean
-  bindSalesPhone: string
+import { bindSalesperson } from '@/api/login'
+import { useUserStore } from '@/store/user'
+
+const { getUserInfo } = useUserStore()
+const visible = ref(false)
+
+const bindSalesPhone = ref('')
+
+async function handleConfirm() {
+  if (bindSalesPhone.value?.length !== 11) {
+    return uni.showToast({
+      title: '手机号错误',
+      icon: 'error',
+    })
+  }
+  const { data } = await bindSalesperson(bindSalesPhone.value)
+  if (!data.bindingSuccess) {
+    return uni.showToast({
+      title: data?.message,
+      icon: 'error',
+    })
+  }
+  else {
+    await getUserInfo()
+    uni.showToast({
+      title: '绑定成功',
+      icon: 'none',
+    })
+    onOverlayClick()
+  }
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  'update:show': [value: boolean]
-  'update:bindSalesPhone': [value: string]
-  'confirm': []
-  'cancel': []
-}>()
-
-function handleConfirm() {
-  emit('confirm')
+function onOverlayClick() {
+  bindSalesPhone.value = ''
+  visible.value = false
 }
 
-function handleCancel() {
-  emit('cancel')
+function handleShow() {
+  visible.value = true
 }
 
-function handleClose() {
-  emit('update:show', false)
-}
+defineExpose({ show: handleShow })
 </script>
 
 <template>
-  <sar-popup
-    :visible="show"
-    :close-on-click-close-icon="true"
-    position="center"
-    :close-on-click-overlay="true"
-    round
-    safe-area-inset-bottom
-    @update:visible="(value) => emit('update:show', value)"
-  >
+  <sar-popup :visible="visible" @overlay-click="onOverlayClick">
     <view class="w-[90vw] overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- 头部区域 -->
       <view class="relative p-6 text-center text-white">
-        <view class="absolute inset-0 bg-gray-800" />
+        <view class="absolute inset-0 bg-gray-800"/>
         <view class="relative z-10">
           <view class="mb-3 flex justify-center">
             <view class="h-12 w-12 flex items-center justify-center rounded-full bg-white/20">
@@ -56,15 +66,7 @@ function handleClose() {
           <view class="space-y-2">
             <text class="text-base text-gray-800 font-semibold">销售专员手机号 *</text>
             <view class="relative">
-              <sar-input
-                :model-value="bindSalesPhone"
-                placeholder="请输入11位手机号码"
-                type="number"
-                maxlength="11"
-                clearable
-                class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
-                @update:model-value="(value) => emit('update:bindSalesPhone', value)"
-              />
+              <sar-input v-model="bindSalesPhone" placeholder="请输入11位手机号码" type="tel" clearable/>
             </view>
           </view>
 
@@ -85,12 +87,12 @@ function handleClose() {
       <view class="flex gap-3 border-t border-gray-100 p-3">
         <view
           class="flex-1 rounded-xl bg-gray-100 py-4 text-center text-gray-700 transition-all duration-200 active:scale-95"
-          @click="handleCancel"
+          @click="onOverlayClick"
         >
           <text class="font-medium">取消</text>
         </view>
         <view
-          class="bg-gray-900 flex-1 rounded-xl py-4 text-center text-white transition-all duration-200 active:scale-95"
+          class="flex-1 rounded-xl bg-gray-900 py-4 text-center text-white transition-all duration-200 active:scale-95"
           @click="handleConfirm"
         >
           <text class="font-medium">确认绑定</text>

@@ -1,57 +1,26 @@
 <script setup lang="ts">
-interface UserInfo {
-  nickname: string
-  phone: string
-  avatar: string
-}
-
 interface Props {
   show: boolean
-  userInfo: UserInfo
 }
 
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  'update:show': [value: boolean]
-  'confirm': [userInfo: UserInfo]
-  'cancel': []
-}>()
+defineProps<Props>()
+const emit = defineEmits<{ 'update:show': [value: boolean] }>()
 
 // 编辑表单
 const editForm = ref({
   nickname: '',
   phone: '',
-  avatar: ''
-})
-
-// 监听show变化，初始化表单数据
-watch(() => props.show, (newVal) => {
-  if (newVal) {
-    editForm.value = {
-      nickname: props.userInfo.nickname,
-      phone: props.userInfo.phone,
-      avatar: props.userInfo.avatar
-    }
-  }
+  avatar: '',
 })
 
 // 确认编辑
 function handleConfirmEdit() {
-  // 表单验证
-  if (!editForm.value.nickname.trim()) {
-    uni.showToast({
-      title: '昵称不能为空',
-      icon: 'none'
-    })
-    return
-  }
-  
-  emit('confirm', editForm.value)
+
 }
 
 // 取消编辑
 function handleCancelEdit() {
-  emit('cancel')
+  emit('update:show', false)
 }
 
 // 选择头像
@@ -72,7 +41,7 @@ function handleSelectAvatar() {
     <view class="w-[90vw] overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- 头部区域 -->
       <view class="relative p-6 text-center text-white">
-        <view class="absolute inset-0 bg-gray-800" />
+        <view class="absolute inset-0 bg-gray-800"/>
         <view class="relative z-10">
           <view class="mb-3 flex justify-center">
             <view class="h-12 w-12 flex items-center justify-center rounded-full bg-white/20">
@@ -92,13 +61,13 @@ function handleSelectAvatar() {
             <text class="text-base text-gray-800 font-semibold">头像</text>
             <view class="flex justify-center">
               <view class="relative">
-                <image 
-                  :src="editForm.avatar" 
-                  class="h-20 w-20 rounded-full border-2 border-gray-200"
+                <image
+                    :src="editForm.avatar"
+                    class="h-20 w-20 rounded-full border-2 border-gray-200"
                 />
-                <view 
-                  class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white"
-                  @click="handleSelectAvatar"
+                <view
+                    class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white"
+                    @click="handleSelectAvatar"
                 >
                   <text class="text-xs">📷</text>
                 </view>
@@ -110,9 +79,9 @@ function handleSelectAvatar() {
           <view class="space-y-2">
             <text class="text-base text-gray-800 font-semibold">昵称 *</text>
             <sar-input
-              v-model="editForm.nickname"
-              placeholder="请输入昵称"
-              class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
+                v-model="editForm.nickname"
+                placeholder="请输入昵称"
+                class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
             />
           </view>
 
@@ -120,11 +89,11 @@ function handleSelectAvatar() {
           <view class="space-y-2">
             <text class="text-base text-gray-800 font-semibold">手机号</text>
             <sar-input
-              v-model="editForm.phone"
-              placeholder="请输入手机号"
-              type="number"
-              maxlength="11"
-              class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
+                v-model="editForm.phone"
+                placeholder="请输入手机号"
+                type="number"
+                maxlength="11"
+                class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
             />
           </view>
         </view>
@@ -133,14 +102,14 @@ function handleSelectAvatar() {
       <!-- 按钮区域 -->
       <view class="flex gap-3 border-t border-gray-100 p-6">
         <view
-          class="flex-1 rounded-xl bg-gray-100 py-4 text-center text-gray-700 transition-all duration-200 active:scale-95"
-          @click="handleCancelEdit"
+            class="flex-1 rounded-xl bg-gray-100 py-4 text-center text-gray-700 transition-all duration-200 active:scale-95"
+            @click="handleCancelEdit"
         >
           <text class="font-medium">取消</text>
         </view>
         <view
-          class="bg-gray-900 flex-1 rounded-xl py-4 text-center text-white transition-all duration-200 active:scale-95"
-          @click="handleConfirmEdit"
+            class="bg-gray-900 flex-1 rounded-xl py-4 text-center text-white transition-all duration-200 active:scale-95"
+            @click="handleConfirmEdit"
         >
           <text class="font-medium">确认修改</text>
         </view>

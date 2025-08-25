@@ -1,26 +1,36 @@
 <script setup lang="ts">
+import BindSalesModal from '@/components/Personal/Modals/BindSalesModal.vue'
+import { useUserStore } from '@/store/user'
+const { wechatUser } = useUserStore()
+
 interface ServiceItem {
   icon: string
   title: string
   path: string
 }
 
-interface Props {
-  serviceList: ServiceItem[]
-}
+const emit = defineEmits<{ bindSales: [] }>()
 
-const props = defineProps<Props>()
-const emit = defineEmits<{
-  serviceClick: [service: ServiceItem]
-  bindSales: []
-}>()
+const bindSalesModalRef = ref()
+
+// 我的服务列表
+const serviceList = ref<ServiceItem[]>([
+  { icon: '📊', title: '我的活动', path: '/pages/activities/index' },
+  { icon: '📚', title: '我的课程', path: '/pages/course/index' },
+  { icon: '📁', title: '我的素材', path: '/pages/material/index' },
+  { icon: '🤖', title: '我的智能体', path: '/pages/ai/index' },
+  { icon: '🎧', title: '联系客服', path: '/pages/service/index' },
+  { icon: '📖', title: '教程中心', path: '/pages/tutorial/index' },
+])
 
 function handleServiceClick(service: ServiceItem) {
-  emit('serviceClick', service)
+  uni.navigateTo({
+    url: service.path,
+  })
 }
 
 function handleBindSales() {
-  emit('bindSales')
+  bindSalesModalRef.value?.show()
 }
 </script>
 
@@ -30,12 +40,12 @@ function handleBindSales() {
       <text class="text-lg text-gray-800 font-bold">我的服务</text>
       <view class="flex items-center">
         <text class="mr-3 text-xs text-gray-500">销售专员:</text>
-        <view
-          class="rounded bg-blue-500 px-3 py-1 text-3 text-white"
-          @click="handleBindSales"
-        >
+        <view v-if="!wechatUser?.salesperson" class="rounded bg-blue-500 px-3 py-1 text-3 text-white" @click="handleBindSales">
           <text class="mr-2">🔗</text>
           <text>立即绑定</text>
+        </view>
+        <view>
+          {{ wechatUser?.salesperson }}
         </view>
       </view>
     </view>
@@ -54,4 +64,7 @@ function handleBindSales() {
       </view>
     </view>
   </view>
+
+  <!-- 绑定销售专员弹框 -->
+  <BindSalesModal ref="bindSalesModalRef" />
 </template>

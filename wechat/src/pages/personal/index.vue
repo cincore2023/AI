@@ -1,19 +1,11 @@
 <script setup lang="ts">
 import BindRequiredModal from '@/components/Personal/Modals/BindRequiredModal.vue'
-import BindSalesModal from '@/components/Personal/Modals/BindSalesModal.vue'
+
 import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
 import PromotionPosterModal from '@/components/Personal/Modals/PromotionPosterModal.vue'
 import PartnerSection from '@/components/Personal/PartnerSection.vue'
 import ServiceSection from '@/components/Personal/ServiceSection.vue'
 import UserInfoSection from '@/components/Personal/UserInfoSection.vue'
-
-import { useMemberStore } from '@/store/member'
-
-interface ServiceItem {
-  icon: string
-  title: string
-  path: string
-}
 
 interface PartnerInfo {
   withdrawableIncome: number
@@ -24,8 +16,6 @@ interface PartnerInfo {
   memberCode: number
   activityCode: number
 }
-
-const memberStore = useMemberStore()
 
 // 绑定销售专员相关
 const showBindSalesModal = ref(false)
@@ -39,16 +29,6 @@ const hasBoundSales = ref(false) // 模拟是否已绑定销售专员
 // 推广码海报相关
 const showPromotionPosterModal = ref(false)
 
-// 我的服务列表
-const serviceList = ref<ServiceItem[]>([
-  { icon: '📊', title: '我的活动', path: '/pages/activities/index' },
-  { icon: '📚', title: '我的课程', path: '/pages/course/index' },
-  { icon: '📁', title: '我的素材', path: '/pages/material/index' },
-  { icon: '🤖', title: '我的智能体', path: '/pages/ai/index' },
-  { icon: '🎧', title: '联系客服', path: '/pages/service/index' },
-  { icon: '📖', title: '教程中心', path: '/pages/tutorial/index' },
-])
-
 // 合伙人信息
 const partnerInfo = ref<PartnerInfo>({
   withdrawableIncome: 1000.20,
@@ -59,39 +39,6 @@ const partnerInfo = ref<PartnerInfo>({
   memberCode: 99,
   activityCode: 5,
 })
-
-// 用户信息
-const userInfo = ref({
-  nickname: '微信昵称',
-  phone: '185****0617',
-  avatar: '/static/images/avatar.jpg',
-  memberExpireDate: '2021-12-12',
-})
-
-// 处理服务点击
-function handleServiceClick(service: ServiceItem) {
-  uni.navigateTo({
-    url: service.path,
-  })
-}
-
-// 修改昵称
-function handleModifyNickname() {
-  uni.showModal({
-    title: '修改昵称',
-    content: '请输入新的昵称',
-    editable: true,
-    success: (res) => {
-      if (res.confirm && res.content) {
-        userInfo.value.nickname = res.content
-        uni.showToast({
-          title: '修改成功',
-          icon: 'success',
-        })
-      }
-    },
-  })
-}
 
 // 立即续费/开通会员
 function handleRenew() {
@@ -109,7 +56,7 @@ function confirmMembership() {
   // 这里应该调用API开通会员
   // const response = await http.post('/api/membership/activate')
 
-  memberStore.activateMember()
+  // memberStore.activateMember()
   uni.showToast({
     title: '会员开通成功',
     icon: 'success',
@@ -158,7 +105,6 @@ function handleBindSalesFromRequired() {
   showBindSalesModal.value = true
 }
 
-
 // 收支明细
 function handleIncomeDetails() {
   uni.navigateTo({
@@ -203,61 +149,29 @@ function handleDownloadPoster(poster: any) {
 
 onMounted(async () => {
   // 检查会员状态
-  await memberStore.checkMemberStatus()
+  // await memberStore.checkMemberStatus()
 })
 </script>
 
 <template>
   <view class="default-layout-content">
     <!-- 头部 -->
-    <HeaderSimple
-      title="个人中心"
-      :show-back="false"
-      :show-right="true"
-    />
+    <HeaderSimple title="个人中心" :show-back="false" :show-right="true"/>
 
-    <scroll-view
-      class="no-scrollbar flex flex-1 flex-col"
-      :scroll-y="true"
-      :show-scrollbar="false"
-      enhanced="true"
-    >
+    <scroll-view class="no-scrollbar flex flex-1 flex-col" :scroll-y="true" :show-scrollbar="false" enhanced="true">
       <!-- 用户信息区域 -->
-      <UserInfoSection
-        :user-info="userInfo"
-        @modify-nickname="handleModifyNickname"
-        @renew="handleRenew"
-      />
+      <UserInfoSection @renew="handleRenew" />
 
       <!-- 我的服务 -->
-      <ServiceSection
-        :service-list="serviceList"
-        @service-click="handleServiceClick"
-        @bind-sales="handleBindSales"
-      />
+      <ServiceSection @bind-sales="handleBindSales" />
 
       <!-- 合伙人中心 -->
-      <PartnerSection
-        :partner-info="partnerInfo"
-        @income-details="handleIncomeDetails"
-        @generate-code="handleGenerateCode"
-      />
+      <PartnerSection :partner-info="partnerInfo" @income-details="handleIncomeDetails" @generate-code="handleGenerateCode"/>
     </scroll-view>
   </view>
 
-  <!-- 绑定销售专员弹框 -->
-  <BindSalesModal
-    v-model:show="showBindSalesModal"
-    v-model:bind-sales-phone="bindSalesPhone"
-    @confirm="confirmBindSales"
-    @cancel="cancelBindSales"
-  />
-
   <!-- 会员开通弹框 -->
-  <MembershipModal
-    v-model:show="showMembershipModal"
-    @confirm="confirmMembership"
-  />
+  <MembershipModal v-model:show="showMembershipModal" @confirm="confirmMembership"/>
 
   <!-- 需要绑定销售专员提示弹框 -->
   <BindRequiredModal
@@ -274,10 +188,10 @@ onMounted(async () => {
 
 <route lang="jsonc" type="page">
 {
-  "layout": "tabbar",
-  "style": {
-    "navigationStyle": "custom",
-    "navigationBarTitleText": "个人中心"
-  }
+"layout": "tabbar",
+"style": {
+"navigationStyle": "custom",
+"navigationBarTitleText": "个人中心"
+}
 }
 </route>

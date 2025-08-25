@@ -29,6 +29,9 @@ gin-vue-admin/server/
 - **WxLogin** - 微信小程序登录接口
 - 路径: `POST /api/wxLogin`
 - 功能: 通过微信code获取用户信息并生成JWT token
+- **WxBindSalesperson** - 绑定销售员接口
+- 路径: `POST /api/wxBindSalesperson` (需要鉴权)
+- 功能: 通过手机号查找并绑定销售员，设置关系渠道
 
 ### 2. 微信轮播图 (banner.go)
 - **WechatBannerApi** - 微信轮播图API结构体
@@ -45,7 +48,25 @@ gin-vue-admin/server/
 - 路径: `GET /api/wxTeachers/{id}`
 - 功能: 获取教师详细信息及其所有课程列表
 
-### 4. 模块入口 (enter.go)
+### 4. 微信课程 (course.go)
+- **WechatCourseApi** - 微信课程API结构体
+- **WxGetCourses** - 获取课程列表接口
+- 路径: `GET /api/wxCourses`
+- 功能: 获取课程列表，支持分页和筛选
+- **WxGetCourseDetail** - 获取课程详情接口
+- 路径: `GET /api/wxCourses/{id}`
+- 功能: 获取课程详细信息及其所有教师列表
+
+### 5. 微信活动 (activity.go)
+- **WechatActivityApi** - 微信活动API结构体
+- **WxGetActivities** - 获取活动列表接口
+- 路径: `GET /api/wxActivities`
+- 功能: 获取在展示时间内的活动列表，支持分页、分类筛选和关键词搜索
+- **WxGetActivityDetail** - 获取活动详情接口
+- 路径: `GET /api/wxActivities/{id}`
+- 功能: 获取在展示时间内的活动详细信息
+
+### 6. 模块入口 (enter.go)
 - **ApiGroup** - 微信模块API分组
 - 统一管理服务依赖和模块导出
 
@@ -65,9 +86,11 @@ gin-vue-admin/server/
 ```go
 // 微信模块路由（独立模块）
 wechatRouter := router.RouterGroupApp.Wechat
-wechatRouter.InitWechatRouter(privateGroup, publicGroup)        // 微信登录
-wechatRouter.InitWechatBannerRouter(privateGroup, publicGroup)  // 微信轮播图
-wechatRouter.InitWechatTeacherRouter(privateGroup, publicGroup) // 微信教师
+wechatRouter.InitWechatRouter(privateGroup, publicGroup)         // 微信登录
+wechatRouter.InitWechatBannerRouter(privateGroup, publicGroup)   // 微信轮播图
+wechatRouter.InitWechatTeacherRouter(privateGroup, publicGroup)  // 微信教师
+wechatRouter.InitWechatCourseRouter(privateGroup, publicGroup)   // 微信课程
+wechatRouter.InitWechatActivityRouter(privateGroup, publicGroup) // 微信活动
 ```
 
 ## API 引用
@@ -78,7 +101,7 @@ wechatRouter.InitWechatTeacherRouter(privateGroup, publicGroup) // 微信教师
 type ApiGroup struct {
     SystemApiGroup  system.ApiGroup
     ExampleApiGroup example.ApiGroup
-    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi）
+    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi、WechatCourseApi、WechatActivityApi）
 }
 ```
 

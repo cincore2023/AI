@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
@@ -150,4 +151,85 @@ func (activitiesService *ActivitiesService) GetActivitiesDataSource(ctx context.
 func (activitiesService *ActivitiesService) GetActivitiesPublic(ctx context.Context) {
 	// 此方法为获取数据源定义的数据
 	// 请自行实现
+}
+
+// GetActivitiesPublicWithTime 获取展示时间内的公开活动数据
+func (activitiesService *ActivitiesService) GetActivitiesPublicWithTime(page, pageSize int, category *int, keyword string) ([]system.Activities, int64, error) {
+	// 设置默认分页参数
+	if page <= 0 {
+		page = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 20
+	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
+
+	limit := pageSize
+	offset := pageSize * (page - 1)
+
+	// 创建查询条件
+	db := global.GVA_DB.Model(&system.Activities{})
+
+	// 只查询状态为启用的活动
+	db = db.Where("status = ?", true)
+
+	// 只查询在展示时间内的活动
+	db = db.Where("show_start_time <= NOW() AND show_end_time >= NOW()")
+
+	// 搜索条件
+	if keyword != "" {
+		db = db.Where("activity_name LIKE ?", "%"+keyword+"%")
+	}
+	if category != nil {
+		db = db.Where("category = ?", *category)
+	}
+
+	// 获取总数
+	var total int64
+	err := db.Count(&total).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 按排序字段排序，然后按ID排序保证结果稳定
+	db = db.Order("sort_order ASC, id DESC")
+
+	// 分页查询
+	var activities []system.Activities
+	err = db.Limit(limit).Offset(offset).Find(&activities).Error
+	if err != nil {
+		return nil, 0, err
+	}
+
+	global.GVA_LOG.Info("查询展示期内活动",
+		zap.Int("page", page),
+		zap.Int("pageSize", pageSize),
+		zap.Int64("total", total),
+		zap.Int("count", len(activities)))
+
+	return activities, total, nil
+}
+
+// GetActivityDetailWithTime 根据ID获取展示时间内的活动详情
+func (activitiesService *ActivitiesService) GetActivityDetailWithTime(id uint) (system.Activities, error) {
+	var activity system.Activities
+
+	// 查询指定ID的活动，且必须是启用状态并在展示时间内
+	err := global.GVA_DB.Where("id = ? AND status = ? AND show_start_time <= NOW() AND show_end_time >= NOW()", id, true).First(&activity).Error
+	if err != nil {
+		return activity, err
+	}
+
+	global.GVA_LOG.Info("查询活动详情",
+		zap.Uint("id", id),
+		zap.String("activityName", func() string {
+			if activity.ActivityName != nil {
+				return *activity.ActivityName
+			}
+			return ""
+		}()))
+
+	return activity, nil
 }

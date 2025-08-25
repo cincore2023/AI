@@ -40,13 +40,23 @@ func SetToken(c *gin.Context, token string, maxAge int) {
 }
 
 func GetToken(c *gin.Context) string {
+	// 首先尝试从x-token头部获取token（原有逻辑）
 	token := c.Request.Header.Get("x-token")
+
+	// 如果x-token为空，尝试从Authorization头部获取Bearer token
+	if token == "" {
+		auth := c.Request.Header.Get("Authorization")
+		if auth != "" && len(auth) > 7 && auth[:7] == "Bearer " {
+			token = auth[7:] // 去掉"Bearer "前缀
+		}
+	}
+
 	if token == "" {
 		j := NewJWT()
 		token, _ = c.Cookie("x-token")
 		claims, err := j.ParseToken(token)
 		if err != nil {
-			global.GVA_LOG.Error("重新写入cookie token失败,未能成功解析token,请检查请求头是否存在x-token且claims是否为规定结构")
+			global.GVA_LOG.Error("重新写入cookie token失败,未能成功解析token,请检查请求头是否存在x-token或Authorization且claims是否为规定结构")
 			return token
 		}
 		SetToken(c, token, int((claims.ExpiresAt.Unix()-time.Now().Unix())/60))
@@ -59,7 +69,7 @@ func GetClaims(c *gin.Context) (*systemReq.CustomClaims, error) {
 	j := NewJWT()
 	claims, err := j.ParseToken(token)
 	if err != nil {
-		global.GVA_LOG.Error("从Gin的Context中获取从jwt解析信息失败, 请检查请求头是否存在x-token且claims是否为规定结构")
+		global.GVA_LOG.Error("从Gin的Context中获取从jwt解析信息失败, 请检查请求头是否存在x-token或Authorization且claims是否为规定结构")
 	}
 	return claims, err
 }

@@ -2,6 +2,8 @@ package system
 
 import (
 	"context"
+	"errors"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
@@ -115,4 +117,44 @@ func (wxUserService *WechatUserService) GetWechatUserInfoList(ctx context.Contex
 func (wxUserService *WechatUserService) GetWechatUserPublic(ctx context.Context) {
 	// 此方法为获取数据源定义的数据
 	// 请自行实现
+}
+
+// BindSalesperson 绑定销售员
+func (wxUserService *WechatUserService) BindSalesperson(ctx context.Context, userID uint, salespersonPhone string) error {
+	// 1. 首先通过手机号查找销售员
+	var salesperson system.WechatUser
+	err := global.GVA_DB.Where("phone_number = ? AND is_active = ?", salespersonPhone, true).First(&salesperson).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return errors.New("没有该销售员")
+		}
+		return err
+	}
+
+	// 2. 更新用户的销售员和关系渠道
+	updateData := map[string]interface{}{
+		"salesperson":          int(salesperson.ID),
+		"relationship_channel": int(salesperson.ID),
+		"updated_by":           userID,
+	}
+
+	err = global.GVA_DB.Model(&system.WechatUser{}).Where("id = ?", userID).Updates(updateData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetSalespersonByPhone 通过手机号获取销售员信息
+func (wxUserService *WechatUserService) GetSalespersonByPhone(ctx context.Context, phone string) (*system.WechatUser, error) {
+	var salesperson system.WechatUser
+	err := global.GVA_DB.Where("phone_number = ? AND is_active = ?", phone, true).First(&salesperson).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("没有该销售员")
+		}
+		return nil, err
+	}
+	return &salesperson, nil
 }

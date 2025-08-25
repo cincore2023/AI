@@ -34,7 +34,6 @@ const headerStyle = computed(() => ({
 }))
 
 function handleCompleteInfo() {
-  // #ifdef MP-WEIXIN
   uni.getUserProfile({
     desc: '用于完善用户信息',
     success: (res) => {
@@ -53,14 +52,6 @@ function handleCompleteInfo() {
       })
     },
   })
-  // #endif
-
-  // #ifndef MP-WEIXIN
-  uni.showToast({
-    title: '请在微信小程序中使用此功能',
-    icon: 'none',
-  })
-  // #endif
 }
 
 function handleSearch(value: string) {
@@ -80,7 +71,7 @@ function handleSearch(value: string) {
       <view class="left-section" @click="handleCompleteInfo">
         <view class="greeting">
           <text class="greeting-text">{{ greeting }}</text>
-          <text class="user-name">{{ wechatUser?.nickname }}</text>
+          <text class="user-name">{{ wechatUser?.nickname || '未登录' }}</text>
         </view>
         <text v-if="!wechatUser?.phone_number" class="complete-hint">点击完善您的信息</text>
       </view>

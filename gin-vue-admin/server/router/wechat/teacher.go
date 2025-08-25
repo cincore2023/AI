@@ -7,9 +7,10 @@ import (
 type WechatTeacherRouter struct{}
 
 func (s *WechatTeacherRouter) InitWechatTeacherRouter(Router *gin.RouterGroup, PublicRouter *gin.RouterGroup) {
-	wechatTeacherPublicRouter := PublicRouter.Group("api")
+	// 微信教师API不需要认证，放在PublicRouter中，使用api/wx前缀
+	wechatTeacherPublicRouter := PublicRouter.Group("api/wx")
 	{
-		wechatTeacherPublicRouter.GET("wxTeachers", wechatTeacherApi.WxGetTeachers)           // 微信小程序讲师列表
-		wechatTeacherPublicRouter.GET("wxTeachers/:id", wechatTeacherApi.WxGetTeacherDetail) // 微信小程序讲师详情
+		wechatTeacherPublicRouter.GET("Teachers", wechatTeacherApi.WxGetTeachers)          // 微信小程序讲师列表
+		wechatTeacherPublicRouter.GET("Teachers/:id", wechatTeacherApi.WxGetTeacherDetail) // 微信小程序讲师详情
 	}
 }

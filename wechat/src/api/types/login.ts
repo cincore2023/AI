@@ -61,6 +61,7 @@ export interface IUpdatePassword {
  */
 export interface IWechatUser {
   id: number
+  avatar?: string
   openId?: string
   nickname?: string
   phone_number?: string
@@ -75,4 +76,22 @@ export interface IWechatUser {
   isActive?: boolean
   createdAt?: string
   updatedAt?: string
+}
+
+/**
+ * 绑定销售员响应数据
+ */
+export interface IWxBindSalespersonResponse {
+  salesperson: IWxSalespersonInfo
+  bindingSuccess: boolean
+  message: string
+}
+
+/**
+ * 销售员信息
+ */
+export interface IWxSalespersonInfo {
+  id: number
+  nickname: string
+  phoneNumber: string
 }

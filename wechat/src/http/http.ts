@@ -1,6 +1,8 @@
 import type { CustomRequestOptions } from '@/http/interceptor'
+import { useUserStore } from '@/store/user'
 
 export function http<T>(options: CustomRequestOptions) {
+  const { removeUserInfo } = useUserStore()
   // 1. 返回 Promise 对象
   return new Promise<IResData<T>>((resolve, reject) => {
     uni.request({
@@ -13,13 +15,21 @@ export function http<T>(options: CustomRequestOptions) {
       success(res) {
         // 状态码 2xx，参考 axios 的设计
         if (res.statusCode >= 200 && res.statusCode < 300) {
+          if (res.data?.code !== 0) {
+            uni.showToast({
+              icon: 'none',
+              title: res.data?.msg || '请求错误',
+            })
+            console.error(res.data?.msg)
+            reject(res)
+          }
           // 2.1 提取核心数据 res.data
           resolve(res.data as IResData<T>)
         }
         else if (res.statusCode === 401) {
           // 401错误  -> 清理用户信息，跳转到登录页
-          // userStore.clearUserInfo()
-          // uni.navigateTo({ url: '/pages/login/login' })
+          removeUserInfo()
+          uni.navigateTo({ url: '/pages/login/login' })
           reject(res)
         }
         else {

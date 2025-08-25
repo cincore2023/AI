@@ -7,7 +7,7 @@ import { http } from '@/http/http'
  * @returns Promise<ITeacherResponse> 教师数据
  */
 export function getTeachers(sort: 'asc' | 'desc' = 'desc') {
-  return http.get<ITeacherResponse>('/api/wxTeachers', {
+  return http.get<ITeacherResponse>('/api/wx/Teachers', {
     params: { sort }
   })
 }
@@ -18,5 +18,5 @@ export function getTeachers(sort: 'asc' | 'desc' = 'desc') {
  * @returns Promise<ITeacherDetailResponse> 教师详情数据（包含课程列表）
  */
 export function getTeacherDetail(id: number | string) {
-  return http.get<ITeacherDetailResponse>(`/api/wxTeachers/${id}`)
+  return http.get<ITeacherDetailResponse>(`/api/wx/Teachers/${id}`)
 }
