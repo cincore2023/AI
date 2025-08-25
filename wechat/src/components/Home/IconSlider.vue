@@ -5,6 +5,7 @@ interface IconItem {
   icon: string
   text: string
   key: string
+  path?: string
 }
 
 // 图标数据 - 将素材库和智能体放在同一列表中
@@ -28,6 +29,7 @@ const iconList = ref<IconItem[]>([
     icon: '🏌️',
     text: '线下',
     key: 'offline',
+    path: '/pages/offline-activities/index',
   },
   {
     icon: '💬',
@@ -43,7 +45,7 @@ const iconList = ref<IconItem[]>([
 
 // 事件处理
 function handleIconClick(item: IconItem) {
-  console.log('点击图标:', item.text, item.key)
+  uni.navigateTo({ url: item.path })
 }
 
 // 暴露方法给父组件

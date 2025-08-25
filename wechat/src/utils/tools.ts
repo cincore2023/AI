@@ -1,3 +1,5 @@
+import dayjs from 'dayjs'
+
 export function hidePhoneNumber(phoneNumber: string) {
   // 检查手机号长度
   if (phoneNumber.length < 4) {
@@ -12,4 +14,8 @@ export function hidePhoneNumber(phoneNumber: string) {
 
   // 返回隐藏后的手机号
   return hiddenPart + lastFourDigits
+}
+
+export function formatDate(dateStr: string) {
+  return dayjs(dateStr).format('YYYY-MM-DD')
 }

@@ -20,7 +20,7 @@ export const TABBAR_MAP = {
   CUSTOM_TABBAR_WITH_CACHE: 2,
   CUSTOM_TABBAR_WITHOUT_CACHE: 3,
 }
-// TODO：通过这里切换使用tabbar的策略
+
 export const selectedTabbarStrategy = TABBAR_MAP.CUSTOM_TABBAR_WITH_CACHE
 
 // selectedTabbarStrategy==NATIVE_TABBAR(1) 时，需要填 iconPath 和 selectedIconPath
@@ -40,29 +40,25 @@ export const tabbarList: FgTabBarItem[] = [
     iconPath: 'static/tabbar/example.png',
     selectedIconPath: 'static/tabbar/exampleHL.png',
     pagePath: 'pages/course/index',
-    text: '课程管理',
-    icon: 'i-carbon-book',
-    // 注意 unocss 图标需要如下处理：（二选一）
-    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见代码第三行）
-    // 2）配置到 unocss.config.ts 的 safelist 中
-    iconType: 'unocss',
+    text: '课程',
+    icon: 'file',
+    iconType: 'uiLib',
   },
   {
     iconPath: 'static/tabbar/example.png',
     selectedIconPath: 'static/tabbar/exampleHL.png',
     pagePath: 'pages/about/about',
-    text: '关于',
-    icon: 'i-carbon-code',
-    // 注意 unocss 图标需要如下处理：（二选一）
-    // 1）在fg-tabbar.vue页面上引入一下并注释掉（见代码第三行）
-    // 2）配置到 unocss.config.ts 的 safelist 中
-    iconType: 'unocss',
+    text: '小鲸AI',
+    icon: 'list',
+    iconType: 'uiLib',
   },
   {
+    iconPath: 'static/tabbar/home.png',
+    selectedIconPath: 'static/tabbar/homeHL.png',
     pagePath: 'pages/personal/index',
-    text: '个人中心',
-    icon: 'i-carbon-code',
-    iconType: 'unocss',
+    text: '我的',
+    icon: 'person',
+    iconType: 'uiLib',
   },
 ]
 
