@@ -193,7 +193,7 @@ onMounted(() => {
         </view>
         <view class="account-info">
           <view class="account-avatar">
-            <image src="/static/images/default-avatar.png" class="avatar-img"/>
+            <image src="/static/images/avatar.png" class="avatar-img"/>
           </view>
           <view class="account-details">
             <text class="account-name">{{ accountName }}</text>

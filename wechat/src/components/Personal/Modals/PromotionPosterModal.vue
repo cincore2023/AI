@@ -24,20 +24,20 @@ const posterList = ref<PosterItem[]>([
   {
     id: '1',
     name: '经典版',
-    qrCode: '/static/images/default-avatar.png',
-    preview: '/static/images/default-avatar.png',
+    qrCode: '/static/images/avatar.png',
+    preview: '/static/images/avatar.png',
   },
   {
     id: '2',
     name: '科技版',
-    qrCode: '/static/images/avatar.jpg',
-    preview: '/static/images/avatar.jpg',
+    qrCode: '/static/images/avatar.png',
+    preview: '/static/images/avatar.png',
   },
   {
     id: '3',
     name: '简约版',
-    qrCode: '/static/images/default-avatar.png',
-    preview: '/static/images/default-avatar.png',
+    qrCode: '/static/images/avatar.png',
+    preview: '/static/images/avatar.png',
   },
 ])
 

@@ -50,7 +50,7 @@ const activities = ref([
     orderTime: '2025-02-02 18:33:33',
     price: '998.00',
     paymentMethod: '线上支付',
-    image: '/static/images/default-avatar.png',
+    image: '/static/images/avatar.png',
   },
   {
     orderNumber: '12312312312312',
@@ -60,7 +60,7 @@ const activities = ref([
     orderTime: '2025-02-02 18:33:33',
     price: '998.00',
     paymentMethod: '兑换码支付',
-    image: '/static/images/avatar.jpg',
+    image: '/static/images/avatar.png',
   },
   {
     orderNumber: '123123123123123',
@@ -70,7 +70,7 @@ const activities = ref([
     orderTime: '2025-02-01 14:20:15',
     price: '1288.00',
     paymentMethod: '线上支付',
-    image: '/static/images/default-avatar.png',
+    image: '/static/images/avatar.png',
   },
   {
     orderNumber: '12312312312312',
@@ -80,7 +80,7 @@ const activities = ref([
     orderTime: '2025-01-30 09:15:30',
     price: '1588.00',
     paymentMethod: '线上支付',
-    image: '/static/images/default-avatar.png',
+    image: '/static/images/avatar.png',
   },
 ])
 

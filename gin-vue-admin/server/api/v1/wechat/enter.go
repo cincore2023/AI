@@ -9,6 +9,7 @@ type ApiGroup struct {
 	WechatTeacherApi
 	WechatCourseApi
 	WechatActivityApi
+	WechatImageApi
 }
 
 var ApiGroupApp = new(ApiGroup)

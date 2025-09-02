@@ -23,16 +23,71 @@ function handleCancelEdit() {
   emit('update:show', false)
 }
 
-// 选择头像
+// 选择头像方式
 function handleSelectAvatar() {
+  uni.showActionSheet({
+    itemList: ['从相册选择', '使用微信头像'],
+    success: (res) => {
+      if (res.tapIndex === 0) {
+        // 从相册选择
+        chooseImageFromAlbum()
+      }
+      else if (res.tapIndex === 1) {
+        // 使用微信头像
+        useWechatAvatar()
+      }
+    },
+  })
+}
+
+// 从相册选择图片
+function chooseImageFromAlbum() {
   uni.chooseImage({
     count: 1,
     sizeType: ['compressed'],
     sourceType: ['album', 'camera'],
     success: (res) => {
       editForm.value.avatar = res.tempFilePaths[0]
-    }
+    },
   })
+}
+
+// 使用微信头像
+function useWechatAvatar() {
+  // 获取微信用户信息
+  uni.getUserProfile({
+    desc: '用于完善会员资料',
+    success: (res) => {
+      // 获取微信头像
+      editForm.value.avatar = res.userInfo.avatarUrl
+      // 同时更新昵称
+      editForm.value.nickname = res.userInfo.nickName
+    },
+    fail: () => {
+      uni.showToast({
+        title: '获取微信头像失败',
+        icon: 'none',
+      })
+    },
+  })
+}
+
+// 获取手机号
+function getPhoneNumber(res: any) {
+  console.log(res)
+  if (res.detail.errMsg === 'getPhoneNumber:ok') {
+    uni.showToast({
+      title: '已获取手机号授权',
+      icon: 'success',
+    })
+    // editForm.value.phone = '解析后的手机号'
+  }
+  else {
+    uni.showToast({
+      title: '获取手机号失败',
+      icon: 'none',
+    })
+  }
 }
 </script>
 
@@ -41,7 +96,7 @@ function handleSelectAvatar() {
     <view class="w-[90vw] overflow-hidden rounded-2xl bg-white shadow-2xl">
       <!-- 头部区域 -->
       <view class="relative p-6 text-center text-white">
-        <view class="absolute inset-0 bg-gray-800"/>
+        <view class="absolute inset-0 bg-gray-800" />
         <view class="relative z-10">
           <view class="mb-3 flex justify-center">
             <view class="h-12 w-12 flex items-center justify-center rounded-full bg-white/20">
@@ -49,7 +104,7 @@ function handleSelectAvatar() {
             </view>
           </view>
           <text class="mb-2 block text-xl font-bold">编辑个人信息</text>
-          <text class="text-sm opacity-90">修改您的头像、昵称和手机号</text>
+          <text class="text-sm opacity-90">修改您的头像和昵称</text>
         </view>
       </view>
 
@@ -62,12 +117,13 @@ function handleSelectAvatar() {
             <view class="flex justify-center">
               <view class="relative">
                 <image
-                    :src="editForm.avatar"
-                    class="h-20 w-20 rounded-full border-2 border-gray-200"
+                  v-if="editForm?.avatar" :src="editForm.avatar"
+                  class="h-20 w-20 border-2 border-gray-200 rounded-full"
                 />
+                <image v-else src="@/static/images/avatar.png" class="h-20 w-20 rounded-full" mode="aspectFit" />
                 <view
-                    class="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white"
-                    @click="handleSelectAvatar"
+                  class="absolute h-6 w-6 flex items-center justify-center rounded-full bg-blue-500 text-white -bottom-1 -right-1"
+                  @click="handleSelectAvatar"
                 >
                   <text class="text-xs">📷</text>
                 </view>
@@ -79,22 +135,21 @@ function handleSelectAvatar() {
           <view class="space-y-2">
             <text class="text-base text-gray-800 font-semibold">昵称 *</text>
             <sar-input
-                v-model="editForm.nickname"
-                placeholder="请输入昵称"
-                class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
+              v-model="editForm.nickname"
+              typ="nickname"
+              placeholder="请输入昵称"
+              class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
             />
           </view>
 
           <!-- 手机号 -->
           <view class="space-y-2">
             <text class="text-base text-gray-800 font-semibold">手机号</text>
-            <sar-input
-                v-model="editForm.phone"
-                placeholder="请输入手机号"
-                type="number"
-                maxlength="11"
-                class="w-full border-2 border-gray-200 rounded-lg px-4 py-3 text-base focus:border-blue-500"
-            />
+            <view class="flex items-center">
+              <button class="flex-1 whitespace-nowrap px-4 py-3 text-sm text-gray-900" open-type="getPhoneNumber" @getphonenumber="getPhoneNumber">
+                {{ editForm.phone || '获取手机号' }}
+              </button>
+            </view>
           </view>
         </view>
       </view>
@@ -102,18 +157,18 @@ function handleSelectAvatar() {
       <!-- 按钮区域 -->
       <view class="flex gap-3 border-t border-gray-100 p-6">
         <view
-            class="flex-1 rounded-xl bg-gray-100 py-4 text-center text-gray-700 transition-all duration-200 active:scale-95"
-            @click="handleCancelEdit"
+          class="flex-1 rounded-xl bg-gray-100 py-4 text-center text-gray-700 transition-all duration-200 active:scale-95"
+          @click="handleCancelEdit"
         >
           <text class="font-medium">取消</text>
         </view>
         <view
-            class="bg-gray-900 flex-1 rounded-xl py-4 text-center text-white transition-all duration-200 active:scale-95"
-            @click="handleConfirmEdit"
+          class="flex-1 rounded-xl bg-gray-900 py-4 text-center text-white transition-all duration-200 active:scale-95"
+          @click="handleConfirmEdit"
         >
           <text class="font-medium">确认修改</text>
         </view>
       </view>
     </view>
   </sar-popup>
-</template> 
+</template>

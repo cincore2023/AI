@@ -22,7 +22,8 @@ function handleRenew() {
 <template>
   <view class="p-4 pt-0">
     <view class="mb-6 flex items-center">
-      <image :src="wechatUser?.avatar" class="mr-4 h-20 w-20 rounded-full"/>
+      <image v-if="wechatUser?.avatar" :src="wechatUser?.avatar" class="mr-4 h-20 w-20 rounded-full"/>
+      <image v-else src="@/static/images/avatar.png" class="mr-4 h-20 w-20 rounded-full" mode="aspectFit"/>
       <view class="flex-1">
         <view class="mb-3 flex items-center justify-between">
           <text class="text-lg text-gray-800 font-bold">{{ wechatUser.nickname }}</text>

@@ -9,6 +9,7 @@ type RouterGroup struct {
 	WechatTeacherRouter
 	WechatCourseRouter
 	WechatActivityRouter
+	WechatImageRouter
 }
 
 var (
@@ -17,4 +18,5 @@ var (
 	wechatTeacherApi  = api.ApiGroupApp.WechatTeacherApi
 	wechatCourseApi   = api.ApiGroupApp.WechatCourseApi
 	wechatActivityApi = api.ApiGroupApp.WechatActivityApi
+	wechatImageApi    = api.ApiGroupApp.WechatImageApi
 )

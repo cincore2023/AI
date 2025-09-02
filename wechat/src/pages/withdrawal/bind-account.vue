@@ -93,7 +93,7 @@ const isBound = ref(false)
 // 模拟数据
 const maskedPhone = ref('185****0617')
 const wechatInfo = ref({
-  avatar: '/static/images/default-avatar.png',
+  avatar: '/static/images/avatar.png',
   nickname: 'Dil'
 })
 
@@ -111,7 +111,7 @@ const bindWechat = () => {
       console.log('微信授权成功', res)
       isBound.value = true
       wechatInfo.value = {
-        avatar: res.userInfo.avatarUrl || '/static/images/default-avatar.png',
+        avatar: res.userInfo.avatarUrl || '/static/images/avatar.png',
         nickname: res.userInfo.nickName || '微信用户'
       }
       uni.showToast({

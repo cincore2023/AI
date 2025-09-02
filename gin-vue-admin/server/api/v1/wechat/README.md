@@ -12,6 +12,7 @@ gin-vue-admin/server/
 │   └── wechat/          # 微信小程序模块（新）
 │       ├── auth.go      # 微信登录认证相关API
 │       ├── banner.go    # 微信轮播图相关API  
+│       ├── image.go     # 微信图片上传相关API
 │       └── enter.go     # 模块入口文件
 └── router/
     ├── system/          # 系统管理路由
@@ -19,6 +20,7 @@ gin-vue-admin/server/
     └── wechat/          # 微信小程序路由（新）
         ├── auth.go      # 微信认证路由
         ├── banner.go    # 微信轮播图路由
+        ├── image.go     # 微信图片上传路由
         └── enter.go     # 路由入口文件
 ```
 
@@ -66,9 +68,11 @@ gin-vue-admin/server/
 - 路径: `GET /api/wxActivities/{id}`
 - 功能: 获取在展示时间内的活动详细信息
 
-### 6. 模块入口 (enter.go)
-- **ApiGroup** - 微信模块API分组
-- 统一管理服务依赖和模块导出
+### 6. 微信图片上传 (image.go)
+- **WechatImageApi** - 微信图片上传API结构体
+- **WxUploadImage** - 上传图片接口
+- 路径: `POST /api/wx/uploadImage`
+- 功能: 上传图片文件，支持分类ID参数
 
 ## 特点
 
@@ -101,7 +105,7 @@ wechatRouter.InitWechatActivityRouter(privateGroup, publicGroup) // 微信活动
 type ApiGroup struct {
     SystemApiGroup  system.ApiGroup
     ExampleApiGroup example.ApiGroup
-    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi、WechatCourseApi、WechatActivityApi）
+    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi、WechatCourseApi、WechatActivityApi、WechatImageApi）
 }
 ```
 
@@ -115,6 +119,7 @@ type ApiGroup struct {
 - 微信课程管理接口
 - 微信活动管理接口
 - 微信意见反馈接口
+- 微信图片上传接口
 
 每个功能都可以创建独立的文件，保持模块的清晰和可维护性。
 
