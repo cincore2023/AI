@@ -61,18 +61,20 @@ func (w *WechatApi) WxLogin(c *gin.Context) {
 
 	global.GVA_LOG.Info("微信登录请求", zap.String("code", req.Code))
 
-	// 1. 通过code获取openid
-	openID, err := w.getOpenIDFromCode(req.Code)
+	// 1. 通过code获取openid和session_key
+	sessionInfo, err := w.getOpenIDAndSessionKey(req.Code)
 	if err != nil {
-		global.GVA_LOG.Error("获取openid失败!", zap.Error(err))
+		global.GVA_LOG.Error("获取openid和session_key失败!", zap.Error(err))
 		response.FailWithMessage("微信登录失败: "+err.Error(), c)
 		return
 	}
 
-	global.GVA_LOG.Info("成功获取openid", zap.String("openId", openID))
+	global.GVA_LOG.Info("成功获取openid和session_key",
+		zap.String("openId", sessionInfo.OpenID),
+		zap.String("sessionKey", sessionInfo.SessionKey[:10]+"..."))
 
 	// 2. 根据openid查找或创建微信用户
-	wxUser, isNewUser, err := w.findOrCreateWechatUser(openID)
+	wxUser, isNewUser, err := w.findOrCreateWechatUser(sessionInfo.OpenID, sessionInfo.SessionKey)
 	if err != nil {
 		global.GVA_LOG.Error("创建微信用户失败!", zap.Error(err))
 		response.FailWithMessage("用户创建失败: "+err.Error(), c)
@@ -103,14 +105,14 @@ func (w *WechatApi) WxLogin(c *gin.Context) {
 	response.OkWithDetailed(wxLoginResponse, "微信登录成功", c)
 }
 
-// getOpenIDFromCode 通过code获取openid
-func (w *WechatApi) getOpenIDFromCode(code string) (string, error) {
+// getOpenIDAndSessionKey 通过code获取openid和session_key
+func (w *WechatApi) getOpenIDAndSessionKey(code string) (*WxSessionResponse, error) {
 	// 微信小程序配置，这里应该从配置文件读取
 	appID := global.GVA_CONFIG.System.WxAppID         // 需要在配置中添加
 	appSecret := global.GVA_CONFIG.System.WxAppSecret // 需要在配置中添加
 
 	if appID == "" || appSecret == "" {
-		return "", fmt.Errorf("微信小程序配置不完整")
+		return nil, fmt.Errorf("微信小程序配置不完整")
 	}
 
 	// 请求微信API
@@ -119,34 +121,43 @@ func (w *WechatApi) getOpenIDFromCode(code string) (string, error) {
 
 	resp, err := http.Get(url)
 	if err != nil {
-		return "", fmt.Errorf("请求微信API失败: %v", err)
+		return nil, fmt.Errorf("请求微信API失败: %v", err)
 	}
 	defer resp.Body.Close()
 
 	var wxResp WxSessionResponse
 	err = json.NewDecoder(resp.Body).Decode(&wxResp)
 	if err != nil {
-		return "", fmt.Errorf("解析微信API响应失败: %v", err)
+		return nil, fmt.Errorf("解析微信API响应失败: %v", err)
 	}
 
 	if wxResp.ErrCode != 0 {
-		return "", fmt.Errorf("微信API错误: %s", wxResp.ErrMsg)
+		return nil, fmt.Errorf("微信API错误: %s", wxResp.ErrMsg)
 	}
 
 	if wxResp.OpenID == "" {
-		return "", fmt.Errorf("获取openid失败")
+		return nil, fmt.Errorf("获取openid失败")
 	}
 
-	return wxResp.OpenID, nil
+	return &wxResp, nil
 }
 
 // findOrCreateWechatUser 查找或创建微信用户
-func (w *WechatApi) findOrCreateWechatUser(openID string) (*system.WechatUser, bool, error) {
+func (w *WechatApi) findOrCreateWechatUser(openID, sessionKey string) (*system.WechatUser, bool, error) {
 	var wxUser system.WechatUser
 	err := global.GVA_DB.Where("open_id = ?", openID).First(&wxUser).Error
 
 	if err == nil {
-		// 用户已存在
+		// 用户已存在，更新session_key
+		updateData := map[string]interface{}{
+			"session_key": sessionKey,
+		}
+		err = global.GVA_DB.Model(&system.WechatUser{}).Where("id = ?", wxUser.ID).Updates(updateData).Error
+		if err != nil {
+			return nil, false, fmt.Errorf("更新微信用户session_key失败: %v", err)
+		}
+		// 更新内存中的用户对象
+		wxUser.SessionKey = &sessionKey
 		return &wxUser, false, nil
 	}
 
@@ -164,6 +175,7 @@ func (w *WechatApi) findOrCreateWechatUser(openID string) (*system.WechatUser, b
 		BenefitLevel:       &benefitLevel,
 		WithdrawableIncome: &withdrawableIncome,
 		CumulativeIncome:   &cumulativeIncome,
+		SessionKey:         &sessionKey, // 保存session_key
 		// 其他字段使用默认值（nil）
 	}
 

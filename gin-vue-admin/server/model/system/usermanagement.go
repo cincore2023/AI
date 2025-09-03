@@ -2,8 +2,9 @@
 package system
 
 import (
-	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"time"
+
+	"github.com/flipped-aurora/gin-vue-admin/server/global"
 )
 
 // 用户管理 结构体  WechatUser
@@ -12,6 +13,8 @@ type WechatUser struct {
 	OpenId                   *string    `json:"openId" form:"openId" gorm:"column:open_id;"`                                                            //小程序Id
 	Nickname                 *string    `json:"nickname" form:"nickname" gorm:"column:nickname;" binding:"required"`                                    //昵称
 	PhoneNumber              *string    `json:"phone_number" form:"phone_number" gorm:"column:phone_number;" binding:"required"`                        //手机号
+	Avatar                   *string    `json:"avatar" form:"avatar" gorm:"column:avatar;"`                                                             //头像URL
+	SessionKey               *string    `json:"session_key" form:"session_key" gorm:"column:session_key;"`                                              //会话密钥
 	Salesperson              *int       `json:"salesperson" form:"salesperson" gorm:"column:salesperson;"`                                              //销售员
 	RelationshipChannel      *int       `json:"relationship_channel" form:"relationship_channel" gorm:"column:relationship_channel;"`                   //关系渠道
 	BenefitLevel             *int       `json:"benefit_level" form:"benefit_level" gorm:"column:benefit_level;"`                                        //权益等级

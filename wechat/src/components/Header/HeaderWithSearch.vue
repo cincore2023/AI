@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import SearchBar from '@/components/SearchBar/SearchBar.vue'
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/user'
+import SearchBar from '@/components/SearchBar/SearchBar.vue'
+import EditUserInfoModal from '@/components/Personal/Modals/EditUserInfoModal.vue'
 
 // 响应式数据
 const searchText = ref('')
 const safeAreaInsets = ref<any>(null)
-const { wechatUser } = useUserStore()
+const { wechatUser } = storeToRefs(useUserStore())
+
+// 编辑弹框相关
+const editUserInfoModalRef = ref()
 
 // 获取屏幕边界到安全区域距离
 const systemInfo = uni.getWindowInfo()
@@ -34,24 +39,7 @@ const headerStyle = computed(() => ({
 }))
 
 function handleCompleteInfo() {
-  uni.getUserProfile({
-    desc: '用于完善用户信息',
-    success: (res) => {
-      console.log('获取用户信息成功', res)
-      // 这里可以调用后端API保存用户信息
-      uni.showToast({
-        title: '信息获取成功',
-        icon: 'success',
-      })
-    },
-    fail: (err) => {
-      console.log('获取用户信息失败', err)
-      uni.showToast({
-        title: '获取信息失败',
-        icon: 'error',
-      })
-    },
-  })
+  if (!wechatUser.value?.phone_number) editUserInfoModalRef.value?.open()
 }
 
 function handleSearch(value: string) {
@@ -86,6 +74,7 @@ function handleSearch(value: string) {
       />
     </view>
   </view>
+  <EditUserInfoModal ref="editUserInfoModalRef" />
 </template>
 
 <style lang="scss" scoped>

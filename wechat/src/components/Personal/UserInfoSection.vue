@@ -1,17 +1,18 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/user'
 import EditUserInfoModal from './Modals/EditUserInfoModal.vue'
 
 const emit = defineEmits(['renew'])
 
-const { wechatUser, isMember } = useUserStore()
+const { wechatUser, isMember } = storeToRefs(useUserStore())
 
 // 编辑弹框相关
-const showEditModal = ref(false)
+const editUserInfoModalRef = ref()
 
 // 打开编辑弹框
 function handleModifyNickname() {
-  showEditModal.value = true
+  editUserInfoModalRef.value?.open()
 }
 
 function handleRenew() {
@@ -68,6 +69,6 @@ function handleRenew() {
     </view>
 
     <!-- 编辑个人信息弹框 -->
-    <EditUserInfoModal :show="showEditModal" @update:show="(value) => showEditModal = value" />
+    <EditUserInfoModal ref="editUserInfoModalRef" />
   </view>
 </template>

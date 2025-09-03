@@ -13,6 +13,7 @@ gin-vue-admin/server/
 │       ├── auth.go      # 微信登录认证相关API
 │       ├── banner.go    # 微信轮播图相关API  
 │       ├── image.go     # 微信图片上传相关API
+│       ├── userinfo.go  # 微信用户信息相关API
 │       └── enter.go     # 模块入口文件
 └── router/
     ├── system/          # 系统管理路由
@@ -21,6 +22,7 @@ gin-vue-admin/server/
         ├── auth.go      # 微信认证路由
         ├── banner.go    # 微信轮播图路由
         ├── image.go     # 微信图片上传路由
+        ├── userinfo.go  # 微信用户信息路由
         └── enter.go     # 路由入口文件
 ```
 
@@ -32,7 +34,7 @@ gin-vue-admin/server/
 - 路径: `POST /api/wxLogin`
 - 功能: 通过微信code获取用户信息并生成JWT token
 - **WxBindSalesperson** - 绑定销售员接口
-- 路径: `POST /api/wxBindSalesperson` (需要鉴权)
+- 路径: `POST /api/wx/BindSalesperson` (需要鉴权)
 - 功能: 通过手机号查找并绑定销售员，设置关系渠道
 
 ### 2. 微信轮播图 (banner.go)
@@ -74,10 +76,21 @@ gin-vue-admin/server/
 - 路径: `POST /api/wx/uploadImage`
 - 功能: 上传图片文件，支持分类ID参数
 
+### 7. 微信用户信息 (userinfo.go)
+- **WechatUserInfoApi** - 微信用户信息API结构体
+- **WxDecryptPhone** - 微信手机号解密接口
+- 路径: `POST /api/wx/DecryptPhone` (需要鉴权)
+- 功能: 通过微信获取的加密手机号code解密出真实手机号
+- **WxUpdateUserInfo** - 更新用户信息接口
+- 路径: `POST /api/wx/UpdateUserInfo` (需要鉴权)
+- 功能: 更新微信用户的昵称和头像
+- **WxUploadAvatar** - 上传用户头像接口
+- 路径: `POST /api/wx/UploadAvatar` (需要鉴权)
+- 功能: 上传微信用户头像
+
 ## 特点
 
 - ✅ **模块化设计** - 独立的微信功能模块，与系统管理模块平级
-- ✅ **无需鉴权** - 所有接口都是公开接口
 - ✅ **完整文档** - 包含完整的Swagger注释
 - ✅ **类型安全** - 完整的请求/响应类型定义
 - ✅ **错误处理** - 统一的错误处理机制
@@ -95,6 +108,8 @@ wechatRouter.InitWechatBannerRouter(privateGroup, publicGroup)   // 微信轮播
 wechatRouter.InitWechatTeacherRouter(privateGroup, publicGroup)  // 微信教师
 wechatRouter.InitWechatCourseRouter(privateGroup, publicGroup)   // 微信课程
 wechatRouter.InitWechatActivityRouter(privateGroup, publicGroup) // 微信活动
+wechatRouter.InitWechatImageRouter(privateGroup, publicGroup)    // 微信图片上传
+wechatRouter.InitWechatUserInfoRouter(privateGroup)              // 微信用户信息
 ```
 
 ## API 引用
@@ -105,7 +120,7 @@ wechatRouter.InitWechatActivityRouter(privateGroup, publicGroup) // 微信活动
 type ApiGroup struct {
     SystemApiGroup  system.ApiGroup
     ExampleApiGroup example.ApiGroup
-    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi、WechatCourseApi、WechatActivityApi、WechatImageApi）
+    WechatApiGroup  wechat.ApiGroup  // 微信模块（包含WechatApi、WechatBannerApi、WechatTeacherApi、WechatCourseApi、WechatActivityApi、WechatImageApi、WechatUserInfoApi）
 }
 ```
 

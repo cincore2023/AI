@@ -158,3 +158,48 @@ func (wxUserService *WechatUserService) GetSalespersonByPhone(ctx context.Contex
 	}
 	return &salesperson, nil
 }
+
+// UpdateUserPhoneNumber 更新用户手机号
+func (wxUserService *WechatUserService) UpdateUserPhoneNumber(ctx context.Context, userID uint, phoneNumber string) error {
+	// 更新用户的手机号
+	updateData := map[string]interface{}{
+		"phone_number": phoneNumber,
+		"updated_by":   userID,
+	}
+
+	err := global.GVA_DB.Model(&system.WechatUser{}).Where("id = ?", userID).Updates(updateData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateUserInfo 更新用户信息
+func (wxUserService *WechatUserService) UpdateUserInfo(ctx context.Context, userID uint, updateData map[string]interface{}) error {
+	// 添加更新人信息
+	updateData["updated_by"] = userID
+
+	err := global.GVA_DB.Model(&system.WechatUser{}).Where("id = ?", userID).Updates(updateData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// UpdateUserAvatar 更新用户头像
+func (wxUserService *WechatUserService) UpdateUserAvatar(ctx context.Context, userID uint, avatarURL string) error {
+	// 更新用户的头像URL
+	updateData := map[string]interface{}{
+		"avatar":     avatarURL,
+		"updated_by": userID,
+	}
+
+	err := global.GVA_DB.Model(&system.WechatUser{}).Where("id = ?", userID).Updates(updateData).Error
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

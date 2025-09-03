@@ -65,11 +65,6 @@ function confirmMembership() {
   showMembershipModal.value = false
 }
 
-// 绑定销售专员
-function handleBindSales() {
-  showBindSalesModal.value = true
-}
-
 // 确认绑定销售专员
 function confirmBindSales() {
   if (!bindSalesPhone.value.trim()) {
@@ -156,22 +151,25 @@ onMounted(async () => {
 <template>
   <view class="default-layout-content">
     <!-- 头部 -->
-    <HeaderSimple title="个人中心" :show-back="false" :show-right="true"/>
+    <HeaderSimple title="个人中心" :show-back="false" :show-right="true" />
 
     <scroll-view class="no-scrollbar flex flex-1 flex-col" :scroll-y="true" :show-scrollbar="false" enhanced="true">
       <!-- 用户信息区域 -->
       <UserInfoSection @renew="handleRenew" />
 
       <!-- 我的服务 -->
-      <ServiceSection @bind-sales="handleBindSales" />
+      <ServiceSection />
 
       <!-- 合伙人中心 -->
-      <PartnerSection :partner-info="partnerInfo" @income-details="handleIncomeDetails" @generate-code="handleGenerateCode"/>
+      <PartnerSection
+        :partner-info="partnerInfo" @income-details="handleIncomeDetails"
+        @generate-code="handleGenerateCode"
+      />
     </scroll-view>
   </view>
 
   <!-- 会员开通弹框 -->
-  <MembershipModal v-model:show="showMembershipModal" @confirm="confirmMembership"/>
+  <MembershipModal v-model:show="showMembershipModal" @confirm="confirmMembership" />
 
   <!-- 需要绑定销售专员提示弹框 -->
   <BindRequiredModal
