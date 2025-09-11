@@ -1,12 +1,14 @@
 package wechat
 
 import (
+	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
+	"strconv"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 type WechatCourseApi struct{}
@@ -89,6 +91,16 @@ type WxCourseTeacherInfo struct {
 	Name         string `json:"name"`         // 讲师姓名
 	Description  string `json:"description"`  // 讲师描述
 	Introduction string `json:"introduction"` // 讲师介绍
+}
+
+// WxCourseFavoriteRequest 微信课程收藏请求
+type WxCourseFavoriteRequest struct {
+	CourseID uint `json:"courseId" form:"courseId" binding:"required"` // 课程ID
+}
+
+// WxCourseFavoriteResponse 微信课程收藏响应
+type WxCourseFavoriteResponse struct {
+	IsFavorite bool `json:"isFavorite"` // 是否已收藏
 }
 
 // WxGetCourses 获取微信小程序课程列表
@@ -444,4 +456,121 @@ func (w *WechatCourseApi) WxGetCourseDetail(c *gin.Context) {
 
 	global.GVA_LOG.Info("课程详情获取成功", zap.Uint("id", course.ID))
 	response.OkWithDetailed(wxCourseDetail, "获取成功", c)
+}
+
+// WxToggleCourseFavorite 收藏/取消收藏课程
+// @Tags     WechatApi
+// @Summary  收藏/取消收藏课程
+// @Description 收藏或取消收藏课程，需要鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    data       body      WxCourseFavoriteRequest                            true   "课程ID"
+// @Success  200        {object}  response.Response{data=WxCourseFavoriteResponse,msg=string} "操作成功"
+// @Failure  400        {object}  response.Response{msg=string}                        "请求参数错误"
+// @Failure  500        {object}  response.Response{msg=string}                        "服务器内部错误"
+// @Router   /api/wxCourses/favorite [post]
+// @Security ApiKeyAuth
+func (w *WechatCourseApi) WxToggleCourseFavorite(c *gin.Context) {
+	// 获取用户ID（从JWT中获取）
+	claims, _ := c.Get("claims")
+	waitUse := claims.(*systemReq.CustomClaims)
+	userID := waitUse.BaseClaims.ID
+
+	// 获取请求参数
+	var req WxCourseFavoriteRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		response.FailWithMessage("参数错误: "+err.Error(), c)
+		return
+	}
+
+	// 检查课程是否存在且已上架
+	_, err := courseService.GetCourseDetailPublic(req.CourseID)
+	if err != nil {
+		if err.Error() == "record not found" {
+			response.FailWithMessage("课程不存在或未上架", c)
+			return
+		}
+		global.GVA_LOG.Error("获取课程详情失败!", zap.Error(err))
+		response.FailWithMessage("获取课程详情失败: "+err.Error(), c)
+		return
+	}
+
+	// 检查是否已收藏
+	isFavorite, err := courseFavoriteService.IsCourseFavorite(c.Request.Context(), userID, req.CourseID)
+	if err != nil {
+		global.GVA_LOG.Error("检查课程收藏状态失败!", zap.Error(err))
+		response.FailWithMessage("检查课程收藏状态失败: "+err.Error(), c)
+		return
+	}
+
+	// 如果已收藏则取消收藏，否则添加收藏
+	if isFavorite {
+		// 取消收藏
+		err = courseFavoriteService.DeleteCourseFavorite(c.Request.Context(), userID, req.CourseID)
+		if err != nil {
+			global.GVA_LOG.Error("取消课程收藏失败!", zap.Error(err))
+			response.FailWithMessage("取消课程收藏失败: "+err.Error(), c)
+			return
+		}
+		global.GVA_LOG.Info("课程取消收藏成功", zap.Uint("userID", userID), zap.Uint("courseID", req.CourseID))
+		response.OkWithDetailed(WxCourseFavoriteResponse{IsFavorite: false}, "已取消收藏", c)
+	} else {
+		// 添加收藏
+		courseFavorite := &system.CourseFavorite{
+			UserID:   userID,
+			CourseID: req.CourseID,
+		}
+		err = courseFavoriteService.CreateCourseFavorite(c.Request.Context(), courseFavorite)
+		if err != nil {
+			global.GVA_LOG.Error("课程收藏失败!", zap.Error(err))
+			response.FailWithMessage("课程收藏失败: "+err.Error(), c)
+			return
+		}
+		global.GVA_LOG.Info("课程收藏成功", zap.Uint("userID", userID), zap.Uint("courseID", req.CourseID), zap.Uint("favoriteID", courseFavorite.ID))
+		response.OkWithDetailed(WxCourseFavoriteResponse{IsFavorite: true}, "已添加收藏", c)
+	}
+}
+
+// WxIsCourseFavorite 检查课程是否已收藏
+// @Tags     WechatApi
+// @Summary  检查课程是否已收藏
+// @Description 检查课程是否已被当前用户收藏，需要鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    id   path      int                                                    true   "课程ID"
+// @Success  200        {object}  response.Response{data=WxCourseFavoriteResponse,msg=string} "获取成功"
+// @Failure  400        {object}  response.Response{msg=string}                        "请求参数错误"
+// @Failure  500        {object}  response.Response{msg=string}                        "服务器内部错误"
+// @Router   /api/wxCourses/{id}/favorite [get]
+// @Security ApiKeyAuth
+func (w *WechatCourseApi) WxIsCourseFavorite(c *gin.Context) {
+	// 获取用户ID（从JWT中获取）
+	claims, _ := c.Get("claims")
+	waitUse := claims.(*systemReq.CustomClaims)
+	userID := waitUse.BaseClaims.ID
+
+	// 获取路径参数
+	idStr := c.Param("id")
+	if idStr == "" {
+		response.FailWithMessage("课程ID不能为空", c)
+		return
+	}
+
+	// 转换ID为整数
+	id, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		global.GVA_LOG.Error("课程ID格式错误!", zap.String("id", idStr), zap.Error(err))
+		response.FailWithMessage("课程ID格式错误", c)
+		return
+	}
+
+	// 检查是否已收藏
+	isFavorite, err := courseFavoriteService.IsCourseFavorite(c.Request.Context(), userID, uint(id))
+	if err != nil {
+		global.GVA_LOG.Error("检查课程收藏状态失败!", zap.Error(err))
+		response.FailWithMessage("检查课程收藏状态失败: "+err.Error(), c)
+		return
+	}
+
+	response.OkWithDetailed(WxCourseFavoriteResponse{IsFavorite: isFavorite}, "获取成功", c)
 }

@@ -54,6 +54,24 @@ async function handleRefresh() {
 onMounted(async () => {
   await handleRefresh()
 })
+
+// 微信小程序分享功能
+// #ifdef MP-WEIXIN
+onShareAppMessage((res) => {
+  return {
+    title: '欢迎来到我们的学习平台',
+    path: '/pages/index/index',
+    imageUrl: ''
+  }
+})
+
+onShareTimeline(() => {
+  return {
+    title: '欢迎来到我们的学习平台',
+    imageUrl: ''
+  }
+})
+// #endif
 </script>
 
 <template>

@@ -24,10 +24,11 @@ var (
 	wechatImageApi    = ApiGroupApp.WechatImageApi
 	wechatUserInfoApi = ApiGroupApp.WechatUserInfoApi
 
-	bannerService     = service.ServiceGroupApp.SystemServiceGroup.BannerService
-	teacherService    = service.ServiceGroupApp.SystemServiceGroup.TeacherService
-	courseService     = service.ServiceGroupApp.SystemServiceGroup.CourseService
-	categoryService   = service.ServiceGroupApp.SystemServiceGroup.CategoryService
-	activitiesService = service.ServiceGroupApp.SystemServiceGroup.ActivitiesService
-	wxUserService     = service.ServiceGroupApp.SystemServiceGroup.WechatUserService
+	bannerService         = service.ServiceGroupApp.SystemServiceGroup.BannerService
+	teacherService        = service.ServiceGroupApp.SystemServiceGroup.TeacherService
+	courseService         = service.ServiceGroupApp.SystemServiceGroup.CourseService
+	courseFavoriteService = service.ServiceGroupApp.SystemServiceGroup.CourseFavoriteService
+	categoryService       = service.ServiceGroupApp.SystemServiceGroup.CategoryService
+	activitiesService     = service.ServiceGroupApp.SystemServiceGroup.ActivitiesService
+	wxUserService         = service.ServiceGroupApp.SystemServiceGroup.WechatUserService
 )

@@ -14,4 +14,11 @@ func (s *WechatCourseRouter) InitWechatCourseRouter(Router *gin.RouterGroup, Pub
 		wechatCoursePublicRouter.GET("Courses/:id", wechatCourseApi.WxGetCourseDetail) // 微信小程序课程详情
 		wechatCoursePublicRouter.GET("Categories", wechatCourseApi.WxGetCategories)    // 微信小程序分类列表
 	}
+
+	// 需要认证的微信课程API，放在Router中
+	wechatCourseRouter := Router.Group("api/wx")
+	{
+		wechatCourseRouter.POST("Courses/favorite", wechatCourseApi.WxToggleCourseFavorite) // 收藏/取消收藏课程
+		wechatCourseRouter.GET("Courses/:id/favorite", wechatCourseApi.WxIsCourseFavorite)  // 检查课程是否已收藏
+	}
 }

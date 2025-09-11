@@ -13,7 +13,6 @@ const tabList = ref([
 ])
 
 interface Props {
-  activeTab: number
   detail: WxCourseDetailItem
 }
 

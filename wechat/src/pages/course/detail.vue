@@ -10,6 +10,7 @@
 
 <script setup lang="ts">
 import { useUserStore } from '@/store/user'
+import { useFavoriteStore } from '@/store/favorite'
 import { getWxCourseDetail } from '@/api/course'
 import type { WxCourseDetailItem } from "@/api/types/course";
 
@@ -19,12 +20,11 @@ import CourseActions from './components/CourseActions.vue'
 
 const courseId = ref('')
 const { isMember } = useUserStore()
-
-
-
+const favoriteStore = useFavoriteStore()
 
 const courseDetail = ref<WxCourseDetailItem | null>(null)
 const loading = ref(false)
+const isFavorite = ref(false)
 
 // 获取课程详情
 async function getCourseDetail(id: string) {
@@ -33,6 +33,11 @@ async function getCourseDetail(id: string) {
     const { data } = await getWxCourseDetail(id)
     courseDetail.value = data
     console.log('课程详情获取成功:', data)
+    
+    // 获取课程收藏状态
+    if (data.id) {
+      isFavorite.value = await favoriteStore.getCourseFavoriteStatus(data.id)
+    }
   } catch (error) {
     console.error('获取课程详情失败:', error)
     uni.showToast({
@@ -42,6 +47,14 @@ async function getCourseDetail(id: string) {
   } finally {
     loading.value = false
   }
+}
+
+// 切换收藏状态
+async function toggleFavorite() {
+  if (!courseId.value) return
+  
+  const courseIdNum = parseInt(courseId.value)
+  isFavorite.value = await favoriteStore.toggleCourseFavorite(courseIdNum)
 }
 
 // 下载资料
@@ -94,6 +107,29 @@ onLoad((options) => {
     getCourseDetail(options.id)
   }
 })
+
+// 微信小程序分享功能
+// #ifdef MP-WEIXIN
+onShareAppMessage((res) => {
+  if (res.from === 'button') {
+    // 来自页面内转发按钮
+    console.log('来自页面内转发按钮')
+  }
+  
+  return {
+    title: courseDetail.value?.courseTitle || '推荐一门好课',
+    path: `/pages/course/detail?id=${courseId.value}`,
+    imageUrl: courseDetail.value?.coverImage || ''
+  }
+})
+
+onShareTimeline(() => {
+  return {
+    title: courseDetail.value?.courseTitle || '推荐一门好课',
+    imageUrl: courseDetail.value?.coverImage || ''
+  }
+})
+// #endif
 </script>
 
 <template>
@@ -119,6 +155,10 @@ onLoad((options) => {
 
     </scroll-view>
     <!-- 底部操作栏 -->
-    <CourseActions :is-member="isMember"/>
+    <CourseActions 
+      :is-member="isMember" 
+      :is-favorite="isFavorite"
+      @toggle-favorite="toggleFavorite"
+    />
   </view>
 </template>

@@ -2,15 +2,41 @@
 
 interface Props {
   isMember: boolean
+  isFavorite?: boolean
 }
 
 interface Emits {
   (e: 'action'): void
+  (e: 'toggleFavorite'): void
 }
+
+const emit = defineEmits<Emits>()
 
 defineProps<Props>()
 
-defineEmits<Emits>()
+// 回到首页
+function goHome() {
+  uni.switchTab({
+    url: '/pages/index/index'
+  })
+}
+
+// 分享功能
+function shareCourse() {
+  // #ifdef MP-WEIXIN
+  uni.showShareMenu({
+    withShareTicket: true,
+    menus: ['shareAppMessage', 'shareTimeline']
+  })
+  // #endif
+  
+  // #ifndef MP-WEIXIN
+  uni.showToast({
+    title: '分享功能仅在微信小程序中可用',
+    icon: 'none'
+  })
+  // #endif
+}
 
 const systemInfo = uni.getWindowInfo()
 
@@ -23,7 +49,7 @@ const BottomStyle = computed(() => ({
 <template>
   <view class="bottom-actions" :style="BottomStyle">
     <view class="action-buttons">
-      <sar-button type="text">
+      <sar-button type="text" @click="goHome">
         <view class="action-btn">
           <view class="action-icon">
             🏠
@@ -33,17 +59,17 @@ const BottomStyle = computed(() => ({
           </view>
         </view>
       </sar-button>
-      <sar-button type="text">
+      <sar-button type="text" @click="$emit('toggleFavorite')">
         <view class="action-btn">
           <view class="action-icon">
-            ⭐
+            {{ isFavorite ? '⭐' : '☆' }}
           </view>
           <view class="action-text">
-            收藏
+            {{ isFavorite ? '已收藏' : '收藏' }}
           </view>
         </view>
       </sar-button>
-      <sar-button type="text">
+      <sar-button type="text" @click="shareCourse" open-type="share">
         <view class="action-btn">
           <view class="action-icon">
             📤

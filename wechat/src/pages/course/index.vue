@@ -118,6 +118,24 @@ watch(
 onMounted(async () => {
   getCourses()
 })
+
+// 微信小程序分享功能
+// #ifdef MP-WEIXIN
+onShareAppMessage((res) => {
+  return {
+    title: '课程列表',
+    path: '/pages/course/index',
+    imageUrl: ''
+  }
+})
+
+onShareTimeline(() => {
+  return {
+    title: '课程列表',
+    imageUrl: ''
+  }
+})
+// #endif
 </script>
 
 <template>

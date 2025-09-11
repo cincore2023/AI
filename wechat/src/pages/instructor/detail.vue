@@ -22,6 +22,7 @@ import InstructorProfile from '@/components/Instructor/InstructorProfile.vue'
 const activeTab = ref<number>(0)
 const loading = ref(false)
 const error = ref<string | null>(null)
+const teacherId = ref<string>('')
 
 // 模拟讲师数据
 const instructorData = ref<ITeacherDetailItem>()
@@ -52,9 +53,28 @@ async function loadInstructorData(id: string) {
 
 onLoad((options: any) => {
   if (options?.id) {
+    teacherId.value = options?.id
     loadInstructorData(options?.id)
   }
 })
+
+// 微信小程序分享功能
+// #ifdef MP-WEIXIN
+onShareAppMessage((res) => {
+  return {
+    title: instructorData.value?.name ? `${instructorData.value.name}讲师` : '讲师详情',
+    path: `/pages/instructor/detail?id=${teacherId.value}`,
+    imageUrl: instructorData.value?.avatar || ''
+  }
+})
+
+onShareTimeline(() => {
+  return {
+    title: instructorData.value?.name ? `${instructorData.value.name}讲师` : '讲师详情',
+    imageUrl: instructorData.value?.avatar || ''
+  }
+})
+// #endif
 </script>
 
 <template>

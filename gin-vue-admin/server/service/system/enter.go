@@ -27,6 +27,7 @@ type ServiceGroup struct {
 	TeacherService
 	BenefitService
 	CourseService
+	CourseFavoriteService
 	WechatUserService
 	CodeService
 	ActivitiesService
