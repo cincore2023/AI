@@ -15,6 +15,11 @@ export interface IWxUpdateUserInfoRequest {
   avatar?: string
 }
 
+// 更新会员状态请求参数
+export interface IWxUpdateMembershipRequest {
+  membershipExpiryDate?: string | null
+}
+
 // 解密微信手机号响应
 export interface IWxDecryptPhoneResponse {
   phoneNumber: string
@@ -28,6 +33,11 @@ export function wxDecryptPhone(data: IWxDecryptPhoneRequest) {
 // 更新用户信息
 export function wxUpdateUserInfo(data: IWxUpdateUserInfoRequest) {
   return http.post('/api/wx/UpdateUserInfo', data)
+}
+
+// 更新会员状态
+export function wxUpdateMembership(data: IWxUpdateMembershipRequest) {
+  return http.post('/api/wx/UpdateMembership', data)
 }
 
 // 上传用户头像

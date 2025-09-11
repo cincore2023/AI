@@ -9,6 +9,7 @@
 </route>
 
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/user'
 import { useFavoriteStore } from '@/store/favorite'
 import { getWxCourseDetail } from '@/api/course'
@@ -21,7 +22,7 @@ import CourseActions from './components/CourseActions.vue'
 import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
 
 const courseId = ref('')
-const { isMember } = useUserStore()
+const { isMember, isLoggedIn } = storeToRefs(useUserStore())
 const favoriteStore = useFavoriteStore()
 
 const courseDetail = ref<WxCourseDetailItem | null>(null)
@@ -39,8 +40,8 @@ async function getCourseDetail(id: string) {
     courseDetail.value = data
     console.log('课程详情获取成功:', data)
     
-    // 获取课程收藏状态
-    if (data.id) {
+    // 只有在用户已登录时才获取课程收藏状态
+    if (isLoggedIn.value && data.id) {
       isFavorite.value = await favoriteStore.getCourseFavoriteStatus(data.id)
     }
   } catch (error) {
@@ -56,6 +57,19 @@ async function getCourseDetail(id: string) {
 
 // 切换收藏状态
 async function toggleFavorite() {
+  // 只有在用户已登录时才允许切换收藏状态
+  if (!isLoggedIn.value) {
+    uni.showToast({
+      title: '请先登录',
+      icon: 'none'
+    })
+    // 跳转到登录页面
+    uni.navigateTo({
+      url: '/pages/login/login'
+    })
+    return
+  }
+  
   if (!courseId.value) return
   
   const courseIdNum = parseInt(courseId.value)
@@ -67,9 +81,37 @@ function openMembershipModal() {
   showMembershipModal.value = true
 }
 
+// 确认开通会员
+async function confirmMembership() {
+  try {
+    // 调用API开通会员，设置一年后的过期时间
+    const expiryDate = new Date()
+    expiryDate.setFullYear(expiryDate.getFullYear() + 1)
+    
+    await wxUpdateMembership({
+      membershipExpiryDate: expiryDate.toISOString()
+    })
+    
+    uni.showToast({
+      title: '会员开通成功',
+      icon: 'success',
+    })
+    
+    showMembershipModal.value = false
+    // 更新用户会员状态
+    useUserStore().setMember(true)
+  } catch (error) {
+    console.error('开通会员失败:', error)
+    uni.showToast({
+      title: '开通会员失败',
+      icon: 'error',
+    })
+  }
+}
+
 // 下载资料
 function downloadMaterial(material: any) {
-  if (!isMember) {
+  if (!isMember.value) {
     uni.showToast({
       title: '会员专享功能',
       icon: 'none',

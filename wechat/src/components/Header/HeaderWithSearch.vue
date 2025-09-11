@@ -7,7 +7,7 @@ import EditUserInfoModal from '@/components/Personal/Modals/EditUserInfoModal.vu
 // 响应式数据
 const searchText = ref('')
 const safeAreaInsets = ref<any>(null)
-const { wechatUser } = storeToRefs(useUserStore())
+const { wechatUser, isLoggedIn } = storeToRefs(useUserStore())
 
 // 编辑弹框相关
 const editUserInfoModalRef = ref()
@@ -42,6 +42,19 @@ function handleCompleteInfo() {
   if (!wechatUser.value?.phone_number) editUserInfoModalRef.value?.open()
 }
 
+// 点击头部区域处理函数
+function handleHeaderClick() {
+  // 如果用户未登录，跳转到登录页面
+  if (!isLoggedIn.value) {
+    uni.navigateTo({
+      url: '/pages/login/login'
+    })
+  } else {
+    // 如果已登录，完善信息
+    handleCompleteInfo()
+  }
+}
+
 function handleSearch(value: string) {
   console.log('搜索内容:', value)
   // 这里可以添加搜索逻辑
@@ -56,12 +69,13 @@ function handleSearch(value: string) {
   <view class="header" :style="headerStyle">
     <!-- 头部内容 -->
     <view class="header-content">
-      <view class="left-section" @click="handleCompleteInfo">
+      <view class="left-section" @click="handleHeaderClick">
         <view class="greeting">
           <text class="greeting-text">{{ greeting }}</text>
           <text class="user-name">{{ wechatUser?.nickname || '未登录' }}</text>
         </view>
-        <text v-if="!wechatUser?.phone_number" class="complete-hint">点击完善您的信息</text>
+        <text v-if="!wechatUser?.phone_number && isLoggedIn" class="complete-hint">点击完善您的信息</text>
+        <text v-else-if="!isLoggedIn" class="complete-hint">点击登录</text>
       </view>
     </view>
 
@@ -92,6 +106,7 @@ function handleSearch(value: string) {
 
 .left-section {
   flex: 1;
+  cursor: pointer;
 }
 
 .greeting {
