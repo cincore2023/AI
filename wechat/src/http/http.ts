@@ -59,6 +59,7 @@ export function http<T>(options: CustomRequestOptions) {
  * @param url 后台地址
  * @param query 请求query参数
  * @param header 请求头，默认为json格式
+ * @param options
  * @returns
  */
 export function httpGet<T>(url: string, query?: Record<string, any>, header?: Record<string, any>, options?: Partial<CustomRequestOptions>) {

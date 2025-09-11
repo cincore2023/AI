@@ -57,13 +57,7 @@ async function getCourseDetail(id: string) {
 
 // 切换收藏状态
 async function toggleFavorite() {
-  // 只有在用户已登录时才允许切换收藏状态
   if (!isLoggedIn.value) {
-    uni.showToast({
-      title: '请先登录',
-      icon: 'none'
-    })
-    // 跳转到登录页面
     uni.navigateTo({
       url: '/pages/login/login'
     })
@@ -78,35 +72,13 @@ async function toggleFavorite() {
 
 // 打开会员开通弹框
 function openMembershipModal() {
-  showMembershipModal.value = true
-}
-
-// 确认开通会员
-async function confirmMembership() {
-  try {
-    // 调用API开通会员，设置一年后的过期时间
-    const expiryDate = new Date()
-    expiryDate.setFullYear(expiryDate.getFullYear() + 1)
-    
-    await wxUpdateMembership({
-      membershipExpiryDate: expiryDate.toISOString()
+  if (!isLoggedIn.value) {
+    uni.navigateTo({
+      url: '/pages/login/login'
     })
-    
-    uni.showToast({
-      title: '会员开通成功',
-      icon: 'success',
-    })
-    
-    showMembershipModal.value = false
-    // 更新用户会员状态
-    useUserStore().setMember(true)
-  } catch (error) {
-    console.error('开通会员失败:', error)
-    uni.showToast({
-      title: '开通会员失败',
-      icon: 'error',
-    })
+    return
   }
+  showMembershipModal.value = true
 }
 
 // 下载资料

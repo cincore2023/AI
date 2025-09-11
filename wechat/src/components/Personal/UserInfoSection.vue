@@ -5,14 +5,21 @@ import EditUserInfoModal from './Modals/EditUserInfoModal.vue'
 
 const emit = defineEmits(['renew'])
 
-const { wechatUser, isMember } = storeToRefs(useUserStore())
+const { wechatUser, isMember, isLoggedIn } = storeToRefs(useUserStore())
 
 // 编辑弹框相关
 const editUserInfoModalRef = ref()
 
 // 打开编辑弹框
 function handleModifyNickname() {
-  editUserInfoModalRef.value?.open()
+  if (isLoggedIn.value) {
+    editUserInfoModalRef.value?.open()
+  }
+  else {
+    uni.navigateTo({
+      url: '/pages/login/login',
+    })
+  }
 }
 
 function handleRenew() {
@@ -22,16 +29,12 @@ function handleRenew() {
 
 <template>
   <view class="p-4 pt-0">
-    <view class="mb-6 flex items-center">
+    <view class="mb-6 flex items-center" @click="handleModifyNickname">
       <image v-if="wechatUser?.avatar" :src="wechatUser?.avatar" class="mr-4 h-20 w-20 rounded-full"/>
       <image v-else src="@/static/images/avatar.png" class="mr-4 h-20 w-20 rounded-full" mode="aspectFit"/>
       <view class="flex-1">
         <view class="mb-3 flex items-center justify-between">
-          <text class="text-lg text-gray-800 font-bold">{{ wechatUser.nickname }}</text>
-          <view class="rounded bg-blue-500 px-3 py-1 text-3 text-white" @click="handleModifyNickname">
-            <text class="mr-2">✏️</text>
-            <text>修改</text>
-          </view>
+          <text class="text-lg text-gray-800 font-bold">{{ isLoggedIn ? wechatUser.nickname : '未登录' }}</text>
         </view>
         <text class="text-sm text-gray-500">{{ wechatUser.phone_number }}</text>
       </view>
