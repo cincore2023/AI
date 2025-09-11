@@ -14,6 +14,7 @@ export interface WxCourseItem {
   apprenticeCount: number
   teacher: number
   category: number
+  salesperson?: string // 销售员ID
 }
 
 export interface WxCourseListParams {
@@ -48,6 +49,7 @@ export interface WxCourseDetailItem {
   apprenticeCount: number
   teacher: number
   category: number
+  salesperson?: string // 销售员ID
   courseDetails: string // 课程详情内容
   teacherInfo?: WxCourseTeacherInfo // 讲师信息（可选）
 }

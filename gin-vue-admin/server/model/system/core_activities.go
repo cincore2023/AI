@@ -20,6 +20,7 @@ type Activities struct {
 	EndTime          *time.Time `json:"endTime" form:"endTime" gorm:"column:end_time;" binding:"required"`                     //结束时间
 	ShowStartTime    *time.Time `json:"showStartTime" form:"showStartTime" gorm:"column:show_start_time;" binding:"required"`  //展示开始时间
 	ShowEndTime      *time.Time `json:"showEndTime" form:"showEndTime" gorm:"column:show_end_time;" binding:"required"`        //展示结束时间
+	Salesperson      *string    `json:"salesperson" form:"salesperson" gorm:"column:salesperson;"`                             //销售员ID
 	CreatedBy        uint       `gorm:"column:created_by;comment:创建者"`
 	UpdatedBy        uint       `gorm:"column:updated_by;comment:更新者"`
 	DeletedBy        uint       `gorm:"column:deleted_by;comment:删除者"`

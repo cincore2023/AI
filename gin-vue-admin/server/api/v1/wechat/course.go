@@ -1,8 +1,9 @@
 package wechat
 
 import (
-	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"strconv"
+
+	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
@@ -62,6 +63,7 @@ type WxCourseListItem struct {
 	ApprenticeCount int     `json:"apprenticeCount"` // 学员数量
 	Teacher         uint    `json:"teacher"`         // 讲师ID
 	Category        int     `json:"category"`        // 分类ID
+	Salesperson     *string `json:"salesperson"`     // 销售员ID
 }
 
 // WxCourseDetailItem 微信课程详情项目
@@ -80,6 +82,7 @@ type WxCourseDetailItem struct {
 	ApprenticeCount int                  `json:"apprenticeCount"` // 学员数量
 	Teacher         int                  `json:"teacher"`         // 讲师ID
 	Category        int                  `json:"category"`        // 分类ID
+	Salesperson     *string              `json:"salesperson"`     // 销售员ID
 	CourseDetails   string               `json:"courseDetails"`   // 课程详情内容
 	TeacherInfo     *WxCourseTeacherInfo `json:"teacherInfo"`     // 讲师信息（可为空）
 }
@@ -230,6 +233,9 @@ func (w *WechatCourseApi) WxGetCourses(c *gin.Context) {
 		}
 		if course.Category != nil {
 			wxCourse.Category = int(*course.Category)
+		}
+		if course.Salesperson != nil {
+			wxCourse.Salesperson = course.Salesperson
 		}
 
 		wxCourses = append(wxCourses, wxCourse)
@@ -424,6 +430,9 @@ func (w *WechatCourseApi) WxGetCourseDetail(c *gin.Context) {
 	}
 	if course.Teacher != nil {
 		wxCourseDetail.Teacher = *course.Teacher
+	}
+	if course.Salesperson != nil {
+		wxCourseDetail.Salesperson = course.Salesperson
 	}
 	if course.CourseDetails != nil {
 		wxCourseDetail.CourseDetails = *course.CourseDetails

@@ -22,6 +22,7 @@ type Course struct {
 	ApprenticeCount *int     `json:"apprenticeCount" form:"apprenticeCount" gorm:"comment:虚拟人数;column:apprentice_count;"`                           //展示学习人数
 	Hot             *bool    `json:"hot" form:"hot" gorm:"default:false;column:hot;"`                                                               //是否推荐
 	Exquisite       *bool    `json:"exquisite" form:"exquisite" gorm:"default:false;column:exquisite;"`                                             //精品推荐
+	Salesperson     *string  `json:"salesperson" form:"salesperson" gorm:"comment:销售员;column:salesperson;"`                                         //销售员
 	CreatedBy       uint     `gorm:"column:created_by;comment:创建者"`
 	UpdatedBy       uint     `gorm:"column:updated_by;comment:更新者"`
 	DeletedBy       uint     `gorm:"column:deleted_by;comment:删除者"`

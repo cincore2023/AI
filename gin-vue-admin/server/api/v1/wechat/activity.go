@@ -39,6 +39,7 @@ type WxActivityItem struct {
 	EndTime          string  `json:"endTime"`          // 结束时间
 	ShowStartTime    string  `json:"showStartTime"`    // 展示开始时间
 	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
+	Salesperson      *string `json:"salesperson"`      // 销售员ID
 }
 
 // WxActivityDetailItem 微信活动详情项目
@@ -54,6 +55,7 @@ type WxActivityDetailItem struct {
 	EndTime          string  `json:"endTime"`          // 结束时间
 	ShowStartTime    string  `json:"showStartTime"`    // 展示开始时间
 	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
+	Salesperson      *string `json:"salesperson"`      // 销售员ID
 }
 
 // WxGetActivities 获取微信小程序活动列表
@@ -129,6 +131,7 @@ func (w *WechatActivityApi) WxGetActivities(c *gin.Context) {
 			EndTime:          "",
 			ShowStartTime:    "",
 			ShowEndTime:      "",
+			Salesperson:      nil,
 		}
 
 		// 安全地获取指针值
@@ -161,6 +164,9 @@ func (w *WechatActivityApi) WxGetActivities(c *gin.Context) {
 		}
 		if activity.ShowEndTime != nil {
 			wxActivity.ShowEndTime = activity.ShowEndTime.Format("2006-01-02 15:04:05")
+		}
+		if activity.Salesperson != nil {
+			wxActivity.Salesperson = activity.Salesperson
 		}
 
 		wxActivities = append(wxActivities, wxActivity)
@@ -226,6 +232,7 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 		EndTime:          "",
 		ShowStartTime:    "",
 		ShowEndTime:      "",
+		Salesperson:      nil,
 	}
 
 	// 安全地获取指针值
@@ -258,6 +265,9 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 	}
 	if activity.ShowEndTime != nil {
 		wxActivity.ShowEndTime = activity.ShowEndTime.Format("2006-01-02 15:04:05")
+	}
+	if activity.Salesperson != nil {
+		wxActivity.Salesperson = activity.Salesperson
 	}
 
 	global.GVA_LOG.Info("活动详情获取成功",
