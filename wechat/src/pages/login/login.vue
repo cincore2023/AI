@@ -104,11 +104,6 @@ function goToDebug() {
             {{ isLogging ? '登录中...' : '微信登录' }}
           </text>
         </button>
-        
-        <!-- 调试按钮 -->
-        <button class="debug-btn" @click="goToDebug">
-          <text class="btn-text">API调试</text>
-        </button>
       </view>
     </view>
   </view>
@@ -118,7 +113,7 @@ function goToDebug() {
 .login-container {
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  //background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   overflow: hidden;
 }
 
@@ -202,14 +197,12 @@ function goToDebug() {
   .app-name {
     font-size: 48rpx;
     font-weight: bold;
-    color: #ffffff;
     margin-bottom: 20rpx;
     text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
   }
 
   .app-description {
     font-size: 28rpx;
-    color: rgba(255, 255, 255, 0.8);
     text-align: center;
     line-height: 1.5;
   }

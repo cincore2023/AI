@@ -12,11 +12,13 @@
 import { useUserStore } from '@/store/user'
 import { useFavoriteStore } from '@/store/favorite'
 import { getWxCourseDetail } from '@/api/course'
+import { wxUpdateMembership } from '@/api/wechat/userinfo'
 import type { WxCourseDetailItem } from "@/api/types/course";
 
 import CourseInfo from './components/CourseInfo.vue'
 import CourseContent from './components/CourseContent.vue'
 import CourseActions from './components/CourseActions.vue'
+import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
 
 const courseId = ref('')
 const { isMember } = useUserStore()
@@ -25,6 +27,9 @@ const favoriteStore = useFavoriteStore()
 const courseDetail = ref<WxCourseDetailItem | null>(null)
 const loading = ref(false)
 const isFavorite = ref(false)
+
+// 添加会员开通弹框显示状态
+const showMembershipModal = ref(false)
 
 // 获取课程详情
 async function getCourseDetail(id: string) {
@@ -55,6 +60,11 @@ async function toggleFavorite() {
   
   const courseIdNum = parseInt(courseId.value)
   isFavorite.value = await favoriteStore.toggleCourseFavorite(courseIdNum)
+}
+
+// 打开会员开通弹框
+function openMembershipModal() {
+  showMembershipModal.value = true
 }
 
 // 下载资料
@@ -159,6 +169,10 @@ onShareTimeline(() => {
       :is-member="isMember" 
       :is-favorite="isFavorite"
       @toggle-favorite="toggleFavorite"
+      @action="openMembershipModal"
     />
+    
+    <!-- 会员开通弹框 -->
+    <MembershipModal :show="showMembershipModal" @update:show="(value) => showMembershipModal = value"/>
   </view>
 </template>

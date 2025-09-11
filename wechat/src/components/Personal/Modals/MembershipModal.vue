@@ -10,7 +10,7 @@ const emit = defineEmits<{
 }>()
 
 function handleConfirm() {
-  emit('confirm')
+  console.log('handleConfirm')
 }
 
 function handleClose() {
