@@ -1,6 +1,8 @@
 package wechat
 
 import (
+	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
@@ -20,8 +22,13 @@ type OpenMemberRequest struct {
 
 // OpenMemberResponse 开通会员响应
 type OpenMemberResponse struct {
-	OrderNo string  `json:"orderNo"` // 订单编号
-	Amount  float64 `json:"amount"`  // 支付金额
+	OrderNo   string  `json:"orderNo"`   // 订单编号
+	Amount    float64 `json:"amount"`    // 支付金额
+	TimeStamp string  `json:"timeStamp"` // 时间戳
+	NonceStr  string  `json:"nonceStr"`  // 随机字符串
+	Package   string  `json:"package"`   // 订单包
+	SignType  string  `json:"signType"`  // 签名类型
+	PaySign   string  `json:"paySign"`   // 支付签名
 }
 
 // OpenMember 开通会员
@@ -74,10 +81,26 @@ func (w *WechatMemberApi) OpenMember(c *gin.Context) {
 		return
 	}
 
-	// 返回订单信息，前端根据此信息调用支付接口
+	// 生成微信支付参数（这里应该是调用微信统一下单接口获取真实参数）
+	// 以下为模拟数据，实际开发中需要调用微信支付API
+	timeStamp := time.Now().Unix()
+	timeStampStr := strconv.FormatInt(timeStamp, 10)
+	nonceStr := utils.RandomString(32)
+
+	// 模拟prepay_id，实际应该从微信统一下单接口获取
+	prepayId := fmt.Sprintf("wx%s%s", time.Now().Format("20060102150405"), utils.RandomString(16))
+
+	// 简化的签名生成（实际应该按照微信支付签名规则生成）
+	paySign := utils.MD5V([]byte(fmt.Sprintf("appid=wxappid&noncestr=%s&package=prepay_id=%s&sign=sign&timestamp=%s", nonceStr, prepayId, timeStampStr)))
+
 	responseData := OpenMemberResponse{
-		OrderNo: orderNo,
-		Amount:  amount,
+		OrderNo:   orderNo,
+		Amount:    amount,
+		TimeStamp: timeStampStr,
+		NonceStr:  nonceStr,
+		Package:   "prepay_id=" + prepayId,
+		SignType:  "MD5",
+		PaySign:   paySign,
 	}
 
 	global.GVA_LOG.Info("会员开通订单创建成功", zap.Uint("userID", userID), zap.String("orderNo", orderNo), zap.Float64("amount", amount))
@@ -120,9 +143,10 @@ func (w *WechatMemberApi) MemberPaymentCallback(c *gin.Context) {
 	}
 
 	// 更新订单状态为已支付
+	now := time.Now().Unix()
 	updateData := map[string]interface{}{
 		"status":       "paid",
-		"payment_time": time.Now().Unix(),
+		"payment_time": &now,
 	}
 
 	err = global.GVA_DB.Model(&system.Order{}).Where("order_no = ?", orderNo).Updates(updateData).Error

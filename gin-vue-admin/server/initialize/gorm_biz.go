@@ -7,7 +7,12 @@ import (
 
 func bizModel() error {
 	db := global.GVA_DB
-	err := db.AutoMigrate(system.Category{}, system.Poster{}, system.Banner{}, system.Teacher{}, system.Benefit{}, system.Course{}, system.WechatUser{}, system.Code{}, system.Activities{}, system.CourseFavorite{})
+	err := db.AutoMigrate(
+		system.Category{}, system.Poster{},
+		system.Banner{}, system.Teacher{}, system.Benefit{},
+		system.Course{}, system.WechatUser{}, system.Code{},
+		system.Activities{}, system.CourseFavorite{}, system.Order{},
+		system.ActivityRegistration{}, system.Tutorial{}, system.SiteConfig{})
 	if err != nil {
 		return err
 	}

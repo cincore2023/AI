@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { wxOpenMember } from '@/api/wechat/member'
+
 interface Props {
   show: boolean
 }
@@ -9,8 +11,50 @@ const emit = defineEmits<{
   'confirm': []
 }>()
 
-function handleConfirm() {
-  console.log('handleConfirm')
+async function handleConfirm() {
+  try {
+    // 调用开通会员接口，获取支付参数
+    const res = await wxOpenMember()
+
+    // 调起微信支付
+    uni.requestPayment({
+      provider: 'wxpay',
+      orderInfo: {
+        timeStamp: res.data.timeStamp,
+        nonceStr: res.data.nonceStr,
+        package: res.data.package,
+        signType: res.data.signType,
+        paySign: res.data.paySign,
+      },
+      success(res) {
+        console.log('支付成功', res)
+        uni.showToast({
+          title: '支付成功',
+          icon: 'success',
+        })
+
+        // 支付成功后通知父组件
+        emit('confirm')
+
+        // 关闭弹框
+        handleClose()
+      },
+      fail(err) {
+        console.log('支付失败', err)
+        uni.showToast({
+          title: '支付失败',
+          icon: 'none',
+        })
+      },
+    })
+  }
+  catch (err) {
+    console.error('开通会员失败', err)
+    uni.showToast({
+      title: '开通会员失败',
+      icon: 'none',
+    })
+  }
 }
 
 function handleClose() {
@@ -20,13 +64,13 @@ function handleClose() {
 
 <template>
   <sar-popup
-    :visible="show"
-    position="center"
-    :close-on-click-overlay="true"
-    :close-on-click-close-icon="true"
-    round
-    safe-area-inset-bottom
-    @update:visible="(value) => emit('update:show', value)"
+      :visible="show"
+      position="center"
+      :close-on-click-overlay="true"
+      :close-on-click-close-icon="true"
+      round
+      safe-area-inset-bottom
+      @update:visible="(value) => emit('update:show', value)"
   >
     <view class="w-[85vw] overflow-hidden rounded-lg bg-white">
       <view class="bg-gray-800 p-5 text-center text-white">
@@ -73,8 +117,8 @@ function handleClose() {
 
       <view class="border-t border-gray-200 p-5">
         <view
-          class="w-full rounded bg-gray-900 py-3 text-center text-white"
-          @click="handleConfirm"
+            class="w-full rounded bg-gray-900 py-3 text-center text-white"
+            @click="handleConfirm"
         >
           确认开通并支付
         </view>
