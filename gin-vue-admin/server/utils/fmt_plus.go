@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"reflect"
 	"strings"
+	"time"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -97,6 +98,15 @@ func RandomString(n int) string {
 
 func RandomInt(min, max int) int {
 	return min + rand.Intn(max-min)
+}
+
+// GenerateOrderNumber 生成订单号
+func GenerateOrderNumber() string {
+	// 生成格式：YYYYMMDD + 8位随机数字
+	now := time.Now()
+	datePart := now.Format("20060102")
+	randomPart := fmt.Sprintf("%08d", RandomInt(0, 99999999))
+	return datePart + randomPart
 }
 
 // BuildTree 用于构建一个树形结构
