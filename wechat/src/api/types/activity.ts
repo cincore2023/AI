@@ -42,5 +42,6 @@ export interface WxActivityDetailItem {
   endTime: string
   showStartTime: string
   showEndTime: string
+  details: string
   salesperson?: string
 }

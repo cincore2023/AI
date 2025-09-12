@@ -94,6 +94,15 @@
       }
     },
     {
+      "path": "pages/activities/detail",
+      "type": "page",
+      "layout": "defaultV2",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "活动详情"
+      }
+    },
+    {
       "path": "pages/activities/index",
       "type": "page",
       "layout": "default",

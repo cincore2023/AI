@@ -1,11 +1,12 @@
 package wechat
 
 import (
+	"strconv"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"strconv"
 )
 
 type WechatActivityApi struct{}
@@ -55,6 +56,7 @@ type WxActivityDetailItem struct {
 	EndTime          string  `json:"endTime"`          // 结束时间
 	ShowStartTime    string  `json:"showStartTime"`    // 展示开始时间
 	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
+	Details          string  `json:"details"`          // 活动详情
 	Salesperson      *string `json:"salesperson"`      // 销售员ID
 }
 
@@ -232,6 +234,7 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 		EndTime:          "",
 		ShowStartTime:    "",
 		ShowEndTime:      "",
+		Details:          "",
 		Salesperson:      nil,
 	}
 
@@ -265,6 +268,9 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 	}
 	if activity.ShowEndTime != nil {
 		wxActivity.ShowEndTime = activity.ShowEndTime.Format("2006-01-02 15:04:05")
+	}
+	if activity.Details != nil {
+		wxActivity.Details = *activity.Details
 	}
 	if activity.Salesperson != nil {
 		wxActivity.Salesperson = activity.Salesperson

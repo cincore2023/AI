@@ -116,7 +116,7 @@ function getCategoryName(idx: number | undefined) {
 // 查看活动详情
 function viewActivityDetail(activity: any) {
   uni.navigateTo({
-    url: `/pages/offline-activities/detail?id=${activity.id}`,
+    url: `/pages/activities/detail?id=${activity.id}`,
   })
 }
 
