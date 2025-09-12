@@ -15,10 +15,15 @@ import { ref } from 'vue'
 import { getWxActivityDetail } from '@/api/activity'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 import HomeSwiper from '@/components/Home/HomeSwiper.vue'
+import { useUserStore } from '@/store'
 
 const activityId = ref('')
 const activityDetail = ref<WxActivityDetailItem | null>(null)
 const loading = ref(false)
+const { wechatUser } = useUserStore()
+const showScanButton = computed(() => {
+  return Number(activityDetail.value?.salesperson) === Number(wechatUser.ID)
+})
 
 // 获取活动详情
 async function getActivityDetail(id: string) {
@@ -38,6 +43,37 @@ async function getActivityDetail(id: string) {
   finally {
     loading.value = false
   }
+}
+
+// 扫描二维码
+function handleScan() {
+  uni.scanCode({
+    onlyFromCamera: true,
+    scanType: ['qrCode'],
+    success(res) {
+      console.log('扫描结果:', res)
+      // 这里添加核销逻辑
+      uni.showToast({
+        title: '核销成功',
+        icon: 'success',
+      })
+    },
+    fail(err) {
+      console.error('扫描失败:', err)
+      uni.showToast({
+        title: '扫描失败',
+        icon: 'none',
+      })
+    },
+  })
+}
+
+// 报名活动
+function handleSignUp() {
+  uni.showToast({
+    title: '报名成功',
+    icon: 'success',
+  })
 }
 
 // 回到首页
@@ -144,7 +180,7 @@ onShareTimeline(() => {
           </view>
 
           <!-- 活动说明 -->
-          <view class="activity-notice" v-if="countdownData">
+          <view v-if="countdownData" class="activity-notice">
             <view class="notice-content">
               <text class="notice-icon">距报名结束</text>
               <sar-count-down :time="countdownData" format="DD 天 HH 时 mm 分 ss 秒" />
@@ -191,9 +227,28 @@ onShareTimeline(() => {
           </view>
         </sar-button>
       </view>
-      <sar-button class="main-action-btn" round block theme="secondary">
-        立即报名
-      </sar-button>
+      <view class="flex flex-1 gap-2">
+        <sar-button
+          class="main-action-btn"
+          round
+          block
+          theme="secondary"
+          @click="handleSignUp"
+        >
+          立即报名
+        </sar-button>
+        <sar-button
+          v-if="showScanButton"
+          class="scan-btn"
+          round
+          block
+          theme="secondary"
+          @click="handleScan"
+        >
+          <sar-icon name="scan" size="20" />
+          扫描核销
+        </sar-button>
+      </view>
     </view>
   </view>
 </template>
@@ -362,5 +417,12 @@ onShareTimeline(() => {
   border: none;
   color: var(--text-primary);
   background-color: var(--bg-inverse);
+  margin-bottom: 20rpx;
+}
+
+.scan-btn {
+  width: 100%;
+  font-size: 26rpx;
+  font-weight: bold;
 }
 </style>

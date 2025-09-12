@@ -60,7 +60,7 @@ export interface IUpdatePassword {
  * 微信用户信息
  */
 export interface IWechatUser {
-  id: number
+  ID: number
   avatar?: string
   openId?: string
   nickname?: string

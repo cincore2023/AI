@@ -6,7 +6,7 @@ import { toast } from '@/utils/toast'
 
 // 初始化状态 - 改为微信用户结构
 const wechatUserState: IWechatUser = {
-  id: 0,
+  ID: 0,
   nickname: '',
   openId: '',
   isActive: true,
