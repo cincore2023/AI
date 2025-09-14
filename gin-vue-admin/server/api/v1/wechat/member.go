@@ -97,11 +97,11 @@ func (w *WechatMemberApi) OpenMember(c *gin.Context) {
 	totalFee := int(amount * 100) // 转换为分
 	unifiedOrderResp, err := utils.CreateUnifiedOrder(
 		wxPayConfig,
-		"会员年卡", // 商品描述
-		orderNo,    // 商户订单号
-		totalFee,   // 总金额(分)
-		clientIP,   // 终端IP
-		"JSAPI",    // 交易类型
+		"会员年卡",   // 商品描述
+		orderNo,  // 商户订单号
+		totalFee, // 总金额(分)
+		clientIP, // 终端IP
+		"JSAPI",  // 交易类型
 	)
 	if err != nil {
 		global.GVA_LOG.Error("调用微信统一下单接口失败!", zap.Error(err))

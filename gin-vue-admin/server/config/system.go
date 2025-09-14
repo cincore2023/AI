@@ -13,4 +13,6 @@ type System struct {
 	UseStrictAuth bool   `mapstructure:"use-strict-auth" json:"use-strict-auth" yaml:"use-strict-auth"` // 使用树形角色分配模式
 	WxAppID       string `mapstructure:"wx-app-id" json:"wx-app-id" yaml:"wx-app-id"`                   // 微信小程序AppID
 	WxAppSecret   string `mapstructure:"wx-app-secret" json:"wx-app-secret" yaml:"wx-app-secret"`       // 微信小程序AppSecret
+	WxMchID       string `mapstructure:"wx-mch-id" json:"wx-mch-id" yaml:"wx-mch-id"`                   // 微信支付商户号
+	WxAPIKey      string `mapstructure:"wx-api-key" json:"wx-api-key" yaml:"wx-api-key"`                // 微信支付API密钥
 }

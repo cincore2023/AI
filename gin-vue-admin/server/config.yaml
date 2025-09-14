@@ -231,6 +231,8 @@ system:
     use-strict-auth: false
     wx-app-id: "wx744280595dad2e3b"          # 微信小程序AppID，请填入真实的AppID
     wx-app-secret: "60628154730cee23ac03c7c5d83b3512"      # 微信小程序AppSecret，请填入真实的AppSecret
+    wx-mch-id: "1370047102"                 # 微信支付商户号，请填入真实的商户号
+    wx-api-key: "jksdjhsjsh23212jshajshuijhshdjsk"               # 微信支付API密钥，请填入真实的API密钥
 tencent-cos:
     bucket: xxxxx-10005608
     region: ap-shanghai
