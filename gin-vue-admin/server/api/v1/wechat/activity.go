@@ -110,6 +110,14 @@ type WxUserRegisteredActivitiesResponse struct {
 	PageSize   int                            `json:"pageSize"`   // 每页数量
 }
 
+// WxUserRegisteredActivitiesRequest 获取用户已报名活动列表请求参数
+type WxUserRegisteredActivitiesRequest struct {
+	Page           int    `json:"page" form:"page"`                     // 页码，默认为1
+	PageSize       int    `json:"pageSize" form:"pageSize"`             // 每页数量，默认为10
+	PaymentStatus  string `json:"paymentStatus" form:"paymentStatus"`   // 支付状态筛选
+	StartTimeRange string `json:"startTimeRange" form:"startTimeRange"` // 开始时间范围筛选
+}
+
 // WxActivityRegistrationRequest 活动报名请求参数
 type WxActivityRegistrationRequest struct {
 	ActivityID uint `json:"activityID" binding:"required"` // 活动ID
@@ -832,8 +840,10 @@ func (w *WechatActivityApi) WxUpdatePaymentStatus(c *gin.Context, registrationID
 // @Description 获取当前用户已报名的活动列表，需要登录鉴权
 // @Accept   application/json
 // @Produce  application/json
-// @Param    page       query     int                                                    false  "页码，默认为1"
-// @Param    pageSize   query     int                                                    false  "每页数量，默认为10"
+// @Param    page           query     int                                                    false  "页码，默认为1"
+// @Param    pageSize       query     int                                                    false  "每页数量，默认为10"
+// @Param    paymentStatus  query     string                                                 false  "支付状态筛选: pending-待支付, paid-已支付, cancelled-已取消"
+// @Param    startTimeRange query     string                                                 false  "开始时间范围筛选: week-最近一周, month-最近一月, quarter-最近三月, halfYear-最近半年"
 // @Success  200        {object}  response.Response{data=WxUserRegisteredActivitiesResponse,msg=string}  "获取成功"
 // @Failure  400        {object}  response.Response{msg=string}                          "请求参数错误"
 // @Failure  401        {object}  response.Response{msg=string}                          "未登录或登录已过期"
@@ -856,10 +866,16 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 		pageSize = 10
 	}
 
+	// 获取筛选参数
+	paymentStatus := c.Query("paymentStatus")
+	startTimeRange := c.Query("startTimeRange")
+
 	global.GVA_LOG.Info("获取用户已报名活动列表",
 		zap.Uint("userID", userID),
 		zap.Int("page", page),
-		zap.Int("pageSize", pageSize))
+		zap.Int("pageSize", pageSize),
+		zap.String("paymentStatus", paymentStatus),
+		zap.String("startTimeRange", startTimeRange))
 
 	// 构造查询条件
 	searchReq := systemReq.ActivityRegistrationSearch{
@@ -870,6 +886,11 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 		},
 		Sort:  "created_at",
 		Order: "descending",
+	}
+
+	// 添加支付状态筛选
+	if paymentStatus != "" {
+		searchReq.PaymentStatus = &paymentStatus
 	}
 
 	// 调用service获取用户已报名的活动
@@ -889,7 +910,31 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 	// 获取活动详情
 	activities := make([]system.Activities, 0)
 	if len(activityIDs) > 0 {
-		err = global.GVA_DB.Where("id IN ?", activityIDs).Find(&activities).Error
+		db := global.GVA_DB.Where("id IN ?", activityIDs)
+
+		// 添加时间范围筛选到活动查询
+		if startTimeRange != "" {
+			now := time.Now()
+			var startTime time.Time
+			switch startTimeRange {
+			case "week":
+				startTime = now.AddDate(0, 0, -7)
+			case "month":
+				startTime = now.AddDate(0, -1, 0)
+			case "quarter":
+				startTime = now.AddDate(0, -3, 0)
+			case "halfYear":
+				startTime = now.AddDate(0, -6, 0)
+			default:
+				startTime = now.AddDate(0, 0, -7) // 默认最近一周
+			}
+			db = db.Where("start_time >= ?", startTime)
+		}
+
+		// 按开始时间接近现在排序（升序）
+		db = db.Order("start_time ASC")
+
+		err = db.Find(&activities).Error
 		if err != nil {
 			global.GVA_LOG.Error("获取活动详情失败!", zap.Error(err))
 			response.FailWithMessage("获取活动详情失败: "+err.Error(), c)
