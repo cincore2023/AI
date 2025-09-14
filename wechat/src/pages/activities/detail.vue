@@ -11,12 +11,16 @@
 <script setup lang="ts">
 import type { WxActivityDetailItem } from '@/api/types/activity'
 import dayjs from 'dayjs'
+import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
-import { getWxActivityDetail } from '@/api/activity'
-import HeaderSimple from '@/components/Header/HeaderSimple.vue'
-import HomeSwiper from '@/components/Home/HomeSwiper.vue'
+import {
+  getWxActivityDetail,
+  wxGetActivityRegistrationStatus,
+  wxPartnerRedemptionCode,
+  wxRegisterForActivity,
+  wxUpdateParticipantInfo,
+} from '@/api/activity'
 import { useUserStore } from '@/store'
-import {storeToRefs} from 'pinia'
 
 const activityId = ref('')
 const activityDetail = ref<WxActivityDetailItem | null>(null)
@@ -27,13 +31,27 @@ const showScanButton = computed(() => {
   return Number(activityDetail.value?.salesperson) === Number(wechatUser.value.ID)
 })
 
+// 报名相关状态
+const registrationStatus = ref({
+  registrationID: 0,
+  verificationCode: '',
+  paymentStatus: '',
+  participantName: '',
+  participantPhone: '',
+})
+
+const participantInfoModalVisible = ref(false)
+
 // 获取活动详情
-async function getActivityDetail(id: string) {
+async function getActivityDetail(id: number) {
   loading.value = true
   try {
     const { data } = await getWxActivityDetail(id)
     activityDetail.value = data
-    console.log('活动详情获取成功:', data)
+    // 或者报名状态
+    if (userStore.isLoggedIn) {
+      await getRegistrationStatus(id)
+    }
   }
   catch (error) {
     console.error('获取活动详情失败:', error)
@@ -44,6 +62,29 @@ async function getActivityDetail(id: string) {
   }
   finally {
     loading.value = false
+  }
+}
+
+// 获取报名状态
+async function getRegistrationStatus(activityID: number) {
+  if (!userStore.isLoggedIn) {
+    return
+  }
+
+  try {
+    const { data } = await wxGetActivityRegistrationStatus(activityID)
+    registrationStatus.value = data
+    console.log('报名状态获取成功:', data)
+  }
+  catch (error: any) {
+    // 没有报名就返回空数据
+    registrationStatus.value = {
+      registrationID: 0,
+      verificationCode: '',
+      paymentStatus: '',
+      participantName: '',
+      participantPhone: '',
+    }
   }
 }
 
@@ -71,12 +112,95 @@ function handleScan() {
 }
 
 // 报名活动
-function handleSignUp() {
-  uni.showToast({
-    title: '报名成功',
-    icon: 'success',
-  })
+async function handleSignUp() {
+  // 检查用户是否已登录
+  if (!userStore.isLoggedIn) {
+    uni.navigateTo({
+      url: '/pages/login/login',
+    })
+    return
+  }
+
+  // 检查用户是否为合伙人
+  const isPartner = wechatUser.value?.user_type === 'partner'
+
+  // 根据当前报名状态执行不同操作
+  if (registrationStatus.value.paymentStatus === 'paid') {
+    // 已支付，显示核销码
+    uni.showModal({
+      title: '核销码',
+      content: registrationStatus.value.verificationCode,
+      showCancel: false,
+      confirmText: '确定',
+    })
+  }
+  try {
+    if (isPartner) {
+      await wxPartnerRedemptionCode(Number(activityId.value))
+    } else {
+      await wxRegisterForActivity(Number(activityId.value))
+    }
+
+    uni.showToast({
+      title: '报名成功',
+      icon: 'success',
+    })
+
+    // 这里应该调用微信支付，简化处理
+    // 模拟支付成功后重新获取报名状态
+    setTimeout(async () => {
+      await getRegistrationStatus(Number(activityId.value))
+    }, 1000)
+  }
+  catch (error) {
+    console.log('error:', error)
+  }
 }
+
+// 处理参与者信息提交
+async function handleParticipantInfoSubmit(name: string, phone: string) {
+  try {
+    await wxUpdateParticipantInfo({
+      registrationID: registrationStatus.value.registrationID,
+      participantName: name,
+      participantPhone: phone,
+    })
+
+    // 重新获取报名状态以确保数据同步
+    await getRegistrationStatus(Number(activityId.value))
+
+    uni.showToast({
+      title: '信息提交成功',
+      icon: 'success',
+    })
+  }
+  catch (error) {
+    console.error('提交参与者信息失败:', error)
+    uni.showToast({
+      title: '信息提交失败',
+      icon: 'error',
+    })
+  }
+}
+
+// 获取按钮文案
+const signUpButtonText = computed(() => {
+  // 检查用户是否为合伙人
+  const isPartner = wechatUser.value?.user_type === 'partner'
+  if (isPartner) {
+    return '合伙人兑换码报名'
+  }
+  // 付费报名（默认）
+  if (registrationStatus.value.paymentStatus === 'paid') {
+    if (!registrationStatus.value.participantName || !registrationStatus.value.participantPhone) {
+      return '完善信息'
+    } else {
+      return '查看核销码'
+    }
+  } else {
+    return '立即报名'
+  }
+})
 
 // 回到首页
 function goHome() {
@@ -122,6 +246,11 @@ const BottomStyle = computed(() => ({
 onMounted(async () => {
   // 获取最新用户信息
   await userStore.getUserInfo()
+
+  // 如果用户已登录，获取报名状态
+  if (userStore.isLoggedIn && activityId.value) {
+    await getRegistrationStatus(Number(activityId.value))
+  }
 })
 
 onLoad((options) => {
@@ -242,7 +371,7 @@ onShareTimeline(() => {
           theme="secondary"
           @click="handleSignUp"
         >
-          立即报名
+          {{ signUpButtonText }}
         </sar-button>
         <sar-button
           v-if="showScanButton"
@@ -257,6 +386,12 @@ onShareTimeline(() => {
         </sar-button>
       </view>
     </view>
+
+    <!-- 参与者信息弹窗 -->
+    <ParticipantInfoModal
+      v-model:show="participantInfoModalVisible"
+      @confirm="handleParticipantInfoSubmit"
+    />
   </view>
 </template>
 
@@ -431,5 +566,38 @@ onShareTimeline(() => {
   width: 100%;
   font-size: 26rpx;
   font-weight: bold;
+}
+
+/* 兑换码弹窗样式 */
+.popup-content {
+  padding: 30rpx;
+  background: var(--bg-primary);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.popup-body {
+  margin-bottom: 30rpx;
+}
+
+.popup-footer {
+  display: flex;
+  gap: 20rpx;
+}
+
+.cancel-btn,
+.confirm-btn {
+  flex: 1;
 }
 </style>
