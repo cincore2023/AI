@@ -65,6 +65,7 @@ export interface IWechatUser {
   openId?: string
   nickname?: string
   phone_number?: string
+  user_type?: string // 用户类型: normal-普通用户, vip-VIP用户, partner-合伙人
   salesperson?: number
   relationshipChannel?: number
   benefitLevel?: number
@@ -76,6 +77,13 @@ export interface IWechatUser {
   isActive?: boolean
   createdAt?: string
   updatedAt?: string
+}
+
+/**
+ * 微信用户信息（包含销售员信息）
+ */
+export interface IWechatUserWithSalesperson extends IWechatUser {
+  salespersonInfo?: IWxSalespersonInfo
 }
 
 /**
@@ -94,11 +102,4 @@ export interface IWxSalespersonInfo {
   id: number
   nickname: string
   phoneNumber: string
-}
-
-/**
- * 微信用户信息（包含销售员信息）
- */
-export interface IWechatUserWithSalesperson extends IWechatUser {
-  salespersonInfo?: IWxSalespersonInfo
 }

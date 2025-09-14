@@ -12,6 +12,7 @@ export interface WxActivityItem {
   endTime: string
   showStartTime: string
   showEndTime: string
+  registrationType?: string // 报名方式: paid-付费报名, free-免费报名, code-兑换码报名
   salesperson?: string
 }
 
@@ -43,5 +44,6 @@ export interface WxActivityDetailItem {
   showStartTime: string
   showEndTime: string
   details: string
+  registrationType?: string // 报名方式: paid-付费报名, free-免费报名, code-兑换码报名
   salesperson?: string
 }
