@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 interface Props {
   isMember: boolean
   isFavorite?: boolean
@@ -10,14 +9,14 @@ interface Emits {
   (e: 'toggleFavorite'): void
 }
 
-const emit = defineEmits<Emits>()
-
 defineProps<Props>()
+
+defineEmits<Emits>()
 
 // 回到首页
 function goHome() {
   uni.switchTab({
-    url: '/pages/index/index'
+    url: '/pages/index/index',
   })
 }
 
@@ -26,14 +25,14 @@ function shareCourse() {
   // #ifdef MP-WEIXIN
   uni.showShareMenu({
     withShareTicket: true,
-    menus: ['shareAppMessage', 'shareTimeline']
+    menus: ['shareAppMessage', 'shareTimeline'],
   })
   // #endif
-  
+
   // #ifndef MP-WEIXIN
   uni.showToast({
     title: '分享功能仅在微信小程序中可用',
-    icon: 'none'
+    icon: 'none',
   })
   // #endif
 }
@@ -69,7 +68,7 @@ const BottomStyle = computed(() => ({
           </view>
         </view>
       </sar-button>
-      <sar-button type="text" @click="shareCourse" open-type="share">
+      <sar-button type="text" open-type="share" @click="shareCourse">
         <view class="action-btn">
           <view class="action-icon">
             📤
@@ -80,7 +79,7 @@ const BottomStyle = computed(() => ({
         </view>
       </sar-button>
     </view>
-    <sar-button class="main-action-btn" round inline theme="secondary" @click="$emit('action')">
+    <sar-button class="main-action-btn" round inline theme="primary" @click="$emit('action')">
       {{ isMember ? '您是会员，可免费观看' : '开通会员，免费看' }}
     </sar-button>
   </view>
@@ -98,8 +97,8 @@ const BottomStyle = computed(() => ({
 
 .action-buttons {
   display: grid;
-  flex: 1;
   grid-template-columns: repeat(3, 1fr);
+  gap: 8rpx;
 }
 
 .action-btn {
@@ -118,7 +117,7 @@ const BottomStyle = computed(() => ({
 }
 
 .main-action-btn {
-  width: 40%;
+  flex: 1;
   font-size: 26rpx;
   font-weight: bold;
   border: none;

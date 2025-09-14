@@ -16,6 +16,7 @@ import { getWxActivityDetail } from '@/api/activity'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 import HomeSwiper from '@/components/Home/HomeSwiper.vue'
 import { useUserStore } from '@/store'
+import {storeToRefs} from 'pinia'
 
 const activityId = ref('')
 const activityDetail = ref<WxActivityDetailItem | null>(null)
