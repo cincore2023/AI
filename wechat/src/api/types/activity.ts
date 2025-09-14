@@ -71,6 +71,7 @@ export interface WxUserRegisteredActivityItem {
   orderNumber: string
   registrationID: number
   verificationCode: string
+  verificationStatus: string // 核销状态: pending-待核销, verified-已核销, cancelled-已取消
   paymentStatus: string
   participantName: string
   participantPhone: string
