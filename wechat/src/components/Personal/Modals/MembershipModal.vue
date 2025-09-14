@@ -1,15 +1,19 @@
 <script setup lang="ts">
 import { wxOpenMember } from '@/api/wechat/member'
+import { useUserStore } from '@/store/user'
 
-interface Props {
-  show: boolean
-}
+defineProps<Props>()
 
-const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:show': [value: boolean]
   'confirm': []
 }>()
+
+const userStore = useUserStore()
+
+interface Props {
+  show: boolean
+}
 
 async function handleConfirm() {
   try {
@@ -20,6 +24,7 @@ async function handleConfirm() {
     uni.requestPayment({
       provider: 'wxpay',
       orderInfo: {
+        appId: res.data.appId,
         timeStamp: res.data.timeStamp,
         nonceStr: res.data.nonceStr,
         package: res.data.package,
@@ -33,11 +38,14 @@ async function handleConfirm() {
           icon: 'success',
         })
 
-        // 支付成功后通知父组件
-        emit('confirm')
+        // 支付成功后，重新获取用户信息以更新会员状态
+        userStore.getUserInfo().finally(() => {
+          // 通知父组件支付成功
+          emit('confirm')
 
-        // 关闭弹框
-        handleClose()
+          // 关闭弹框
+          handleClose()
+        })
       },
       fail(err) {
         console.log('支付失败', err)
@@ -64,13 +72,13 @@ function handleClose() {
 
 <template>
   <sar-popup
-      :visible="show"
-      position="center"
-      :close-on-click-overlay="true"
-      :close-on-click-close-icon="true"
-      round
-      safe-area-inset-bottom
-      @update:visible="(value) => emit('update:show', value)"
+    :visible="show"
+    position="center"
+    :close-on-click-overlay="true"
+    :close-on-click-close-icon="true"
+    round
+    safe-area-inset-bottom
+    @update:visible="(value) => emit('update:show', value)"
   >
     <view class="w-[85vw] overflow-hidden rounded-lg bg-white">
       <view class="bg-gray-800 p-5 text-center text-white">
@@ -85,8 +93,8 @@ function handleClose() {
               <text class="mb-2 block text-base font-bold">鲸抖迅VIP会员年卡</text>
             </view>
             <view class="text-right">
-              <text class="mb-1 block text-xl text-yellow-400 font-bold">399元/年</text>
-              <text class="text-xs opacity-80">折合: 1.09元/天</text>
+              <text class="mb-1 block text-xl text-yellow-400 font-bold">199元/年</text>
+              <text class="text-xs opacity-80">折合: 0.55元/天</text>
             </view>
           </view>
         </view>
@@ -117,8 +125,8 @@ function handleClose() {
 
       <view class="border-t border-gray-200 p-5">
         <view
-            class="w-full rounded bg-gray-900 py-3 text-center text-white"
-            @click="handleConfirm"
+          class="w-full rounded bg-gray-900 py-3 text-center text-white"
+          @click="handleConfirm"
         >
           确认开通并支付
         </view>

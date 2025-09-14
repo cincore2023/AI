@@ -1,8 +1,8 @@
 package wechat
 
 import (
-	"fmt"
-	"strconv"
+	"net"
+	"strings"
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
@@ -22,13 +22,14 @@ type OpenMemberRequest struct {
 
 // OpenMemberResponse 开通会员响应
 type OpenMemberResponse struct {
-	OrderNo   string  `json:"orderNo"`   // 订单编号
-	Amount    float64 `json:"amount"`    // 支付金额
+	AppID     string  `json:"appId"`     // 应用ID
 	TimeStamp string  `json:"timeStamp"` // 时间戳
 	NonceStr  string  `json:"nonceStr"`  // 随机字符串
 	Package   string  `json:"package"`   // 订单包
 	SignType  string  `json:"signType"`  // 签名类型
 	PaySign   string  `json:"paySign"`   // 支付签名
+	Amount    float64 `json:"amount"`    // 支付金额
+	OrderNo   string  `json:"orderNo"`   // 订单编号
 }
 
 // OpenMember 开通会员
@@ -81,30 +82,95 @@ func (w *WechatMemberApi) OpenMember(c *gin.Context) {
 		return
 	}
 
-	// 生成微信支付参数（这里应该是调用微信统一下单接口获取真实参数）
-	// 以下为模拟数据，实际开发中需要调用微信支付API
-	timeStamp := time.Now().Unix()
-	timeStampStr := strconv.FormatInt(timeStamp, 10)
-	nonceStr := utils.RandomString(32)
+	// 获取客户端IP
+	clientIP := getClientIP(c)
 
-	// 模拟prepay_id，实际应该从微信统一下单接口获取
-	prepayId := fmt.Sprintf("wx%s%s", time.Now().Format("20060102150405"), utils.RandomString(16))
+	// 配置微信支付参数
+	wxPayConfig := utils.WechatPayConfig{
+		AppID:     global.GVA_CONFIG.System.WxAppID,                       // 微信小程序AppID
+		MchID:     global.GVA_CONFIG.System.WxMchID,                       // 微信支付商户号
+		APIKey:    global.GVA_CONFIG.System.WxAPIKey,                      // 微信支付API密钥
+		NotifyURL: getServerURL(c) + "/api/wx/member/callback/" + orderNo, // 支付回调地址
+	}
 
-	// 简化的签名生成（实际应该按照微信支付签名规则生成）
-	paySign := utils.MD5V([]byte(fmt.Sprintf("appid=wxappid&noncestr=%s&package=prepay_id=%s&sign=sign&timestamp=%s", nonceStr, prepayId, timeStampStr)))
+	// 调用微信统一下单接口
+	totalFee := int(amount * 100) // 转换为分
+	unifiedOrderResp, err := utils.CreateUnifiedOrder(
+		wxPayConfig,
+		"会员年卡", // 商品描述
+		orderNo,    // 商户订单号
+		totalFee,   // 总金额(分)
+		clientIP,   // 终端IP
+		"JSAPI",    // 交易类型
+	)
+	if err != nil {
+		global.GVA_LOG.Error("调用微信统一下单接口失败!", zap.Error(err))
+		response.FailWithMessage("调用微信支付失败: "+err.Error(), c)
+		return
+	}
+
+	// 生成前端支付参数
+	payParams := utils.GenerateWechatPayParams(wxPayConfig, unifiedOrderResp.PrepayID)
 
 	responseData := OpenMemberResponse{
-		OrderNo:   orderNo,
+		AppID:     payParams.AppID,
+		TimeStamp: payParams.TimeStamp,
+		NonceStr:  payParams.NonceStr,
+		Package:   payParams.Package,
+		SignType:  payParams.SignType,
+		PaySign:   payParams.PaySign,
 		Amount:    amount,
-		TimeStamp: timeStampStr,
-		NonceStr:  nonceStr,
-		Package:   "prepay_id=" + prepayId,
-		SignType:  "MD5",
-		PaySign:   paySign,
+		OrderNo:   orderNo,
 	}
 
 	global.GVA_LOG.Info("会员开通订单创建成功", zap.Uint("userID", userID), zap.String("orderNo", orderNo), zap.Float64("amount", amount))
 	response.OkWithDetailed(responseData, "订单创建成功，请调用支付接口完成支付", c)
+}
+
+// getClientIP 获取客户端IP地址
+func getClientIP(c *gin.Context) string {
+	// 首先尝试从X-Forwarded-For头部获取
+	ip := c.GetHeader("X-Forwarded-For")
+	if ip != "" {
+		// 取第一个IP地址
+		if ips := strings.Split(ip, ","); len(ips) > 0 {
+			ip = strings.TrimSpace(ips[0])
+			if net.ParseIP(ip) != nil {
+				return ip
+			}
+		}
+	}
+
+	// 尝试从X-Real-IP头部获取
+	ip = c.GetHeader("X-Real-IP")
+	if ip != "" && net.ParseIP(ip) != nil {
+		return ip
+	}
+
+	// 从gin上下文获取
+	if ip, _, err := net.SplitHostPort(c.Request.RemoteAddr); err == nil {
+		return ip
+	}
+
+	// 默认返回
+	return "127.0.0.1"
+}
+
+// getServerURL 获取服务器URL
+func getServerURL(c *gin.Context) string {
+	// 获取协议
+	scheme := "http"
+	if c.Request.TLS != nil {
+		scheme = "https"
+	}
+
+	// 获取主机
+	host := c.Request.Host
+	if host == "" {
+		host = "localhost:8888" // 默认端口
+	}
+
+	return scheme + "://" + host
 }
 
 // MemberPaymentCallback 会员支付回调
@@ -157,9 +223,28 @@ func (w *WechatMemberApi) MemberPaymentCallback(c *gin.Context) {
 	}
 
 	// 更新用户会员过期时间（默认开通一年）
-	expiryDate := time.Now().AddDate(1, 0, 0) // 一年后
+	// 如果用户已经有会员，则在现有到期时间基础上延长一年
+	// 如果用户没有会员，则从现在开始计算一年
+	var wxUser system.WechatUser
+	err = global.GVA_DB.Where("id = ?", order.UserID).First(&wxUser).Error
+	if err != nil {
+		global.GVA_LOG.Error("获取用户信息失败!", zap.Uint("userID", order.UserID), zap.Error(err))
+		response.FailWithMessage("获取用户信息失败: "+err.Error(), c)
+		return
+	}
+
+	// 计算新的会员到期时间
+	var newExpiryDate time.Time
+	if wxUser.MembershipExpiryDate != nil && wxUser.MembershipExpiryDate.After(time.Now()) {
+		// 如果当前会员还未过期，则在现有到期时间基础上延长一年
+		newExpiryDate = wxUser.MembershipExpiryDate.AddDate(1, 0, 0)
+	} else {
+		// 如果当前没有会员或会员已过期，则从现在开始计算一年
+		newExpiryDate = time.Now().AddDate(1, 0, 0)
+	}
+
 	updateUserData := map[string]interface{}{
-		"membership_expiry_date": &expiryDate,
+		"membership_expiry_date": &newExpiryDate,
 		"updated_by":             order.UserID,
 	}
 
