@@ -32,6 +32,7 @@ CREATE TABLE public."User" (
     open_id text,
     nickname text,
     phone_number text,
+    user_type text DEFAULT 'normal'::text,
     salesperson bigint,
     relationship_channel bigint,
     benefit_level bigint,
@@ -150,6 +151,7 @@ CREATE TABLE public.core_activities (
     end_time timestamp with time zone,
     show_start_time timestamp with time zone,
     show_end_time timestamp with time zone,
+    registration_type text DEFAULT 'paid'::text,
     created_by bigint,
     updated_by bigint,
     deleted_by bigint
@@ -3351,6 +3353,73 @@ CREATE INDEX idx_sys_users_username ON public.sys_users USING btree (username);
 --
 
 CREATE INDEX idx_sys_users_uuid ON public.sys_users USING btree (uuid);
+
+
+--
+-- Name: activity_registrations; Type: TABLE; Schema: public; Owner: gva
+--
+
+CREATE TABLE public.activity_registrations (
+    id bigint NOT NULL,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone,
+    deleted_at timestamp with time zone,
+    user_id bigint NOT NULL,
+    activity_id bigint NOT NULL,
+    registration_type text DEFAULT 'paid'::text,
+    verification_code character varying(50),
+    participant_name character varying(100),
+    participant_phone character varying(20),
+    payment_status character varying(20) DEFAULT 'pending'::character varying,
+    payment_time timestamp with time zone,
+    created_by bigint,
+    updated_by bigint,
+    deleted_by bigint
+);
+
+
+ALTER TABLE public.activity_registrations OWNER TO gva;
+
+--
+-- Name: COLUMN activity_registrations.created_by; Type: COMMENT; Schema: public; Owner: gva
+--
+
+COMMENT ON COLUMN public.activity_registrations.created_by IS '创建者';
+
+
+--
+-- Name: COLUMN activity_registrations.updated_by; Type: COMMENT; Schema: public; Owner: gva
+--
+
+COMMENT ON COLUMN public.activity_registrations.updated_by IS '更新者';
+
+
+--
+-- Name: COLUMN activity_registrations.deleted_by; Type: COMMENT; Schema: public; Owner: gva
+--
+
+COMMENT ON COLUMN public.activity_registrations.deleted_by IS '删除者';
+
+
+--
+-- Name: activity_registrations_id_seq; Type: SEQUENCE; Schema: public; Owner: gva
+--
+
+CREATE SEQUENCE public.activity_registrations_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.activity_registrations_id_seq OWNER TO gva;
+
+--
+-- Name: activity_registrations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: gva
+--
+
+ALTER SEQUENCE public.activity_registrations_id_seq OWNED BY public.activity_registrations.id;
 
 
 --

@@ -2,25 +2,25 @@
 package system
 
 import (
+	"time"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 )
 
-// 活动报名 结构体  ActivityRegistration
+// 活动报名 结构体
 type ActivityRegistration struct {
 	global.GVA_MODEL
-	UserID           uint   `json:"userId" form:"userId" gorm:"comment:用户ID;column:user_id;index;not null;" binding:"required"`                       // 用户ID
-	ActivityID       uint   `json:"activityId" form:"activityId" gorm:"comment:活动ID;column:activity_id;index;not null;" binding:"required"`           // 活动ID
-	StudentName      string `json:"studentName" form:"studentName" gorm:"comment:学员姓名;column:student_name;not null;" binding:"required"`              // 学员姓名
-	StudentPhone     string `json:"studentPhone" form:"studentPhone" gorm:"comment:学员电话;column:student_phone;not null;" binding:"required"`           // 学员电话
-	RegistrationNo   string `json:"registrationNo" form:"registrationNo" gorm:"comment:报名编号;column:registration_no;index;not null;"`                  // 报名编号
-	RegistrationType string `json:"registrationType" form:"registrationType" gorm:"comment:报名方式;column:registration_type;default:purchase;not null;"` // 报名方式: purchase-购买, code-码
-	Code             string `json:"code" form:"code" gorm:"comment:报名码;column:code;"`                                                                 // 报名码
-	OrderID          uint   `json:"orderId" form:"orderId" gorm:"comment:订单ID;column:order_id;"`                                                      // 订单ID
-	Status           string `json:"status" form:"status" gorm:"comment:核销状态;column:status;default:pending;not null;"`                                 // 核销状态: pending-待确认, confirmed-已确认, cancelled-已取消
-	Remark           string `json:"remark" form:"remark" gorm:"comment:备注;column:remark;type:text;"`                                                  // 备注
-	CreatedBy        uint   `gorm:"column:created_by;comment:创建者"`
-	UpdatedBy        uint   `gorm:"column:updated_by;comment:更新者"`
-	DeletedBy        uint   `gorm:"column:deleted_by;comment:删除者"`
+	UserID           uint       `json:"userID" form:"userID" gorm:"column:user_id;not null;" binding:"required"`                 // 用户ID
+	ActivityID       uint       `json:"activityID" form:"activityID" gorm:"column:activity_id;not null;" binding:"required"`     // 活动ID
+	RegistrationType *string    `json:"registrationType" form:"registrationType" gorm:"column:registration_type;default:'paid'"` // 报名方式: paid-付费报名, free-免费报名, code-兑换码报名
+	VerificationCode string     `json:"verificationCode" form:"verificationCode" gorm:"column:verification_code;size:50;"`       // 核销码
+	ParticipantName  *string    `json:"participantName" form:"participantName" gorm:"column:participant_name;size:100;"`         // 参与人姓名
+	ParticipantPhone *string    `json:"participantPhone" form:"participantPhone" gorm:"column:participant_phone;size:20;"`       // 参与人手机号
+	PaymentStatus    string     `json:"paymentStatus" form:"paymentStatus" gorm:"column:payment_status;size:20;default:pending"` // 支付状态: pending, paid, cancelled
+	PaymentTime      *time.Time `json:"paymentTime" form:"paymentTime" gorm:"column:payment_time;"`                              // 支付时间
+	CreatedBy        uint       `gorm:"column:created_by;comment:创建者"`
+	UpdatedBy        uint       `gorm:"column:updated_by;comment:更新者"`
+	DeletedBy        uint       `gorm:"column:deleted_by;comment:删除者"`
 }
 
 // TableName 活动报名 ActivityRegistration自定义表名 activity_registrations

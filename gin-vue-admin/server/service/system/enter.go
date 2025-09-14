@@ -31,4 +31,5 @@ type ServiceGroup struct {
 	WechatUserService
 	CodeService
 	ActivitiesService
+	ActivityRegistrationService
 }

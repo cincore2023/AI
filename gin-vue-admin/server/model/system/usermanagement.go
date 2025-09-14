@@ -15,6 +15,7 @@ type WechatUser struct {
 	PhoneNumber              *string    `json:"phone_number" form:"phone_number" gorm:"column:phone_number;" binding:"required"`                        //手机号
 	Avatar                   *string    `json:"avatar" form:"avatar" gorm:"column:avatar;"`                                                             //头像URL
 	SessionKey               *string    `json:"session_key" form:"session_key" gorm:"column:session_key;"`                                              //会话密钥
+	UserType                 *string    `json:"user_type" form:"user_type" gorm:"column:user_type;default:'normal'"`                                    //用户类型: normal-普通用户, vip-VIP用户, partner-合伙人
 	Salesperson              *int       `json:"salesperson" form:"salesperson" gorm:"column:salesperson;"`                                              //销售员
 	RelationshipChannel      *int       `json:"relationship_channel" form:"relationship_channel" gorm:"column:relationship_channel;"`                   //关系渠道
 	BenefitLevel             *int       `json:"benefit_level" form:"benefit_level" gorm:"column:benefit_level;"`                                        //权益等级

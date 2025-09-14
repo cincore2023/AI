@@ -31,6 +31,5 @@ var (
 	courseService         = service.ServiceGroupApp.SystemServiceGroup.CourseService
 	courseFavoriteService = service.ServiceGroupApp.SystemServiceGroup.CourseFavoriteService
 	categoryService       = service.ServiceGroupApp.SystemServiceGroup.CategoryService
-	activitiesService     = service.ServiceGroupApp.SystemServiceGroup.ActivitiesService
 	wxUserService         = service.ServiceGroupApp.SystemServiceGroup.WechatUserService
 )
