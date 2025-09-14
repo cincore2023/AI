@@ -15,5 +15,6 @@ func (s *WechatUserInfoRouter) InitWechatUserInfoRouter(Router *gin.RouterGroup)
 		wechatUserInfoRouter.POST("/DecryptPhone", wechatUserInfoApi.WxDecryptPhone)     // 微信手机号解密
 		wechatUserInfoRouter.POST("/UpdateUserInfo", wechatUserInfoApi.WxUpdateUserInfo) // 更新用户信息
 		wechatUserInfoRouter.POST("/UploadAvatar", wechatUserInfoApi.WxUploadAvatar)     // 上传用户头像
+		wechatUserInfoRouter.GET("/GetUserInfo", wechatUserInfoApi.GetWechatUserInfo)    // 获取用户信息
 	}
 }

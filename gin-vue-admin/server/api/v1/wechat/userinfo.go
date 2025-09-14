@@ -292,3 +292,33 @@ func (w *WechatUserInfoApi) WxUploadAvatar(c *gin.Context) {
 		zap.String("fileURL", fileURL))
 	response.OkWithDetailed(fileURL, "头像上传成功", c)
 }
+
+// GetWechatUserInfo 获取微信用户信息
+// @Tags     WechatUserInfoApi
+// @Summary  获取微信用户信息
+// @Description 获取当前登录微信用户的详细信息，需要登录鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Success  200   {object}  response.Response{data=system.WechatUser,msg=string}  "获取成功"
+// @Failure  401   {object}  response.Response{msg=string}                        "未登录或登录已过期"
+// @Failure  500   {object}  response.Response{msg=string}                        "服务器内部错误"
+// @Router   /api/wx/GetUserInfo [get]
+func (w *WechatUserInfoApi) GetWechatUserInfo(c *gin.Context) {
+	// 获取当前用户ID
+	userID := utils.GetUserID(c)
+
+	global.GVA_LOG.Info("获取微信用户信息请求",
+		zap.Uint("userID", userID))
+
+	// 获取用户信息
+	user, err := wxUserService.GetWechatUser(c.Request.Context(), fmt.Sprintf("%d", userID))
+	if err != nil {
+		global.GVA_LOG.Error("获取用户信息失败!", zap.Error(err))
+		response.FailWithMessage("获取用户信息失败: "+err.Error(), c)
+		return
+	}
+
+	global.GVA_LOG.Info("获取微信用户信息成功",
+		zap.Uint("userID", userID))
+	response.OkWithDetailed(user, "获取用户信息成功", c)
+}
