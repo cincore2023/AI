@@ -5,8 +5,10 @@ import (
 	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/common/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
+	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
@@ -71,6 +73,41 @@ type WxActivityDetailItem struct {
 	Details          string  `json:"details"`          // 活动详情
 	Salesperson      *string `json:"salesperson"`      // 销售员ID
 	RegistrationType *string `json:"registrationType"` // 报名方式
+}
+
+// WxUserRegisteredActivityItem 用户已报名活动项目
+type WxUserRegisteredActivityItem struct {
+	// 活动基本信息
+	ID               uint    `json:"id"`               // 活动 ID
+	ActivityName     string  `json:"activityName"`     // 活动名称
+	Price            float64 `json:"price"`            // 活动价格
+	Category         int     `json:"category"`         // 分类
+	CoverPicture     string  `json:"coverPicture"`     // 封面图
+	ActualEnrollment int     `json:"actualEnrollment"` // 展示报名人数
+	RealEnrollment   int     `json:"realEnrollment"`   // 真实报名人数
+	SortOrder        int     `json:"sortOrder"`        // 排序
+	StartTime        string  `json:"startTime"`        // 开始时间
+	EndTime          string  `json:"endTime"`          // 结束时间
+	ShowStartTime    string  `json:"showStartTime"`    // 展示开始时间
+	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
+	RegistrationType string  `json:"registrationType"` // 报名方式
+
+	// 报名相关信息
+	OrderNumber      string `json:"orderNumber"`      // 订单编号
+	RegistrationID   uint   `json:"registrationID"`   // 报名ID
+	VerificationCode string `json:"verificationCode"` // 核销码
+	PaymentStatus    string `json:"paymentStatus"`    // 支付状态: pending-待支付, paid-已支付, cancelled-已取消
+	ParticipantName  string `json:"participantName"`  // 参与人姓名
+	ParticipantPhone string `json:"participantPhone"` // 参与人手机号
+	CreatedAt        string `json:"createdAt"`        // 报名时间
+}
+
+// WxUserRegisteredActivitiesResponse 用户已报名活动响应
+type WxUserRegisteredActivitiesResponse struct {
+	Activities []WxUserRegisteredActivityItem `json:"activities"` // 活动列表
+	Total      int64                          `json:"total"`      // 总数
+	Page       int                            `json:"page"`       // 当前页码
+	PageSize   int                            `json:"pageSize"`   // 每页数量
 }
 
 // WxActivityRegistrationRequest 活动报名请求参数
@@ -566,7 +603,7 @@ func (w *WechatActivityApi) WxPartnerRedemptionCode(c *gin.Context) {
 		responseData.ParticipantPhone = *registration.ParticipantPhone
 	}
 
-	// 安安地获取报名方式
+	// �安安地获取报名方式
 	if registration.RegistrationType != nil {
 		responseData.RegistrationType = *registration.RegistrationType
 	}
@@ -787,4 +824,187 @@ func (w *WechatActivityApi) WxUpdatePaymentStatus(c *gin.Context, registrationID
 		zap.Uint("registrationID", registrationID),
 		zap.String("status", status))
 	return nil
+}
+
+// WxGetUserRegisteredActivities 获取用户已报名的活动列表
+// @Tags     WechatApi
+// @Summary  获取用户已报名的活动列表
+// @Description 获取当前用户已报名的活动列表，需要登录鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    page       query     int                                                    false  "页码，默认为1"
+// @Param    pageSize   query     int                                                    false  "每页数量，默认为10"
+// @Success  200        {object}  response.Response{data=WxUserRegisteredActivitiesResponse,msg=string}  "获取成功"
+// @Failure  400        {object}  response.Response{msg=string}                          "请求参数错误"
+// @Failure  401        {object}  response.Response{msg=string}                          "未登录或登录已过期"
+// @Failure  500        {object}  response.Response{msg=string}                          "服务器内部错误"
+// @Router   /api/wx/Activities/registered [get]
+func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
+	// 获取当前用户ID
+	userID := utils.GetUserID(c)
+
+	// 获取查询参数
+	pageStr := c.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSizeStr := c.DefaultQuery("pageSize", "10")
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil || pageSize < 1 || pageSize > 100 {
+		pageSize = 10
+	}
+
+	global.GVA_LOG.Info("获取用户已报名活动列表",
+		zap.Uint("userID", userID),
+		zap.Int("page", page),
+		zap.Int("pageSize", pageSize))
+
+	// 构造查询条件
+	searchReq := systemReq.ActivityRegistrationSearch{
+		UserID: &userID,
+		PageInfo: request.PageInfo{
+			Page:     page,
+			PageSize: pageSize,
+		},
+		Sort:  "created_at",
+		Order: "descending",
+	}
+
+	// 调用service获取用户已报名的活动
+	registrations, total, err := activityRegistrationService.GetActivityRegistrationInfoList(c.Request.Context(), searchReq)
+	if err != nil {
+		global.GVA_LOG.Error("获取用户已报名活动列表失败!", zap.Error(err))
+		response.FailWithMessage("获取用户已报名活动列表失败: "+err.Error(), c)
+		return
+	}
+
+	// 获取活动ID列表
+	activityIDs := make([]uint, 0, len(registrations))
+	for _, registration := range registrations {
+		activityIDs = append(activityIDs, registration.ActivityID)
+	}
+
+	// 获取活动详情
+	activities := make([]system.Activities, 0)
+	if len(activityIDs) > 0 {
+		err = global.GVA_DB.Where("id IN ?", activityIDs).Find(&activities).Error
+		if err != nil {
+			global.GVA_LOG.Error("获取活动详情失败!", zap.Error(err))
+			response.FailWithMessage("获取活动详情失败: "+err.Error(), c)
+			return
+		}
+	}
+
+	// 构建活动ID到活动详情的映射
+	activityMap := make(map[uint]system.Activities)
+	for _, activity := range activities {
+		activityMap[activity.ID] = activity
+	}
+
+	// 转换为微信接口响应格式
+	wxActivities := make([]WxUserRegisteredActivityItem, 0, len(registrations))
+	for _, registration := range registrations {
+		// 获取对应的活动详情
+		activity, exists := activityMap[registration.ActivityID]
+		if !exists {
+			continue // 如果活动不存在，跳过该报名记录
+		}
+
+		// 构建活动项
+		wxActivity := WxUserRegisteredActivityItem{
+			ID:               activity.ID,
+			ActivityName:     "",
+			Price:            0,
+			Category:         0,
+			CoverPicture:     "",
+			ActualEnrollment: 0,
+			RealEnrollment:   0,
+			SortOrder:        0,
+			StartTime:        "",
+			EndTime:          "",
+			ShowStartTime:    "",
+			ShowEndTime:      "",
+			RegistrationType: "",
+			OrderNumber:      "", // 订单编号需要从订单表获取
+			RegistrationID:   registration.ID,
+			VerificationCode: registration.VerificationCode,
+			PaymentStatus:    registration.PaymentStatus,
+			ParticipantName:  "",
+			ParticipantPhone: "",
+			CreatedAt:        registration.CreatedAt.Format("2006-01-02 15:04:05"),
+		}
+
+		// 安全地获取活动指针值
+		if activity.ActivityName != nil {
+			wxActivity.ActivityName = *activity.ActivityName
+		}
+		if activity.Price != nil {
+			wxActivity.Price = *activity.Price
+		}
+		if activity.Category != nil {
+			wxActivity.Category = *activity.Category
+		}
+		if activity.CoverPicture != nil {
+			wxActivity.CoverPicture = *activity.CoverPicture
+		}
+		if activity.ActualEnrollment != nil {
+			wxActivity.ActualEnrollment = *activity.ActualEnrollment
+		}
+		if activity.RealEnrollment != nil {
+			wxActivity.RealEnrollment = *activity.RealEnrollment
+		}
+		if activity.SortOrder != nil {
+			wxActivity.SortOrder = *activity.SortOrder
+		}
+		if activity.StartTime != nil {
+			wxActivity.StartTime = activity.StartTime.Format("2006-01-02 15:04:05")
+		}
+		if activity.EndTime != nil {
+			wxActivity.EndTime = activity.EndTime.Format("2006-01-02 15:04:05")
+		}
+		if activity.ShowStartTime != nil {
+			wxActivity.ShowStartTime = activity.ShowStartTime.Format("2006-01-02 15:04:05")
+		}
+		if activity.ShowEndTime != nil {
+			wxActivity.ShowEndTime = activity.ShowEndTime.Format("2006-01-02 15:04:05")
+		}
+		if activity.RegistrationType != nil {
+			wxActivity.RegistrationType = *activity.RegistrationType
+		}
+
+		// 安全地获取报名记录指针值
+		if registration.ParticipantName != nil {
+			wxActivity.ParticipantName = *registration.ParticipantName
+		}
+		if registration.ParticipantPhone != nil {
+			wxActivity.ParticipantPhone = *registration.ParticipantPhone
+		}
+
+		// 获取订单编号
+		if registration.ID > 0 {
+			var order system.Order
+			err = global.GVA_DB.Where("reference_id = ? AND order_type = ?", registration.ID, "activity").First(&order).Error
+			if err == nil {
+				wxActivity.OrderNumber = order.OrderNo
+			}
+		}
+
+		wxActivities = append(wxActivities, wxActivity)
+	}
+
+	// 构建响应数据
+	wxActivityResponse := WxUserRegisteredActivitiesResponse{
+		Activities: wxActivities,
+		Total:      total,
+		Page:       page,
+		PageSize:   pageSize,
+	}
+
+	global.GVA_LOG.Info("用户已报名活动列表获取成功",
+		zap.Uint("userID", userID),
+		zap.Int("count", len(wxActivities)),
+		zap.Int64("total", total))
+	response.OkWithDetailed(wxActivityResponse, "获取成功", c)
 }

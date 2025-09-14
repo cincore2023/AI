@@ -22,6 +22,7 @@ func (s *WechatActivityRouter) InitWechatActivityRouter(Router *gin.RouterGroup,
 		wechatActivityRouter.POST("Activities/register", wechatActivityApi.WxRegisterForActivity)                     // 用户报名活动
 		wechatActivityRouter.POST("Activities/create-order", wechatActivityApi.WxCreateActivityOrder)                 // 创建活动支付订单
 		wechatActivityRouter.GET("Activities/registration-status", wechatActivityApi.WxGetActivityRegistrationStatus) // 获取活动报名状态
+		wechatActivityRouter.GET("Activities/registered", wechatActivityApi.WxGetUserRegisteredActivities)            // 获取用户已报名活动列表
 		wechatActivityRouter.POST("Activities/participant-info", wechatActivityApi.WxUpdateParticipantInfo)           // 更新参与者信息
 		wechatActivityRouter.POST("Activities/partner-redemption", wechatActivityApi.WxPartnerRedemptionCode)         // 合伙人兑换码报名
 	}
