@@ -70,7 +70,7 @@ export interface IWechatUser {
   benefitLevel?: number
   withdrawableIncome?: number
   cumulativeIncome?: number
-  membershipExpiryDate?: string
+  membership_expiry_date?: string
   membershipRedemptionCode?: string
   activityRedemptionCode?: string
   isActive?: boolean

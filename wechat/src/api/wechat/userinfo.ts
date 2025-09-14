@@ -1,3 +1,4 @@
+import type { IWechatUser } from '@/api/types/login'
 import { http } from '@/http/http'
 
 /**
@@ -47,4 +48,9 @@ export function wxUploadAvatar(file: File) {
   return http.post<string>('/api/wx/UploadAvatar', formData, {}, {
     'Content-Type': 'multipart/form-data',
   })
+}
+
+// 获取用户信息
+export function wxGetUserInfo() {
+  return http.get<{ user: IWechatUser }>('/api/wx/GetUserInfo')
 }

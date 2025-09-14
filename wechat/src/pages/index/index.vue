@@ -21,6 +21,7 @@ import RecommendedSection from '@/components/Home/RecommendedSection.vue'
 import { useThemeStore } from '@/store'
 import { AppStore } from '@/store/app'
 import { CourseStore } from '@/store/course'
+import { useUserStore } from '@/store/user'
 
 // 使用主题store
 const themeStore = useThemeStore()
@@ -28,6 +29,7 @@ const themeStore = useThemeStore()
 // 使用课程store
 const courseStore = CourseStore()
 const appStore = AppStore()
+const userStore = useUserStore()
 
 // 下拉刷新状态
 const refreshing = ref(false)
@@ -43,6 +45,7 @@ async function handleRefresh() {
       courseStore.getHotCourse(),
       courseStore.getExquisiteCourse(),
       courseStore.getCategory(),
+      userStore.getUserInfo(), // 获取最新用户信息
     ])
   }
   finally {
@@ -61,14 +64,14 @@ onShareAppMessage((res) => {
   return {
     title: '欢迎来到我们的学习平台',
     path: '/pages/index/index',
-    imageUrl: ''
+    imageUrl: '',
   }
 })
 
 onShareTimeline(() => {
   return {
     title: '欢迎来到我们的学习平台',
-    imageUrl: ''
+    imageUrl: '',
   }
 })
 // #endif

@@ -22,7 +22,8 @@ import CourseActions from './components/CourseActions.vue'
 import MembershipModal from '@/components/Personal/Modals/MembershipModal.vue'
 
 const courseId = ref('')
-const { isMember, isLoggedIn } = storeToRefs(useUserStore())
+const userStore = useUserStore()
+const { isMember, isLoggedIn } = storeToRefs(userStore)
 const favoriteStore = useFavoriteStore()
 
 const courseDetail = ref<WxCourseDetailItem | null>(null)
@@ -120,6 +121,7 @@ function checkIOSPayment() {
 
 onMounted(async () => {
   // 检查会员状态
+  await userStore.getUserInfo() // 获取最新用户信息
 
   // 检查iOS支付限制
   checkIOSPayment()

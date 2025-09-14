@@ -1,7 +1,8 @@
 import type { IWechatUser } from '@/api/types/login'
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { wxLogin as _wxLogin, getWxCode } from '@/api/login'
+import { wxGetUserInfo } from '@/api/wechat/userinfo'
 import { toast } from '@/utils/toast'
 
 // 初始化状态 - 改为微信用户结构
@@ -21,7 +22,18 @@ export const useUserStore = defineStore(
     const isLoggedIn = ref<boolean>(false)
 
     const isMember = computed(() => {
-      return !!wechatUser.value.membershipExpiryDate
+      if (!wechatUser.value.membership_expiry_date) {
+        return false
+      }
+
+      try {
+        const expiryDate = new Date(wechatUser.value.membership_expiry_date)
+        return expiryDate > new Date()
+      }
+      catch (e) {
+        console.error('解析会员过期时间失败', e)
+        return false
+      }
     })
 
     // 设置微信用户信息
@@ -46,13 +58,21 @@ export const useUserStore = defineStore(
     }
 
     /**
-     * 获取用户信息（保留给后续扩展）
+     * 获取用户信息
      */
     const getUserInfo = async () => {
-      // 这里可以根据需要获取微信用户的详细信息
-      // 暂时直接返回当前用户信息
-      return {
-        data: wechatUser.value,
+      try {
+        const res = await wxGetUserInfo()
+        if (res.data?.user) {
+          setWechatUser(res.data.user)
+          // 同时存储到本地
+          uni.setStorageSync('wechatUser', res.data.user)
+        }
+        return res
+      }
+      catch (error) {
+        console.error('获取用户信息失败:', error)
+        throw error
       }
     }
 

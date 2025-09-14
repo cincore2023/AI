@@ -6,6 +6,7 @@ import PromotionPosterModal from '@/components/Personal/Modals/PromotionPosterMo
 import PartnerSection from '@/components/Personal/PartnerSection.vue'
 import ServiceSection from '@/components/Personal/ServiceSection.vue'
 import UserInfoSection from '@/components/Personal/UserInfoSection.vue'
+import { useUserStore } from '@/store/user'
 
 interface PartnerInfo {
   withdrawableIncome: number
@@ -16,6 +17,8 @@ interface PartnerInfo {
   memberCode: number
   activityCode: number
 }
+
+const userStore = useUserStore()
 
 // 绑定销售专员相关
 const showBindSalesModal = ref(false)
@@ -143,8 +146,8 @@ function handleDownloadPoster(poster: any) {
 }
 
 onMounted(async () => {
-  // 检查会员状态
-  // await memberStore.checkMemberStatus()
+  // 获取最新用户信息
+  await userStore.getUserInfo()
 })
 </script>
 

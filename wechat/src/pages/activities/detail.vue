@@ -20,9 +20,10 @@ import { useUserStore } from '@/store'
 const activityId = ref('')
 const activityDetail = ref<WxActivityDetailItem | null>(null)
 const loading = ref(false)
-const { wechatUser } = useUserStore()
+const userStore = useUserStore()
+const { wechatUser } = storeToRefs(userStore)
 const showScanButton = computed(() => {
-  return Number(activityDetail.value?.salesperson) === Number(wechatUser.ID)
+  return Number(activityDetail.value?.salesperson) === Number(wechatUser.value.ID)
 })
 
 // 获取活动详情
@@ -116,6 +117,11 @@ const BottomStyle = computed(() => ({
   paddingBottom: `${systemInfo.windowHeight - systemInfo.safeArea.bottom + 5}px` || '0px',
   paddingTop: '20rpx',
 }))
+
+onMounted(async () => {
+  // 获取最新用户信息
+  await userStore.getUserInfo()
+})
 
 onLoad((options) => {
   if (options?.id) {

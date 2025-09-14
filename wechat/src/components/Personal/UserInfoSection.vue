@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/user'
+import { formatDate } from '@/utils/date'
 import EditUserInfoModal from './Modals/EditUserInfoModal.vue'
 
 const emit = defineEmits(['renew'])
@@ -41,7 +42,7 @@ function handleRenew() {
     </view>
 
     <!-- VIP状态 -->
-    <view v-if="isMember" class="flex items-center justify-between rounded-lg bg-black p-3 text-white">
+    <view v-if="isMember" class="flex items-center justify-between rounded-lg bg-gray-800 p-3 text-white">
       <view class="flex items-center gap-3">
         <text class="text-4">👑</text>
         <view class="grid gap-1">
@@ -49,7 +50,7 @@ function handleRenew() {
             <text class="text-base font-bold">尊敬的VIP用户</text>
           </view>
           <view class="text-3 opacity-80">
-            您的会员有效期至{{ wechatUser.membershipExpiryDate }}
+            效期至{{ formatDate(wechatUser.membership_expiry_date) }}
           </view>
         </view>
       </view>
@@ -65,7 +66,8 @@ function handleRenew() {
         <text class="mr-3 text-xl">👑</text>
         <text class="flex-1 text-base font-bold">开通会员享受更多权益</text>
       </view>
-      <view class="absolute right-5 top-1/2 transform rounded bg-white px-4 py-2 text-sm text-blue-500 -translate-y-1/2" @click="handleRenew">
+      <view class="absolute right-5 top-1/2 transform rounded bg-white px-4 py-2 text-sm text-blue-500 -translate-y-1/2"
+            @click="handleRenew">
         <text class="mr-2">🚀</text>
         <text>立即开通</text>
       </view>
