@@ -20,6 +20,8 @@ import {
   wxRegisterForActivity,
   wxUpdateParticipantInfo,
 } from '@/api/activity'
+import ParticipantInfoModal from '@/components/Activity/ParticipantInfoModal.vue'
+import VerificationCodeQR from '@/components/Activity/VerificationCodeQR.vue'
 import { useUserStore } from '@/store'
 
 const activityId = ref('')
@@ -41,6 +43,7 @@ const registrationStatus = ref({
 })
 
 const participantInfoModalVisible = ref(false)
+const showVerificationCodeQR = ref(false)
 
 // 获取活动详情
 async function getActivityDetail(id: number) {
@@ -126,13 +129,9 @@ async function handleSignUp() {
 
   // 根据当前报名状态执行不同操作
   if (registrationStatus.value.paymentStatus === 'paid') {
-    // 已支付，显示核销码
-    uni.showModal({
-      title: '核销码',
-      content: registrationStatus.value.verificationCode,
-      showCancel: false,
-      confirmText: '确定',
-    })
+    // 已支付，显示核销码二维码弹框
+    showVerificationCodeQR.value = true
+    return
   }
   try {
     if (isPartner) {
@@ -150,6 +149,10 @@ async function handleSignUp() {
     // 模拟支付成功后重新获取报名状态
     setTimeout(async () => {
       await getRegistrationStatus(Number(activityId.value))
+      // 显示核销码二维码弹框
+      if (registrationStatus.value.verificationCode) {
+        showVerificationCodeQR.value = true
+      }
     }, 1000)
   }
   catch (error) {
@@ -389,9 +392,10 @@ onShareTimeline(() => {
 
     <!-- 参与者信息弹窗 -->
     <ParticipantInfoModal
-      v-model:show="participantInfoModalVisible"
-      @confirm="handleParticipantInfoSubmit"
+        v-model:show="participantInfoModalVisible"
+        @confirm="handleParticipantInfoSubmit"
     />
+    <VerificationCodeQR v-model:show="showVerificationCodeQR" :text="registrationStatus.verificationCode"/>
   </view>
 </template>
 
@@ -592,6 +596,48 @@ onShareTimeline(() => {
 }
 
 .popup-footer {
+  display: flex;
+  gap: 20rpx;
+}
+
+.cancel-btn,
+.confirm-btn {
+  flex: 1;
+}
+
+.qr-popup-content {
+  padding: 30rpx;
+  background: var(--bg-primary);
+}
+
+.qr-popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30rpx;
+}
+
+.qr-popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.qr-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.verification-code-text {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.qr-popup-footer {
   display: flex;
   gap: 20rpx;
 }

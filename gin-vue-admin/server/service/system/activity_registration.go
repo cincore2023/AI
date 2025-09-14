@@ -208,10 +208,10 @@ func (activityRegistrationService *ActivityRegistrationService) PartnerRedemptio
 		return nil, fmt.Errorf("获取活动信息失败: %v", err)
 	}
 
-	// 检查活动报名方式是否为兑换码报名
-	if activity.RegistrationType == nil || *activity.RegistrationType != "code" {
-		return nil, fmt.Errorf("该活动不支持兑换码报名")
-	}
+	//// 检查活动报名方式是否为兑换码报名
+	//if activity.RegistrationType == nil || *activity.RegistrationType != "code" {
+	//	return nil, fmt.Errorf("该活动不支持兑换码报名")
+	//}
 
 	// 获取用户信息
 	var user system.WechatUser
