@@ -1,8 +1,9 @@
 <script setup lang="ts">
+import { storeToRefs } from 'pinia'
 import BindSalesModal from '@/components/Personal/Modals/BindSalesModal.vue'
 import { useUserStore } from '@/store/user'
 
-const { wechatUser } = useUserStore()
+const { wechatUser } = storeToRefs(useUserStore())
 
 interface ServiceItem {
   icon: string
@@ -49,7 +50,7 @@ function handleBindSales() {
           <text>立即绑定</text>
         </view>
         <view>
-          {{ wechatUser?.salesperson }}
+          {{ wechatUser.salespersonInfo?.nickname || wechatUser.salespersonInfo?.phoneNumber }}
         </view>
       </view>
     </view>
@@ -64,7 +65,6 @@ function handleBindSales() {
         :open-type="service.open"
         @click="handleServiceClick(service)"
       >
-<!--        <view class="mb-3 text-3xl">{{ service.icon }}</view>-->
         <text class="whitespace-nowrap text-xs text-gray-700">{{ service.title }}</text>
       </sar-button>
     </view>

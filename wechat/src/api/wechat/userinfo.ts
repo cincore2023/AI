@@ -52,5 +52,5 @@ export function wxUploadAvatar(file: File) {
 
 // 获取用户信息
 export function wxGetUserInfo() {
-  return http.get<{ user: IWechatUser }>('/api/wx/GetUserInfo')
+  return http.get<IWechatUser>('/api/wx/GetUserInfo')
 }

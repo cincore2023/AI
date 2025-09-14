@@ -95,3 +95,10 @@ export interface IWxSalespersonInfo {
   nickname: string
   phoneNumber: string
 }
+
+/**
+ * 微信用户信息（包含销售员信息）
+ */
+export interface IWechatUserWithSalesperson extends IWechatUser {
+  salespersonInfo?: IWxSalespersonInfo
+}

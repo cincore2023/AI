@@ -1,4 +1,4 @@
-import type { IWechatUser } from '@/api/types/login'
+import type { IWechatUserWithSalesperson } from '@/api/types/login'
 import { defineStore } from 'pinia'
 import { computed, ref } from 'vue'
 import { wxLogin as _wxLogin, getWxCode } from '@/api/login'
@@ -6,7 +6,7 @@ import { wxGetUserInfo } from '@/api/wechat/userinfo'
 import { toast } from '@/utils/toast'
 
 // 初始化状态 - 改为微信用户结构
-const wechatUserState: IWechatUser = {
+const wechatUserState: IWechatUserWithSalesperson = {
   ID: 0,
   nickname: '',
   openId: '',
@@ -17,7 +17,7 @@ export const useUserStore = defineStore(
   'user',
   () => {
     // 定义用户信息
-    const wechatUser = ref<IWechatUser>({ ...wechatUserState })
+    const wechatUser = ref<IWechatUserWithSalesperson>({ ...wechatUserState })
     const token = ref<string>('')
     const isLoggedIn = ref<boolean>(false)
 
@@ -37,7 +37,7 @@ export const useUserStore = defineStore(
     })
 
     // 设置微信用户信息
-    const setWechatUser = (user: IWechatUser) => {
+    const setWechatUser = (user: IWechatUserWithSalesperson) => {
       console.log('设置微信用户信息', user)
       wechatUser.value = user
     }
@@ -53,7 +53,6 @@ export const useUserStore = defineStore(
       wechatUser.value = { ...wechatUserState }
       token.value = ''
       isLoggedIn.value = false
-      uni.removeStorageSync('wechatUser')
       uni.removeStorageSync('token')
     }
 
@@ -63,10 +62,9 @@ export const useUserStore = defineStore(
     const getUserInfo = async () => {
       try {
         const res = await wxGetUserInfo()
-        if (res.data?.user) {
-          setWechatUser(res.data.user)
-          // 同时存储到本地
-          uni.setStorageSync('wechatUser', res.data.user)
+        console.log('res', res)
+        if (res.data) {
+          setWechatUser(res.data)
         }
         return res
       }
@@ -92,36 +90,11 @@ export const useUserStore = defineStore(
       try {
         // 获取微信小程序登录的code
         const codeData = await getWxCode()
-        console.log('微信登录code', codeData)
-
-        if (!codeData.code) {
-          throw new Error('获取微信登录code失败')
-        }
-
         const res = await _wxLogin({ code: codeData.code })
-        console.log('微信登录响应', res)
-
-        // 检查响应数据结构
-        if (!res || !res.data) {
-          throw new Error('服务器响应数据为空')
-        }
-
-        if (!res.data.user) {
-          throw new Error('服务器返回的用户信息为空')
-        }
-
-        if (!res.data.token) {
-          throw new Error('服务器返回的token为空')
-        }
-
         // 设置微信用户信息
         setWechatUser(res.data.user)
         setToken(res.data.token)
-
-        // 存储到本地
-        uni.setStorageSync('wechatUser', res.data.user)
         uni.setStorageSync('token', res.data.token)
-
         return res
       }
       catch (error) {

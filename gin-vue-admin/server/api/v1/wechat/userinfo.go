@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
-	"net/http"
 )
 
 type WechatUserInfoApi struct{}
@@ -43,6 +45,12 @@ type WxPhoneInfoResponse struct {
 			Appid     string `json:"appid"`
 		} `json:"watermark"`
 	} `json:"phone_info"`
+}
+
+// WxWechatUserWithSalesperson 包含销售员信息的微信用户信息
+type WxWechatUserWithSalesperson struct {
+	system.WechatUser
+	SalespersonInfo *WxSalespersonInfo `json:"salespersonInfo,omitempty"` // 销售员信息
 }
 
 // WxDecryptPhone 微信手机号解密
@@ -299,7 +307,7 @@ func (w *WechatUserInfoApi) WxUploadAvatar(c *gin.Context) {
 // @Description 获取当前登录微信用户的详细信息，需要登录鉴权
 // @Accept   application/json
 // @Produce  application/json
-// @Success  200   {object}  response.Response{data=system.WechatUser,msg=string}  "获取成功"
+// @Success  200   {object}  response.Response{data=WxWechatUserWithSalesperson,msg=string}  "获取成功"
 // @Failure  401   {object}  response.Response{msg=string}                        "未登录或登录已过期"
 // @Failure  500   {object}  response.Response{msg=string}                        "服务器内部错误"
 // @Router   /api/wx/GetUserInfo [get]
@@ -318,7 +326,25 @@ func (w *WechatUserInfoApi) GetWechatUserInfo(c *gin.Context) {
 		return
 	}
 
+	// 创建包含销售员信息的响应结构
+	userWithSalesperson := WxWechatUserWithSalesperson{
+		WechatUser: user,
+	}
+
+	// 如果用户有销售员，则获取销售员信息
+	if user.Salesperson != nil && *user.Salesperson > 0 {
+		salesperson, err := wxUserService.GetWechatUser(c.Request.Context(), fmt.Sprintf("%d", *user.Salesperson))
+		if err == nil && salesperson.Nickname != nil && salesperson.PhoneNumber != nil {
+			salespersonInfo := &WxSalespersonInfo{
+				ID:          salesperson.ID,
+				Nickname:    *salesperson.Nickname,
+				PhoneNumber: *salesperson.PhoneNumber,
+			}
+			userWithSalesperson.SalespersonInfo = salespersonInfo
+		}
+	}
+
 	global.GVA_LOG.Info("获取微信用户信息成功",
 		zap.Uint("userID", userID))
-	response.OkWithDetailed(user, "获取用户信息成功", c)
+	response.OkWithDetailed(userWithSalesperson, "获取用户信息成功", c)
 }

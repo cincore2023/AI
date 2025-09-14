@@ -15,8 +15,7 @@ const editUserInfoModalRef = ref()
 function handleModifyNickname() {
   if (isLoggedIn.value) {
     editUserInfoModalRef.value?.open()
-  }
-  else {
+  } else {
     uni.navigateTo({
       url: '/pages/login/login',
     })
@@ -74,6 +73,6 @@ function handleRenew() {
     </view>
 
     <!-- 编辑个人信息弹框 -->
-    <EditUserInfoModal ref="editUserInfoModalRef" />
+    <EditUserInfoModal ref="editUserInfoModalRef"/>
   </view>
 </template>
