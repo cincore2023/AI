@@ -241,7 +241,9 @@ onMounted(() => {
                   </text>
                 </view>
                 <view class="meta-item">
-                  <text class="meta-text">已报名 {{ activity.actualEnrollment || 0 }} 人</text>
+                  <text class="meta-text">已报名 {{ (activity.actualEnrollment || 0) + (activity.realEnrollment || 0) }}
+                    人
+                  </text>
                 </view>
               </view>
             </view>

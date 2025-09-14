@@ -30,7 +30,7 @@ function handleClose() {
         <text class="text-lg font-bold">核销码</text>
       </view>
 
-      <view v-if="text" class="flex flex-col items-center justify-center">
+      <view v-if="text && show" class="flex flex-col items-center justify-center">
         <Qrcode :text="text" />
         <text class="verification-code-text">{{ text }}</text>
       </view>

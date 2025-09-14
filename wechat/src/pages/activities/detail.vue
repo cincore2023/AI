@@ -360,7 +360,7 @@ onShareTimeline(() => {
               <text class="price-value">¥{{ activityDetail?.price }}</text>
             </view>
             <view class="activity-stats">
-              已报名: {{ activityDetail?.actualEnrollment || 0 }}人
+              已报名: {{ (activityDetail.actualEnrollment || 0) + (activityDetail.realEnrollment || 0) }}人
             </view>
           </view>
 
@@ -441,10 +441,7 @@ onShareTimeline(() => {
     </view>
 
     <!-- 参与者信息弹窗 -->
-    <ParticipantInfoModal
-        v-model:show="participantInfoModalVisible"
-        @confirm="handleParticipantInfoSubmit"
-    />
+    <ParticipantInfoModal v-model:show="participantInfoModalVisible" @confirm="handleParticipantInfoSubmit"/>
     <VerificationCodeQR v-model:show="showVerificationCodeQR" :text="registrationStatus.verificationCode"/>
   </view>
 </template>
