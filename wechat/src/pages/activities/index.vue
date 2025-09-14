@@ -9,10 +9,15 @@
 </route>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import HeaderSimple from '@/components/Header/HeaderSimple.vue'
-import ActivityItem from '@/components/Activities/ActivityItem.vue'
+import type { WxUserRegisteredActivityItem } from '@/api/types/activity'
+import dayjs from 'dayjs'
+import { computed, onMounted, ref } from 'vue'
+import { wxGetUserRegisteredActivities } from '@/api/activity'
 import FilterModal from '@/components/Activities/FilterModal.vue'
+import MyActivityItem from '@/components/Activities/MyActivityItem.vue'
+import VerificationCodeQR from '@/components/Activity/VerificationCodeQR.vue'
+import HeaderSimple from '@/components/Header/HeaderSimple.vue'
+import { toast } from '@/utils/toast'
 
 defineOptions({
   name: 'ActivitiesPage',
@@ -23,12 +28,17 @@ const showStatusFilter = ref(false)
 const showTimeFilter = ref(false)
 const selectedStatus = ref('')
 const selectedTimeRange = ref('')
+const qrShow = ref(false)
+const qrText = ref('')
+
+// 加载状态
+const loading = ref(false)
 
 // 筛选选项
 const statusOptions = [
   { label: '全部', value: '' },
   { label: '待核销', value: 'pending' },
-  { label: '已核销', value: 'verified' },
+  { label: '已核销', value: 'paid' },
   { label: '已取消', value: 'cancelled' },
 ]
 
@@ -41,48 +51,7 @@ const timeOptions = [
 ]
 
 // 活动数据
-const activities = ref([
-  {
-    orderNumber: '123123123123123',
-    status: 'pending',
-    name: '三天两夜AI活动实操课',
-    dateRange: '2022-08-25~2022-08-26',
-    orderTime: '2025-02-02 18:33:33',
-    price: '998.00',
-    paymentMethod: '线上支付',
-    image: '/static/images/avatar.png',
-  },
-  {
-    orderNumber: '12312312312312',
-    status: 'verified',
-    name: '三天两夜AI活动实操课',
-    dateRange: '2022-08-25~2022-08-26',
-    orderTime: '2025-02-02 18:33:33',
-    price: '998.00',
-    paymentMethod: '兑换码支付',
-    image: '/static/images/avatar.png',
-  },
-  {
-    orderNumber: '123123123123123',
-    status: 'pending',
-    name: 'AI营销实战训练营',
-    dateRange: '2022-09-15~2022-09-16',
-    orderTime: '2025-02-01 14:20:15',
-    price: '1288.00',
-    paymentMethod: '线上支付',
-    image: '/static/images/avatar.png',
-  },
-  {
-    orderNumber: '12312312312312',
-    status: 'cancelled',
-    name: '数字人制作大师课',
-    dateRange: '2022-10-01~2022-10-02',
-    orderTime: '2025-01-30 09:15:30',
-    price: '1588.00',
-    paymentMethod: '线上支付',
-    image: '/static/images/avatar.png',
-  },
-])
+const activities = ref<WxUserRegisteredActivityItem[]>([])
 
 // 筛选后的活动列表
 const filteredActivities = computed(() => {
@@ -90,13 +59,31 @@ const filteredActivities = computed(() => {
 
   // 按状态筛选
   if (selectedStatus.value) {
-    result = result.filter(activity => activity.status === selectedStatus.value)
+    result = result.filter(activity => activity.paymentStatus === selectedStatus.value)
   }
 
   // 按时间筛选
   if (selectedTimeRange.value) {
-    // 这里可以根据实际需求实现时间筛选逻辑
-    // 暂时返回所有数据
+    const now = dayjs()
+    result = result.filter((activity) => {
+      const activityDate = dayjs(activity.createdAt)
+      switch (selectedTimeRange.value) {
+        case 'day':
+          return activityDate.isAfter(now.subtract(1, 'day'))
+        case 'week':
+          return activityDate.isAfter(now.subtract(1, 'week'))
+        case 'month':
+          return activityDate.isAfter(now.subtract(1, 'month'))
+        case 'quarter':
+          return activityDate.isAfter(now.subtract(3, 'months'))
+        case 'halfYear':
+          return activityDate.isAfter(now.subtract(6, 'months'))
+        case 'year':
+          return activityDate.isAfter(now.subtract(1, 'year'))
+        default:
+          return true
+      }
+    })
   }
 
   return result
@@ -122,20 +109,35 @@ function selectTimeRange(timeRange: string) {
   selectedTimeRange.value = timeRange
 }
 
-// 查看活动详情
-function viewActivityDetail(activity: any) {
-  uni.navigateTo({
-    url: `/pages/activities/detail?orderNumber=${activity.orderNumber}`,
-  })
+// 查看核销码
+function viewVerificationCode(activity: WxUserRegisteredActivityItem) {
+  qrText.value = activity.verificationCode
+  qrShow.value = true
 }
 
-// 查看核销码
-function viewVerificationCode(activity: any) {
+// 获取用户已报名的活动列表
+async function getUserRegisteredActivities() {
+  loading.value = true
+  try {
+    const res = await wxGetUserRegisteredActivities({
+      page: 1,
+      pageSize: 100, // 获取所有活动
+    })
 
+    activities.value = res.data.activities
+  }
+  catch (error) {
+    console.error('获取用户已报名活动失败:', error)
+    toast.error('获取活动列表失败')
+  }
+  finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
   console.log('我的活动页面已加载')
+  getUserRegisteredActivities()
 })
 </script>
 
@@ -162,19 +164,21 @@ onMounted(() => {
       :show-scrollbar="false"
       enhanced="true"
     >
+      <!-- 加载状态 -->
+      <sar-skeleton v-if="loading" />
+
       <!-- 活动列表 -->
-      <view class="activities-list">
-        <ActivityItem
+      <view v-else class="activities-list">
+        <MyActivityItem
           v-for="activity in filteredActivities"
           :key="activity.orderNumber"
           :activity="activity"
-          @click="viewActivityDetail"
           @verification-click="viewVerificationCode"
         />
       </view>
 
       <!-- 空状态 -->
-      <view v-if="filteredActivities.length === 0" class="empty-state">
+      <view v-if="!loading && filteredActivities.length === 0" class="empty-state">
         <view class="empty-icon">
           <sar-icon name="info-circle" size="60" color="var(--text-tertiary)" />
         </view>
@@ -200,6 +204,7 @@ onMounted(() => {
       @select="selectTimeRange"
     />
   </view>
+  <VerificationCodeQR v-model:show="qrShow" :text="qrText" />
 </template>
 
 <style lang="scss" scoped>

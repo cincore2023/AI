@@ -1,22 +1,10 @@
-<!-- 活动订单子项组件 -->
+<!-- 我的活动页面活动项组件 -->
 <script setup lang="ts">
 import type { WxUserRegisteredActivityItem } from '@/api/types/activity'
 
-// 定义活动订单接口
-interface Activity {
-  orderNumber: string
-  status: 'pending' | 'verified' | 'cancelled'
-  name: string
-  dateRange: string
-  orderTime: string
-  price: string
-  paymentMethod: string
-  image: string
-}
-
-// 定义组件Props，提供默认值
+// 定义组件Props
 interface Props {
-  activity: Activity | WxUserRegisteredActivityItem
+  activity: WxUserRegisteredActivityItem
   showVerificationButton?: boolean
 }
 
@@ -24,20 +12,19 @@ const props = withDefaults(defineProps<Props>(), {
   showVerificationButton: true,
 })
 
-// 定义组件Emits
-interface Emits {
-  (e: 'click', activity: Activity | WxUserRegisteredActivityItem): void
-  (e: 'verificationClick', activity: Activity | WxUserRegisteredActivityItem): void
-}
-
 const emit = defineEmits<Emits>()
 
-// 方法定义
-function getStatusClass(status: string): string {
-  switch (status) {
+// 定义组件Emits
+interface Emits {
+  (e: 'verificationClick', activity: WxUserRegisteredActivityItem): void
+}
+
+// 获取状态类名
+function getStatusClass(paymentStatus: string): string {
+  switch (paymentStatus) {
     case 'pending':
       return 'status-pending'
-    case 'verified':
+    case 'paid':
       return 'status-verified'
     case 'cancelled':
       return 'status-cancelled'
@@ -46,11 +33,12 @@ function getStatusClass(status: string): string {
   }
 }
 
-function getStatusText(status: string): string {
-  switch (status) {
+// 获取状态文本
+function getStatusText(paymentStatus: string): string {
+  switch (paymentStatus) {
     case 'pending':
       return '待核销'
-    case 'verified':
+    case 'paid':
       return '已核销'
     case 'cancelled':
       return '已取消'
@@ -59,46 +47,56 @@ function getStatusText(status: string): string {
   }
 }
 
-function handleOrderClick() {
-  emit('click', props.activity)
+// 获取支付方式文本
+function getPaymentMethodText(registrationType: string): string {
+  switch (registrationType) {
+    case 'code':
+      return '兑换码支付'
+    case 'free':
+      return '免费报名'
+    default:
+      return '线上支付'
+  }
 }
 
+// 处理核销码点击
 function handleVerificationClick(event: Event) {
   event.stopPropagation()
   emit('verificationClick', props.activity)
 }
 
+// 处理图片加载错误
 function handleImageError() {
-  console.warn('活动图片加载失败:', props.activity.image)
+  console.warn('活动图片加载失败:', props.activity.coverPicture)
 }
 </script>
 
 <template>
-  <view class="activity-item" @click="handleOrderClick">
+  <view class="activity-item">
     <!-- 订单头部 -->
     <view class="order-header">
       <text class="order-number">订单编号: {{ activity.orderNumber }}</text>
-      <view class="order-status" :class="getStatusClass(activity.status)">
-        {{ getStatusText(activity.status) }}
+      <view class="order-status" :class="getStatusClass(activity.paymentStatus)">
+        {{ getStatusText(activity.paymentStatus) }}
       </view>
     </view>
 
     <!-- 活动信息 -->
     <view class="activity-info">
       <view class="activity-image">
-        <image 
-          :src="activity.image" 
-          class="activity-img" 
+        <image
+          :src="activity.coverPicture"
+          class="activity-img"
           mode="aspectFill"
           @error="handleImageError"
         />
       </view>
       <view class="activity-details">
-        <text class="activity-name">{{ activity.name }}</text>
-        <text class="activity-date">{{ activity.dateRange }}</text>
-        <view 
-          v-if="showVerificationButton"
-          class="verification-btn" 
+        <text class="activity-name">{{ activity.activityName }}</text>
+        <text class="activity-date">{{ activity.startTime.split(' ')[0] }}~{{ activity.endTime.split(' ')[0] }}</text>
+        <view
+          v-if="showVerificationButton && activity.verificationCode"
+          class="verification-btn"
           @click="handleVerificationClick"
         >
           查看核销码
@@ -108,10 +106,10 @@ function handleImageError() {
 
     <!-- 订单底部 -->
     <view class="order-footer">
-      <text class="order-time">{{ activity.orderTime }}</text>
+      <text class="order-time">{{ activity.createdAt }}</text>
       <view class="order-price">
         <text class="price-amount">¥{{ activity.price }}</text>
-        <text class="payment-method">({{ activity.paymentMethod }})</text>
+        <text class="payment-method">({{ getPaymentMethodText(activity.registrationType) }})</text>
       </view>
     </view>
   </view>
@@ -125,12 +123,9 @@ function handleImageError() {
   margin-bottom: 20rpx;
   box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
-  &:active {
-    transform: scale(0.98);
-    box-shadow: var(--shadow-md);
-  }
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .order-header {
@@ -203,6 +198,7 @@ function handleImageError() {
       font-size: 24rpx;
       cursor: pointer;
       transition: background-color 0.2s ease;
+      margin-left: auto;
 
       &:active {
         background: var(--primary-dark);
