@@ -49,3 +49,38 @@ export interface WxActivityDetailItem {
   registrationType?: string // 报名方式: paid-付费报名, free-免费报名, code-兑换码报名
   salesperson?: string
 }
+
+// 用户已报名活动项目
+export interface WxUserRegisteredActivityItem {
+  // 活动基本信息
+  id: number
+  activityName: string
+  price: number
+  category: number
+  coverPicture: string
+  actualEnrollment: number
+  realEnrollment?: number
+  sortOrder: number
+  startTime: string
+  endTime: string
+  showStartTime: string
+  showEndTime: string
+  registrationType: string
+
+  // 报名相关信息
+  orderNumber: string
+  registrationID: number
+  verificationCode: string
+  paymentStatus: string
+  participantName: string
+  participantPhone: string
+  createdAt: string
+}
+
+// 用户已报名活动响应
+export interface WxUserRegisteredActivitiesResponse {
+  activities: WxUserRegisteredActivityItem[]
+  total: number
+  page: number
+  pageSize: number
+}
