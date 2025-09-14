@@ -237,25 +237,11 @@ onMounted(() => {
             <view class="flex justify-between">
               <view class="activity-meta">
                 <view class="meta-item">
-                  <text class="meta-icon">📅</text>
                   <text class="meta-text">{{ formatDate(activity.startTime) }}&nbsp;-&nbsp;{{ formatDate(activity.endTime) }}
                   </text>
                 </view>
                 <view class="meta-item">
-                  <text class="meta-icon">📊</text>
                   <text class="meta-text">已报名 {{ activity.actualEnrollment || 0 }} 人</text>
-                </view>
-              </view>
-
-              <!-- 价格和报名 -->
-              <view class="action-section">
-                <view
-                    class="enroll-btn" :class="{ disabled: getActivityStatus(activity) === 'ended' }"
-                    @click.stop="enrollActivity(activity)"
-                >
-                  <text v-if="getActivityStatus(activity) === 'ended'">已结束</text>
-                  <text v-else-if="getActivityStatus(activity) === 'upcoming'">即将开始</text>
-                  <text v-else>立即报名</text>
                 </view>
               </view>
             </view>
@@ -389,9 +375,11 @@ onMounted(() => {
 
 .activity-meta {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 12rpx;
   margin-bottom: 20rpx;
+  flex: 1;
+  justify-content: space-between;
 }
 
 .meta-item {
