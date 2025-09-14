@@ -93,13 +93,14 @@ type WxUserRegisteredActivityItem struct {
 	RegistrationType string  `json:"registrationType"` // 报名方式
 
 	// 报名相关信息
-	OrderNumber      string `json:"orderNumber"`      // 订单编号
-	RegistrationID   uint   `json:"registrationID"`   // 报名ID
-	VerificationCode string `json:"verificationCode"` // 核销码
-	PaymentStatus    string `json:"paymentStatus"`    // 支付状态: pending-待支付, paid-已支付, cancelled-已取消
-	ParticipantName  string `json:"participantName"`  // 参与人姓名
-	ParticipantPhone string `json:"participantPhone"` // 参与人手机号
-	CreatedAt        string `json:"createdAt"`        // 报名时间
+	OrderNumber        string `json:"orderNumber"`        // 订单编号
+	RegistrationID     uint   `json:"registrationID"`     // 报名ID
+	VerificationCode   string `json:"verificationCode"`   // 核销码
+	VerificationStatus string `json:"verificationStatus"` // 核销状态: pending-待核销, verified-已核销, cancelled-已取消
+	PaymentStatus      string `json:"paymentStatus"`      // 支付状态: pending-待支付, paid-已支付, cancelled-已取消
+	ParticipantName    string `json:"participantName"`    // 参与人姓名
+	ParticipantPhone   string `json:"participantPhone"`   // 参与人手机号
+	CreatedAt          string `json:"createdAt"`          // 报名时间
 }
 
 // WxUserRegisteredActivitiesResponse 用户已报名活动响应
@@ -493,7 +494,7 @@ func (w *WechatActivityApi) WxGetActivityRegistrationStatus(c *gin.Context) {
 		responseData.ParticipantPhone = *registration.ParticipantPhone
 	}
 
-	// 安全地获取报名方式
+	// 安安地获取报名方式
 	if registration.RegistrationType != nil {
 		responseData.RegistrationType = *registration.RegistrationType
 	}
@@ -959,26 +960,27 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 
 		// 构建活动项
 		wxActivity := WxUserRegisteredActivityItem{
-			ID:               activity.ID,
-			ActivityName:     "",
-			Price:            0,
-			Category:         0,
-			CoverPicture:     "",
-			ActualEnrollment: 0,
-			RealEnrollment:   0,
-			SortOrder:        0,
-			StartTime:        "",
-			EndTime:          "",
-			ShowStartTime:    "",
-			ShowEndTime:      "",
-			RegistrationType: "",
-			OrderNumber:      "", // 订单编号需要从订单表获取
-			RegistrationID:   registration.ID,
-			VerificationCode: registration.VerificationCode,
-			PaymentStatus:    registration.PaymentStatus,
-			ParticipantName:  "",
-			ParticipantPhone: "",
-			CreatedAt:        registration.CreatedAt.Format("2006-01-02 15:04:05"),
+			ID:                 activity.ID,
+			ActivityName:       "",
+			Price:              0,
+			Category:           0,
+			CoverPicture:       "",
+			ActualEnrollment:   0,
+			RealEnrollment:     0,
+			SortOrder:          0,
+			StartTime:          "",
+			EndTime:            "",
+			ShowStartTime:      "",
+			ShowEndTime:        "",
+			RegistrationType:   "",
+			OrderNumber:        "", // 订单编号需要从订单表获取
+			RegistrationID:     registration.ID,
+			VerificationCode:   registration.VerificationCode,
+			VerificationStatus: "", // 初始化核销状态
+			PaymentStatus:      registration.PaymentStatus,
+			ParticipantName:    "",
+			ParticipantPhone:   "",
+			CreatedAt:          registration.CreatedAt.Format("2006-01-02 15:04:05"),
 		}
 
 		// 安全地获取活动指针值
@@ -1025,6 +1027,13 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 		}
 		if registration.ParticipantPhone != nil {
 			wxActivity.ParticipantPhone = *registration.ParticipantPhone
+		}
+		// 安全地获取核销状态
+		if registration.VerificationStatus != "" {
+			wxActivity.VerificationStatus = registration.VerificationStatus
+		} else {
+			// 默认核销状态为pending
+			wxActivity.VerificationStatus = "pending"
 		}
 
 		// 获取订单编号

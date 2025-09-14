@@ -165,12 +165,13 @@ func (activityRegistrationService *ActivityRegistrationService) RegisterForActiv
 
 	// 创建新的报名记录（不生成核销码）
 	newRegistration := &system.ActivityRegistration{
-		UserID:           userID,
-		ActivityID:       activityID,
-		RegistrationType: &registrationType, // 设置报名方式
-		PaymentStatus:    "pending",         // 初始状态为待支付
-		CreatedBy:        userID,
-		UpdatedBy:        userID,
+		UserID:             userID,
+		ActivityID:         activityID,
+		RegistrationType:   &registrationType, // 设置报名方式
+		VerificationStatus: "pending",         // 初始核销状态为待核销
+		PaymentStatus:      "pending",         // 初始状态为待支付
+		CreatedBy:          userID,
+		UpdatedBy:          userID,
 	}
 
 	err = global.GVA_DB.Create(newRegistration).Error
