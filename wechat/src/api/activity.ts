@@ -43,7 +43,12 @@ export function wxGetActivityRegistrationStatus(activityID: number) {
 }
 
 // 获取用户已报名活动列表
-export function wxGetUserRegisteredActivities(params: { page?: number, pageSize?: number } = {}) {
+export function wxGetUserRegisteredActivities(params: {
+  page?: number
+  pageSize?: number
+  paymentStatus?: string
+  startTimeRange?: string
+} = {}) {
   return http.get<WxUserRegisteredActivitiesResponse>('/api/wx/Activities/registered', params)
 }
 
