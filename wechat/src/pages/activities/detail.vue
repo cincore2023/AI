@@ -15,9 +15,9 @@ import { storeToRefs } from 'pinia'
 import { ref } from 'vue'
 import {
   getWxActivityDetail,
+  wxCreateActivityOrder,
   wxGetActivityRegistrationStatus,
   wxPartnerRedemptionCode,
-  wxRegisterForActivity,
   wxUpdateParticipantInfo,
 } from '@/api/activity'
 import ParticipantInfoModal from '@/components/Activity/ParticipantInfoModal.vue'
@@ -133,30 +133,78 @@ async function handleSignUp() {
     showVerificationCodeQR.value = true
     return
   }
+
   try {
     if (isPartner) {
+      // 合伙人直接报名
       await wxPartnerRedemptionCode(Number(activityId.value))
-    } else {
-      await wxRegisterForActivity(Number(activityId.value))
-    }
 
-    uni.showToast({
-      title: '报名成功',
-      icon: 'success',
-    })
-
-    // 这里应该调用微信支付，简化处理
-    // 模拟支付成功后重新获取报名状态
-    setTimeout(async () => {
+      // 重新获取报名状态并显示核销码
       await getRegistrationStatus(Number(activityId.value))
-      // 显示核销码二维码弹框
       if (registrationStatus.value.verificationCode) {
         showVerificationCodeQR.value = true
       }
-    }, 1000)
+
+      uni.showToast({
+        title: '报名成功',
+        icon: 'success',
+      })
+    }
+    else {
+      // 普通用户需要创建订单并支付
+      const { data } = await wxCreateActivityOrder(Number(activityId.value))
+
+      // 调用微信支付
+      uni.requestPayment({
+        provider: 'wxpay',
+        orderInfo: {
+          appId: data.appId,
+          timeStamp: data.timeStamp,
+          nonceStr: data.nonceStr,
+          package: data.package,
+          signType: data.signType,
+          paySign: data.paySign,
+        },
+        async success(res) {
+          // 支付成功后检查是否需要完善报名信息
+          try {
+            const { data: checkData } = await wxGetActivityRegistrationStatus(Number(activityId.value))
+            if (!checkData.participantName || !checkData.participantPhone) {
+              // 信息不完整，显示完善信息弹窗
+              participantInfoModalVisible.value = true
+            } else {
+              // 信息已完整，显示核销码
+              await getRegistrationStatus(Number(activityId.value))
+              if (registrationStatus.value.verificationCode) {
+                showVerificationCodeQR.value = true
+              }
+            }
+          }
+          catch (error) {
+            console.error('检查参与者信息失败:', error)
+            // 出错时也显示核销码
+            await getRegistrationStatus(Number(activityId.value))
+            if (registrationStatus.value.verificationCode) {
+              showVerificationCodeQR.value = true
+            }
+          }
+        },
+        fail(err) {
+          console.error('支付失败:', err)
+          uni.showToast({
+            title: '支付失败',
+            icon: 'none',
+          })
+        },
+      })
+    }
   }
   catch (error) {
-    console.log('error:', error)
+    console.log('报名失败:', error)
+    uni.showToast({
+      title: '报名失败',
+      icon: 'none',
+    })
   }
 }
 
@@ -190,17 +238,19 @@ async function handleParticipantInfoSubmit(name: string, phone: string) {
 const signUpButtonText = computed(() => {
   // 检查用户是否为合伙人
   const isPartner = wechatUser.value?.user_type === 'partner'
-  if (isPartner) {
-    return '合伙人兑换码报名'
-  }
   // 付费报名（默认）
   if (registrationStatus.value.paymentStatus === 'paid') {
     if (!registrationStatus.value.participantName || !registrationStatus.value.participantPhone) {
       return '完善信息'
-    } else {
+    }
+    else {
       return '查看核销码'
     }
-  } else {
+  }
+  else if (isPartner) {
+    return '合伙人兑换码报名'
+  }
+  else {
     return '立即报名'
   }
 })

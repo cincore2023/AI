@@ -17,6 +17,21 @@ export function wxRegisterForActivity(activityID: number) {
   return http.post('/api/wx/Activities/register', { activityID })
 }
 
+// 创建活动支付订单
+export function wxCreateActivityOrder(activityID: number) {
+  return http.post<{
+    registrationID: number
+    appId: string
+    timeStamp: string
+    nonceStr: string
+    package: string
+    signType: string
+    paySign: string
+    amount: number
+    orderNo: string
+  }>('/api/wx/Activities/create-order', { activityID })
+}
+
 // 获取活动报名状态
 export function wxGetActivityRegistrationStatus(activityID: number) {
   return http.get<WxActivityRegistrationResponse>('/api/wx/Activities/registration-status', { activityID })

@@ -7,6 +7,7 @@ export interface WxActivityItem {
   category: number
   coverPicture: string
   actualEnrollment: number
+  realEnrollment?: number // 真实报名人数
   sortOrder: number
   startTime: string
   endTime: string
@@ -38,6 +39,7 @@ export interface WxActivityDetailItem {
   category: number
   coverPicture: string
   actualEnrollment: number
+  realEnrollment?: number // 真实报名人数
   sortOrder: number
   startTime: string
   endTime: string

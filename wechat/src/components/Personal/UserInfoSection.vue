@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/store/user'
-import { formatDate } from '@/utils/date'
+import { formatDate } from '@/utils/tools'
 import EditUserInfoModal from './Modals/EditUserInfoModal.vue'
 
 const emit = defineEmits(['renew'])
