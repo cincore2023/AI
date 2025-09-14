@@ -1,4 +1,9 @@
-import type { WxActivityDetailItem, WxActivityListParams, WxActivityListResponse } from '@/api/types/activity'
+import type {
+  WxActivityDetailItem,
+  WxActivityListParams,
+  WxActivityListResponse,
+  WxUserRegisteredActivitiesResponse,
+} from '@/api/types/activity'
 import type { WxActivityRegistrationResponse } from '@/api/types/activityRegistration'
 import { http } from '@/http/http'
 
@@ -35,6 +40,11 @@ export function wxCreateActivityOrder(activityID: number) {
 // 获取活动报名状态
 export function wxGetActivityRegistrationStatus(activityID: number) {
   return http.get<WxActivityRegistrationResponse>('/api/wx/Activities/registration-status', { activityID })
+}
+
+// 获取用户已报名活动列表
+export function wxGetUserRegisteredActivities(params: { page?: number, pageSize?: number } = {}) {
+  return http.get<WxUserRegisteredActivitiesResponse>('/api/wx/Activities/registered', params)
 }
 
 // 更新参与者信息
