@@ -76,8 +76,8 @@ function handleImageError() {
     <!-- 订单头部 -->
     <view class="order-header">
       <text class="order-number">订单编号: {{ activity.orderNumber }}</text>
-      <view class="order-status" :class="getStatusClass(activity.paymentStatus)">
-        {{ getStatusText(activity.paymentStatus) }}
+      <view class="order-status" :class="getStatusClass(activity.verificationStatus)">
+        {{ getStatusText(activity.verificationStatus) }}
       </view>
     </view>
 

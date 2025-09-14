@@ -46,7 +46,7 @@ export function wxGetActivityRegistrationStatus(activityID: number) {
 export function wxGetUserRegisteredActivities(params: {
   page?: number
   pageSize?: number
-  paymentStatus?: string
+  verificationStatus?: string
   startTimeRange?: string
 } = {}) {
   return http.get<WxUserRegisteredActivitiesResponse>('/api/wx/Activities/registered', params)

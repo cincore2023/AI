@@ -9,12 +9,13 @@
 </route>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import HeaderSimple from '@/components/Header/HeaderSimple.vue'
-import MyActivityItem from '@/components/Activities/MyActivityItem.vue'
-import FilterModal from '@/components/Activities/FilterModal.vue'
-import { wxGetUserRegisteredActivities } from '@/api/activity'
 import type { WxUserRegisteredActivityItem } from '@/api/types/activity'
+import { onMounted, ref } from 'vue'
+import { wxGetUserRegisteredActivities } from '@/api/activity'
+import FilterModal from '@/components/Activities/FilterModal.vue'
+import MyActivityItem from '@/components/Activities/MyActivityItem.vue'
+import VerificationCodeQR from '@/components/Activity/VerificationCodeQR.vue'
+import HeaderSimple from '@/components/Header/HeaderSimple.vue'
 import { toast } from '@/utils/toast'
 
 defineOptions({
@@ -77,17 +78,10 @@ function selectTimeRange(timeRange: string) {
   getUserRegisteredActivities()
 }
 
-// 查看活动详情
-function viewActivityDetail(activity: WxUserRegisteredActivityItem) {
-  uni.navigateTo({
-    url: `/pages/activities/detail?id=${activity.id}`,
-  })
-}
-
 // 查看核销码
 function viewVerificationCode(activity: WxUserRegisteredActivityItem) {
-  showVerificationCodeModal.value = activity.verificationCode
-  currentVerificationCode.value = true
+  currentVerificationCode.value = activity.verificationCode
+  showVerificationCodeModal.value = true
 }
 
 // 获取用户已报名的活动列表
@@ -97,15 +91,17 @@ async function getUserRegisteredActivities() {
     const res = await wxGetUserRegisteredActivities({
       page: 1,
       pageSize: 100, // 获取所有活动
-      paymentStatus: selectedStatus.value,
+      verificationStatus: selectedStatus.value,
       startTimeRange: selectedTimeRange.value
     })
-    
+
     activities.value = res.data.activities
-  } catch (error) {
+  }
+  catch (error) {
     console.error('获取用户已报名活动失败:', error)
     toast.error('获取活动列表失败')
-  } finally {
+  }
+  finally {
     loading.value = false
   }
 }
@@ -154,10 +150,7 @@ onMounted(() => {
 
       <!-- 空状态 -->
       <view v-if="!loading && activities.length === 0" class="empty-state">
-        <view class="empty-icon">
-          <sar-icon name="info-circle" size="60" color="var(--text-tertiary)" />
-        </view>
-        <text class="empty-text">暂无活动订单</text>
+        <sar-empty description="暂无活动订单"/>
       </view>
     </scroll-view>
 
