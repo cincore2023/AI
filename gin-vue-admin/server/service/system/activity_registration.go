@@ -62,6 +62,10 @@ func (activityRegistrationService *ActivityRegistrationService) GetActivityRegis
 	if info.PaymentStatus != nil && *info.PaymentStatus != "" {
 		db = db.Where("payment_status = ?", *info.PaymentStatus)
 	}
+	// 添加核销状态筛选
+	if info.VerificationStatus != nil && *info.VerificationStatus != "" {
+		db = db.Where("verification_status = ?", *info.VerificationStatus)
+	}
 	err = db.Count(&total).Error
 	if err != nil {
 		return

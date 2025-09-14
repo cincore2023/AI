@@ -869,6 +869,7 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 
 	// 获取筛选参数
 	paymentStatus := c.Query("paymentStatus")
+	verificationStatus := c.Query("verificationStatus")
 	startTimeRange := c.Query("startTimeRange")
 
 	global.GVA_LOG.Info("获取用户已报名活动列表",
@@ -876,6 +877,7 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 		zap.Int("page", page),
 		zap.Int("pageSize", pageSize),
 		zap.String("paymentStatus", paymentStatus),
+		zap.String("verificationStatus", verificationStatus),
 		zap.String("startTimeRange", startTimeRange))
 
 	// 构造查询条件
@@ -892,6 +894,10 @@ func (w *WechatActivityApi) WxGetUserRegisteredActivities(c *gin.Context) {
 	// 添加支付状态筛选
 	if paymentStatus != "" {
 		searchReq.PaymentStatus = &paymentStatus
+	}
+
+	if verificationStatus != "" {
+		searchReq.VerificationStatus = &verificationStatus
 	}
 
 	// 调用service获取用户已报名的活动

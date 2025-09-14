@@ -7,10 +7,11 @@ import (
 )
 
 type ActivityRegistrationSearch struct {
-	CreatedAtRange []time.Time `json:"createdAtRange" form:"createdAtRange[]"`
-	UserID         *uint       `json:"userID" form:"userID"`
-	ActivityID     *uint       `json:"activityID" form:"activityID"`
-	PaymentStatus  *string     `json:"paymentStatus" form:"paymentStatus"`
+	CreatedAtRange     []time.Time `json:"createdAtRange" form:"createdAtRange[]"`
+	UserID             *uint       `json:"userID" form:"userID"`
+	ActivityID         *uint       `json:"activityID" form:"activityID"`
+	PaymentStatus      *string     `json:"paymentStatus" form:"paymentStatus"`
+	VerificationStatus *string     `json:"verificationStatus" form:"verificationStatus"`
 	request.PageInfo
 	Sort  string `json:"sort" form:"sort"`
 	Order string `json:"order" form:"order"`
