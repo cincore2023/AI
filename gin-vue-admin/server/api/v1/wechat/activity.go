@@ -2,9 +2,11 @@ package wechat
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/common/response"
+	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	"github.com/flipped-aurora/gin-vue-admin/server/service"
 	"github.com/flipped-aurora/gin-vue-admin/server/utils"
 	"github.com/gin-gonic/gin"
@@ -42,12 +44,14 @@ type WxActivityItem struct {
 	Category         int     `json:"category"`         // 分类
 	CoverPicture     string  `json:"coverPicture"`     // 封面图
 	ActualEnrollment int     `json:"actualEnrollment"` // 展示报名人数
+	RealEnrollment   int     `json:"realEnrollment"`   // 真实报名人数
 	SortOrder        int     `json:"sortOrder"`        // 排序
 	StartTime        string  `json:"startTime"`        // 开始时间
 	EndTime          string  `json:"endTime"`          // 结束时间
 	ShowStartTime    string  `json:"showStartTime"`    // 展示开始时间
 	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
 	Salesperson      *string `json:"salesperson"`      // 销售员ID
+	RegistrationType *string `json:"registrationType"` // 报名方式
 }
 
 // WxActivityDetailItem 微信活动详情项目
@@ -58,6 +62,7 @@ type WxActivityDetailItem struct {
 	Category         int     `json:"category"`         // 分类
 	CoverPicture     string  `json:"coverPicture"`     // 封面图
 	ActualEnrollment int     `json:"actualEnrollment"` // 展示报名人数
+	RealEnrollment   int     `json:"realEnrollment"`   // 真实报名人数
 	SortOrder        int     `json:"sortOrder"`        // 排序
 	StartTime        string  `json:"startTime"`        // 开始时间
 	EndTime          string  `json:"endTime"`          // 结束时间
@@ -65,6 +70,7 @@ type WxActivityDetailItem struct {
 	ShowEndTime      string  `json:"showEndTime"`      // 展示结束时间
 	Details          string  `json:"details"`          // 活动详情
 	Salesperson      *string `json:"salesperson"`      // 销售员ID
+	RegistrationType *string `json:"registrationType"` // 报名方式
 }
 
 // WxActivityRegistrationRequest 活动报名请求参数
@@ -87,6 +93,19 @@ type WxActivityRegistrationResponse struct {
 	ParticipantName  string `json:"participantName"`  // 参与人姓名
 	ParticipantPhone string `json:"participantPhone"` // 参与人手机号
 	RegistrationType string `json:"registrationType"` // 报名方式: paid-付费报名, free-免费报名, code-兑换码报名
+}
+
+// WxCreateActivityOrderResponse 创建活动订单响应
+type WxCreateActivityOrderResponse struct {
+	RegistrationID uint   `json:"registrationID"` // 报名ID
+	AppID          string `json:"appId"`          // 应用ID
+	TimeStamp      string `json:"timeStamp"`      // 时间戳
+	NonceStr       string `json:"nonceStr"`       // 随机字符串
+	Package        string `json:"package"`        // 订单包
+	SignType       string `json:"signType"`       // 签名类型
+	PaySign        string `json:"paySign"`        // 支付签名
+	Amount         int    `json:"amount"`         // 支付金额(分)
+	OrderNo        string `json:"orderNo"`        // 订单编号
 }
 
 // WxGetActivities 获取微信小程序活动列表
@@ -157,6 +176,7 @@ func (w *WechatActivityApi) WxGetActivities(c *gin.Context) {
 			Category:         0,
 			CoverPicture:     "",
 			ActualEnrollment: 0,
+			RealEnrollment:   0, // 添加真实报名人数字段
 			SortOrder:        0,
 			StartTime:        "",
 			EndTime:          "",
@@ -181,6 +201,10 @@ func (w *WechatActivityApi) WxGetActivities(c *gin.Context) {
 		if activity.ActualEnrollment != nil {
 			wxActivity.ActualEnrollment = *activity.ActualEnrollment
 		}
+		// 安全地获取真实报名人数
+		if activity.RealEnrollment != nil {
+			wxActivity.RealEnrollment = *activity.RealEnrollment
+		}
 		if activity.SortOrder != nil {
 			wxActivity.SortOrder = *activity.SortOrder
 		}
@@ -198,6 +222,9 @@ func (w *WechatActivityApi) WxGetActivities(c *gin.Context) {
 		}
 		if activity.Salesperson != nil {
 			wxActivity.Salesperson = activity.Salesperson
+		}
+		if activity.RegistrationType != nil {
+			wxActivity.RegistrationType = activity.RegistrationType
 		}
 
 		wxActivities = append(wxActivities, wxActivity)
@@ -258,6 +285,7 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 		Category:         0,
 		CoverPicture:     "",
 		ActualEnrollment: 0,
+		RealEnrollment:   0, // 添加真实报名人数字段
 		SortOrder:        0,
 		StartTime:        "",
 		EndTime:          "",
@@ -283,6 +311,10 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 	if activity.ActualEnrollment != nil {
 		wxActivity.ActualEnrollment = *activity.ActualEnrollment
 	}
+	// 安全地获取真实报名人数
+	if activity.RealEnrollment != nil {
+		wxActivity.RealEnrollment = *activity.RealEnrollment
+	}
 	if activity.SortOrder != nil {
 		wxActivity.SortOrder = *activity.SortOrder
 	}
@@ -303,6 +335,9 @@ func (w *WechatActivityApi) WxGetActivityDetail(c *gin.Context) {
 	}
 	if activity.Salesperson != nil {
 		wxActivity.Salesperson = activity.Salesperson
+	}
+	if activity.RegistrationType != nil {
+		wxActivity.RegistrationType = activity.RegistrationType
 	}
 
 	global.GVA_LOG.Info("活动详情获取成功",
@@ -531,7 +566,7 @@ func (w *WechatActivityApi) WxPartnerRedemptionCode(c *gin.Context) {
 		responseData.ParticipantPhone = *registration.ParticipantPhone
 	}
 
-	// 安全地获取报名方式
+	// 安安地获取报名方式
 	if registration.RegistrationType != nil {
 		responseData.RegistrationType = *registration.RegistrationType
 	}
@@ -541,6 +576,203 @@ func (w *WechatActivityApi) WxPartnerRedemptionCode(c *gin.Context) {
 		zap.Uint("activityID", req.ActivityID),
 		zap.Uint("registrationID", registration.ID))
 	response.OkWithDetailed(responseData, "报名成功", c)
+}
+
+// WxCreateActivityOrder 创建活动支付订单
+// @Tags     WechatApi
+// @Summary  创建活动支付订单
+// @Description 创建活动支付订单，返回支付信息
+// @Accept   application/json
+// @Produce  application/json
+// @Param    data  body      WxActivityRegistrationRequest                    true  "活动报名请求"
+// @Success  200   {object}  response.Response{data=WxCreateActivityOrderResponse,msg=string}  "返回订单信息用于支付"
+// @Failure  400   {object}  response.Response{msg=string}                  "请求参数错误"
+// @Failure  401   {object}  response.Response{msg=string}                  "未登录或登录已过期"
+// @Failure  500   {object}  response.Response{msg=string}                  "服务器内部错误"
+// @Router   /api/wx/Activities/create-order [post]
+func (w *WechatActivityApi) WxCreateActivityOrder(c *gin.Context) {
+	// 获取当前用户ID
+	userID := utils.GetUserID(c)
+
+	var req WxActivityRegistrationRequest
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		global.GVA_LOG.Error("参数绑定失败!", zap.Error(err))
+		response.FailWithMessage("请求参数错误: "+err.Error(), c)
+		return
+	}
+
+	global.GVA_LOG.Info("创建活动支付订单请求",
+		zap.Uint("userID", userID),
+		zap.Uint("activityID", req.ActivityID))
+
+	// 获取活动详情
+	activity, err := activitiesService.GetActivityDetailWithTime(req.ActivityID)
+	if err != nil {
+		global.GVA_LOG.Error("获取活动详情失败!", zap.Error(err))
+		response.FailWithMessage("活动不存在或未在展示期内", c)
+		return
+	}
+
+	// 检查活动价格
+	if activity.Price == nil || *activity.Price <= 0 {
+		global.GVA_LOG.Error("活动价格无效", zap.Uint("activityID", req.ActivityID))
+		response.FailWithMessage("活动价格无效", c)
+		return
+	}
+
+	// 调用service进行报名（确保有报名记录）
+	registration, err := activityRegistrationService.RegisterForActivity(c.Request.Context(), userID, req.ActivityID)
+	if err != nil {
+		global.GVA_LOG.Error("活动报名失败!", zap.Error(err))
+		response.FailWithMessage("活动报名失败: "+err.Error(), c)
+		return
+	}
+
+	// 生成订单号
+	orderNo := utils.GenerateOrderNumber()
+
+	// 创建订单记录
+	amount := int(*activity.Price * 100) // 转换为分
+	order := system.Order{
+		OrderNo:       orderNo,
+		UserID:        userID,
+		ActivityID:    &req.ActivityID,       // 设置活动ID
+		Amount:        float64(amount) / 100, // 转换回元
+		ActualAmount:  float64(amount) / 100, // 转换回元
+		Status:        "pending",             // 待支付
+		PaymentMethod: "wechat",              // 微信支付
+		OrderType:     "activity",            // 订单类型为活动
+		ReferenceID:   &registration.ID,      // 关联报名记录ID
+	}
+
+	err = global.GVA_DB.Create(&order).Error
+	if err != nil {
+		global.GVA_LOG.Error("创建订单失败!", zap.Error(err))
+		response.FailWithMessage("创建订单失败: "+err.Error(), c)
+		return
+	}
+
+	// 获取客户端IP
+	clientIP := getClientIP(c)
+
+	// 配置微信支付参数
+	wxPayConfig := utils.WechatPayConfig{
+		AppID:     global.GVA_CONFIG.System.WxAppID,                                   // 微信小程序AppID
+		MchID:     global.GVA_CONFIG.System.WxMchID,                                   // 微信支付商户号
+		APIKey:    global.GVA_CONFIG.System.WxAPIKey,                                  // 微信支付API密钥
+		NotifyURL: getServerURL(c) + "/api/wx/Activities/payment-callback/" + orderNo, // 支付回调地址
+	}
+
+	// 调用微信统一下单接口
+	unifiedOrderResp, err := utils.CreateUnifiedOrder(
+		wxPayConfig,
+		*activity.ActivityName, // 商品描述
+		orderNo,                // 商户订单号
+		amount,                 // 总金额(分)
+		clientIP,               // 终端IP
+		"JSAPI",                // 交易类型
+	)
+	if err != nil {
+		global.GVA_LOG.Error("调用微信统一下单接口失败!", zap.Error(err))
+		response.FailWithMessage("调用微信支付失败: "+err.Error(), c)
+		return
+	}
+
+	// 生成前端支付参数
+	payParams := utils.GenerateWechatPayParams(wxPayConfig, unifiedOrderResp.PrepayID)
+
+	responseData := WxCreateActivityOrderResponse{
+		RegistrationID: registration.ID,
+		AppID:          payParams.AppID,
+		TimeStamp:      payParams.TimeStamp,
+		NonceStr:       payParams.NonceStr,
+		Package:        payParams.Package,
+		SignType:       payParams.SignType,
+		PaySign:        payParams.PaySign,
+		Amount:         amount,
+		OrderNo:        orderNo,
+	}
+
+	global.GVA_LOG.Info("活动支付订单创建成功",
+		zap.Uint("userID", userID),
+		zap.Uint("activityID", req.ActivityID),
+		zap.String("orderNo", orderNo),
+		zap.Int("amount", amount))
+	response.OkWithDetailed(responseData, "订单创建成功，请调用支付接口完成支付", c)
+}
+
+// WxActivityPaymentCallback 活动支付回调
+// @Tags     WechatApi
+// @Summary  活动支付回调
+// @Description 支付成功后的回调处理，更新报名状态
+// @Accept   application/json
+// @Produce  application/json
+// @Param    orderNo  path      string  true  "订单编号"
+// @Success  200   {object}  response.Response{msg=string}  "支付处理成功"
+// @Failure  400   {object}  response.Response{msg=string}  "请求参数错误"
+// @Failure  500   {object}  response.Response{msg=string}  "服务器内部错误"
+// @Router   /api/wx/Activities/payment-callback/{orderNo} [post]
+func (w *WechatActivityApi) WxActivityPaymentCallback(c *gin.Context) {
+	orderNo := c.Param("orderNo")
+	if orderNo == "" {
+		global.GVA_LOG.Error("订单编号不能为空")
+		response.FailWithMessage("订单编号不能为空", c)
+		return
+	}
+
+	// 查找订单
+	var order system.Order
+	err := global.GVA_DB.Where("order_no = ?", orderNo).First(&order).Error
+	if err != nil {
+		global.GVA_LOG.Error("订单不存在!", zap.String("orderNo", orderNo), zap.Error(err))
+		response.FailWithMessage("订单不存在: "+err.Error(), c)
+		return
+	}
+
+	// 检查订单状态
+	if order.Status == "paid" {
+		global.GVA_LOG.Info("订单已处理", zap.String("orderNo", orderNo))
+		response.OkWithMessage("订单已处理", c)
+		return
+	}
+
+	// 更新订单状态为已支付
+	now := time.Now().Unix()
+	updateData := map[string]interface{}{
+		"status":       "paid",
+		"payment_time": &now,
+	}
+
+	err = global.GVA_DB.Model(&system.Order{}).Where("order_no = ?", orderNo).Updates(updateData).Error
+	if err != nil {
+		global.GVA_LOG.Error("更新订单状态失败!", zap.String("orderNo", orderNo), zap.Error(err))
+		response.FailWithMessage("更新订单状态失败: "+err.Error(), c)
+		return
+	}
+
+	// 获取关联的报名记录ID
+	if order.ReferenceID == nil {
+		global.GVA_LOG.Error("订单关联的报名记录ID为空!", zap.String("orderNo", orderNo))
+		response.FailWithMessage("订单数据异常", c)
+		return
+	}
+
+	registrationID := *order.ReferenceID
+
+	// 更新报名记录的支付状态
+	err = activityRegistrationService.UpdatePaymentStatus(c.Request.Context(), registrationID, "paid", order.UserID)
+	if err != nil {
+		global.GVA_LOG.Error("更新报名支付状态失败!", zap.Uint("registrationID", registrationID), zap.Error(err))
+		response.FailWithMessage("更新报名状态失败: "+err.Error(), c)
+		return
+	}
+
+	global.GVA_LOG.Info("活动报名支付成功",
+		zap.Uint("userID", order.UserID),
+		zap.String("orderNo", orderNo),
+		zap.Uint("registrationID", registrationID))
+	response.OkWithMessage("支付处理成功", c)
 }
 
 // WxUpdatePaymentStatus 更新支付状态（内部使用，由支付回调调用）

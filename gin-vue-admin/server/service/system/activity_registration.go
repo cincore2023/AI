@@ -14,6 +14,10 @@ import (
 	"gorm.io/gorm"
 )
 
+var (
+	activitiesService = new(ActivitiesService)
+)
+
 type ActivityRegistrationService struct{}
 
 // CreateActivityRegistration 创建活动报名记录
@@ -137,12 +141,9 @@ func (activityRegistrationService *ActivityRegistrationService) RegisterForActiv
 		registrationType = *activity.RegistrationType
 	}
 
-	// 如果存在未支付的记录，更新它
+	// 如果存在未支付的记录，更新它（不生成核销码）
 	if existingRegistration.ID != 0 {
-		// 生成新的核销码
-		verificationCode := activityRegistrationService.GenerateVerificationCode()
 		updateData := map[string]interface{}{
-			"verification_code": verificationCode,
 			"registration_type": registrationType, // 更新报名方式
 			"updated_by":        userID,
 			"updated_at":        time.Now(),
@@ -162,14 +163,12 @@ func (activityRegistrationService *ActivityRegistrationService) RegisterForActiv
 		return &updatedRegistration, nil
 	}
 
-	// 创建新的报名记录
-	verificationCode := activityRegistrationService.GenerateVerificationCode()
+	// 创建新的报名记录（不生成核销码）
 	newRegistration := &system.ActivityRegistration{
 		UserID:           userID,
 		ActivityID:       activityID,
 		RegistrationType: &registrationType, // 设置报名方式
-		VerificationCode: verificationCode,
-		PaymentStatus:    "pending", // 初始状态为待支付
+		PaymentStatus:    "pending",         // 初始状态为待支付
 		CreatedBy:        userID,
 		UpdatedBy:        userID,
 	}
@@ -179,10 +178,9 @@ func (activityRegistrationService *ActivityRegistrationService) RegisterForActiv
 		return nil, err
 	}
 
-	global.GVA_LOG.Info("用户报名活动",
+	global.GVA_LOG.Info("用户报名活动（未生成核销码）",
 		zap.Uint("userID", userID),
 		zap.Uint("activityID", activityID),
-		zap.String("verificationCode", verificationCode),
 		zap.String("registrationType", registrationType))
 
 	return newRegistration, nil
@@ -320,6 +318,23 @@ func (activityRegistrationService *ActivityRegistrationService) UpdateParticipan
 
 // UpdatePaymentStatus 更新支付状态
 func (activityRegistrationService *ActivityRegistrationService) UpdatePaymentStatus(ctx context.Context, registrationID uint, status string, userID uint) error {
+	// 开始事务
+	tx := global.GVA_DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// 获取报名记录详情
+	var registration system.ActivityRegistration
+	err := tx.Where("id = ?", registrationID).First(&registration).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 更新报名记录的支付状态
 	updateData := map[string]interface{}{
 		"payment_status": status,
 		"updated_by":     userID,
@@ -332,12 +347,44 @@ func (activityRegistrationService *ActivityRegistrationService) UpdatePaymentSta
 		updateData["payment_time"] = &now
 	}
 
-	err := global.GVA_DB.Model(&system.ActivityRegistration{}).Where("id = ?", registrationID).Updates(updateData).Error
+	err = tx.Model(&system.ActivityRegistration{}).Where("id = ?", registrationID).Updates(updateData).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// 如果是支付成功，生成核销码并增加活动的真实报名人数
+	if status == "paid" {
+		// 生成核销码
+		verificationCode := activityRegistrationService.GenerateVerificationCode()
+
+		// 更新报名记录的核销码
+		err = tx.Model(&system.ActivityRegistration{}).Where("id = ?", registrationID).Update("verification_code", verificationCode).Error
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		// 更新活动的真实报名人数
+		err = activitiesService.IncrementRealEnrollment(ctx, registration.ActivityID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+
+		global.GVA_LOG.Info("更新活动真实报名人数并生成核销码",
+			zap.Uint("activityID", registration.ActivityID),
+			zap.Uint("registrationID", registrationID),
+			zap.String("verificationCode", verificationCode))
+	}
+
+	// 提交事务
+	err = tx.Commit().Error
 	if err != nil {
 		return err
 	}
 
-	global.GVA_LOG.Info("更新支付状态",
+	global.GVA_LOG.Info("更新支付状态成功",
 		zap.Uint("registrationID", registrationID),
 		zap.String("status", status))
 

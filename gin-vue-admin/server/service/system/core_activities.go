@@ -233,3 +233,20 @@ func (activitiesService *ActivitiesService) GetActivityDetailWithTime(id uint) (
 
 	return activity, nil
 }
+
+// IncrementRealEnrollment 增加活动的真实报名人数
+func (activitiesService *ActivitiesService) IncrementRealEnrollment(ctx context.Context, activityID uint) error {
+	err := global.GVA_DB.Model(&system.Activities{}).
+		Where("id = ?", activityID).
+		UpdateColumn("real_enrollment", gorm.Expr("COALESCE(real_enrollment, 0) + 1")).Error
+
+	if err != nil {
+		global.GVA_LOG.Error("更新活动真实报名人数失败",
+			zap.Uint("activityID", activityID),
+			zap.Error(err))
+		return err
+	}
+
+	global.GVA_LOG.Info("更新活动真实报名人数成功", zap.Uint("activityID", activityID))
+	return nil
+}

@@ -14,7 +14,8 @@ type Activities struct {
 	Price            *float64   `json:"price" form:"price" gorm:"column:price;"`                                                 //活动价格
 	Category         *int       `json:"category" form:"category" gorm:"column:category;" binding:"required"`                     //分类
 	CoverPicture     *string    `json:"coverPicture" form:"coverPicture" gorm:"column:cover_picture;" binding:"required"`        //封面图
-	ActualEnrollment *int       `json:"actualEnrollment" form:"actualEnrollment" gorm:"default:100;column:actual_enrollment;"`   //展示报名人数
+	ActualEnrollment *int       `json:"actualEnrollment" form:"actualEnrollment" gorm:"default:0;column:actual_enrollment;"`     //展示报名人数
+	RealEnrollment   *int       `json:"realEnrollment" form:"realEnrollment" gorm:"default:0;column:real_enrollment;"`           //真实报名人数
 	Status           *bool      `json:"status" form:"status" gorm:"default:true;column:status;"`                                 //状态
 	SortOrder        *int       `json:"sortOrder" form:"sortOrder" gorm:"column:sort_order;"`                                    //排序
 	StartTime        *time.Time `json:"startTime" form:"startTime" gorm:"column:start_time;" binding:"required"`                 //开始时间
