@@ -53,6 +53,7 @@ func (e *ensureTables) MigrateTable(ctx context.Context) (context.Context, error
 		sysModel.Condition{},
 		sysModel.JoinTemplate{},
 		sysModel.SysParams{},
+		sysModel.ActivityRegistration{}, // 添加活动报名表
 
 		adapter.CasbinRule{},
 
@@ -94,6 +95,8 @@ func (e *ensureTables) TableCreated(ctx context.Context) bool {
 		sysModel.SysExportTemplate{},
 		sysModel.Condition{},
 		sysModel.JoinTemplate{},
+		sysModel.SysParams{},
+		sysModel.ActivityRegistration{}, // 添加活动报名表
 
 		adapter.CasbinRule{},
 
