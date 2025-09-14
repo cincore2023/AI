@@ -9,14 +9,12 @@
 </route>
 
 <script setup lang="ts">
-import type { WxUserRegisteredActivityItem } from '@/api/types/activity'
-import dayjs from 'dayjs'
-import { computed, onMounted, ref } from 'vue'
-import { wxGetUserRegisteredActivities } from '@/api/activity'
-import FilterModal from '@/components/Activities/FilterModal.vue'
-import MyActivityItem from '@/components/Activities/MyActivityItem.vue'
-import VerificationCodeQR from '@/components/Activity/VerificationCodeQR.vue'
+import { ref, onMounted } from 'vue'
 import HeaderSimple from '@/components/Header/HeaderSimple.vue'
+import MyActivityItem from '@/components/Activities/MyActivityItem.vue'
+import FilterModal from '@/components/Activities/FilterModal.vue'
+import { wxGetUserRegisteredActivities } from '@/api/activity'
+import type { WxUserRegisteredActivityItem } from '@/api/types/activity'
 import { toast } from '@/utils/toast'
 
 defineOptions({
@@ -28,8 +26,10 @@ const showStatusFilter = ref(false)
 const showTimeFilter = ref(false)
 const selectedStatus = ref('')
 const selectedTimeRange = ref('')
-const qrShow = ref(false)
-const qrText = ref('')
+
+// 核销码弹窗状态
+const showVerificationCodeModal = ref(false)
+const currentVerificationCode = ref('')
 
 // 加载状态
 const loading = ref(false)
@@ -53,42 +53,6 @@ const timeOptions = [
 // 活动数据
 const activities = ref<WxUserRegisteredActivityItem[]>([])
 
-// 筛选后的活动列表
-const filteredActivities = computed(() => {
-  let result = activities.value
-
-  // 按状态筛选
-  if (selectedStatus.value) {
-    result = result.filter(activity => activity.paymentStatus === selectedStatus.value)
-  }
-
-  // 按时间筛选
-  if (selectedTimeRange.value) {
-    const now = dayjs()
-    result = result.filter((activity) => {
-      const activityDate = dayjs(activity.createdAt)
-      switch (selectedTimeRange.value) {
-        case 'day':
-          return activityDate.isAfter(now.subtract(1, 'day'))
-        case 'week':
-          return activityDate.isAfter(now.subtract(1, 'week'))
-        case 'month':
-          return activityDate.isAfter(now.subtract(1, 'month'))
-        case 'quarter':
-          return activityDate.isAfter(now.subtract(3, 'months'))
-        case 'halfYear':
-          return activityDate.isAfter(now.subtract(6, 'months'))
-        case 'year':
-          return activityDate.isAfter(now.subtract(1, 'year'))
-        default:
-          return true
-      }
-    })
-  }
-
-  return result
-})
-
 // 显示状态筛选
 function showStatusFilterModal() {
   showStatusFilter.value = true
@@ -102,17 +66,28 @@ function showTimeFilterModal() {
 // 选择状态
 function selectStatus(status: string) {
   selectedStatus.value = status
+  // 选择后立即重新获取数据
+  getUserRegisteredActivities()
 }
 
 // 选择时间范围
 function selectTimeRange(timeRange: string) {
   selectedTimeRange.value = timeRange
+  // 选择后立即重新获取数据
+  getUserRegisteredActivities()
+}
+
+// 查看活动详情
+function viewActivityDetail(activity: WxUserRegisteredActivityItem) {
+  uni.navigateTo({
+    url: `/pages/activities/detail?id=${activity.id}`,
+  })
 }
 
 // 查看核销码
 function viewVerificationCode(activity: WxUserRegisteredActivityItem) {
-  qrText.value = activity.verificationCode
-  qrShow.value = true
+  showVerificationCodeModal.value = activity.verificationCode
+  currentVerificationCode.value = true
 }
 
 // 获取用户已报名的活动列表
@@ -122,15 +97,15 @@ async function getUserRegisteredActivities() {
     const res = await wxGetUserRegisteredActivities({
       page: 1,
       pageSize: 100, // 获取所有活动
+      paymentStatus: selectedStatus.value,
+      startTimeRange: selectedTimeRange.value
     })
-
+    
     activities.value = res.data.activities
-  }
-  catch (error) {
+  } catch (error) {
     console.error('获取用户已报名活动失败:', error)
     toast.error('获取活动列表失败')
-  }
-  finally {
+  } finally {
     loading.value = false
   }
 }
@@ -170,7 +145,7 @@ onMounted(() => {
       <!-- 活动列表 -->
       <view v-else class="activities-list">
         <MyActivityItem
-          v-for="activity in filteredActivities"
+          v-for="activity in activities"
           :key="activity.orderNumber"
           :activity="activity"
           @verification-click="viewVerificationCode"
@@ -178,7 +153,7 @@ onMounted(() => {
       </view>
 
       <!-- 空状态 -->
-      <view v-if="!loading && filteredActivities.length === 0" class="empty-state">
+      <view v-if="!loading && activities.length === 0" class="empty-state">
         <view class="empty-icon">
           <sar-icon name="info-circle" size="60" color="var(--text-tertiary)" />
         </view>
@@ -204,7 +179,7 @@ onMounted(() => {
       @select="selectTimeRange"
     />
   </view>
-  <VerificationCodeQR v-model:show="qrShow" :text="qrText" />
+  <VerificationCodeQR v-model:show="showVerificationCodeModal" :text="currentVerificationCode" />
 </template>
 
 <style lang="scss" scoped>
