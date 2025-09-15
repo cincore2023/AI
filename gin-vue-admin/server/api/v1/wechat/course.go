@@ -106,6 +106,34 @@ type WxCourseFavoriteResponse struct {
 	IsFavorite bool `json:"isFavorite"` // 是否已收藏
 }
 
+// WxFavoriteCourseItem 微信收藏课程项目
+type WxFavoriteCourseItem struct {
+	ID              uint    `json:"id"`              // 课程 ID
+	CourseTitle     string  `json:"courseTitle"`     // 课程名称
+	CoverImage      string  `json:"coverImage"`      // 封面图片
+	Type            string  `json:"type"`            // 类型（img/video）
+	Price           float64 `json:"price"`           // 课程售价
+	OriginalPrice   float64 `json:"originalPrice"`   // 标注原价
+	OnSale          bool    `json:"onSale"`          // 上架状态
+	Hot             bool    `json:"hot"`             // 是否推荐
+	Exquisite       bool    `json:"exquisite"`       // 是否精品
+	Sort            int     `json:"sort"`            // 排序
+	ViewDetails     string  `json:"viewDetails"`     // 课程简介
+	ApprenticeCount int     `json:"apprenticeCount"` // 学员数量
+	Teacher         int     `json:"teacher"`         // 讲师ID
+	Category        int     `json:"category"`        // 分类ID
+	Salesperson     *string `json:"salesperson"`     // 销售员ID
+	FavoriteTime    string  `json:"favoriteTime"`    // 收藏时间
+}
+
+// WxFavoriteCourseResponse 微信收藏课程响应
+type WxFavoriteCourseResponse struct {
+	Courses  []WxFavoriteCourseItem `json:"courses"`  // 收藏课程列表
+	Total    int64                  `json:"total"`    // 总数
+	Page     int                    `json:"page"`     // 当前页码
+	PageSize int                    `json:"pageSize"` // 每页数量
+}
+
 // WxGetCourses 获取微信小程序课程列表
 // @Tags     WechatApi
 // @Summary  获取微信小程序课程列表
@@ -582,4 +610,156 @@ func (w *WechatCourseApi) WxIsCourseFavorite(c *gin.Context) {
 	}
 
 	response.OkWithDetailed(WxCourseFavoriteResponse{IsFavorite: isFavorite}, "获取成功", c)
+}
+
+// WxGetFavoriteCourses 获取微信小程序用户收藏课程列表
+// @Tags     WechatApi
+// @Summary  获取微信小程序用户收藏课程列表
+// @Description 获取当前用户收藏的课程列表，需要鉴权
+// @Accept   application/json
+// @Produce  application/json
+// @Param    page       query     int                                                    false  "页码，默认为1"
+// @Param    pageSize   query     int                                                    false  "每页数量，默认为20"
+// @Success  200        {object}  response.Response{data=WxFavoriteCourseResponse,msg=string} "获取成功"
+// @Failure  400        {object}  response.Response{msg=string}                        "请求参数错误"
+// @Failure  500        {object}  response.Response{msg=string}                        "服务器内部错误"
+// @Router   /api/wxCourses/favorite [get]
+// @Security ApiKeyAuth
+func (w *WechatCourseApi) WxGetFavoriteCourses(c *gin.Context) {
+	// 获取用户ID（从JWT中获取）
+	claims, _ := c.Get("claims")
+	waitUse := claims.(*systemReq.CustomClaims)
+	userID := waitUse.BaseClaims.ID
+
+	// 获取查询参数
+	pageStr := c.DefaultQuery("page", "1")
+	page, err := strconv.Atoi(pageStr)
+	if err != nil || page < 1 {
+		page = 1
+	}
+
+	pageSizeStr := c.DefaultQuery("pageSize", "20")
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil || pageSize < 1 || pageSize > 100 {
+		pageSize = 20
+	}
+
+	global.GVA_LOG.Info("获取用户收藏课程列表",
+		zap.Uint("userID", userID),
+		zap.Int("page", page),
+		zap.Int("pageSize", pageSize))
+
+	// 调用courseFavoriteService获取用户收藏的课程ID列表
+	favorites, total, err := courseFavoriteService.GetCourseFavoritesByUser(c.Request.Context(), userID, page, pageSize)
+	if err != nil {
+		global.GVA_LOG.Error("获取用户收藏课程列表失败!", zap.Error(err))
+		response.FailWithMessage("获取收藏课程列表失败: "+err.Error(), c)
+		return
+	}
+
+	// 如果没有收藏的课程，直接返回空列表
+	if len(favorites) == 0 {
+		response.OkWithDetailed(WxFavoriteCourseResponse{
+			Courses:  []WxFavoriteCourseItem{},
+			Total:    0,
+			Page:     page,
+			PageSize: pageSize,
+		}, "获取成功", c)
+		return
+	}
+
+	// 提取课程ID列表
+	courseIDs := make([]uint, 0, len(favorites))
+	favoriteTimeMap := make(map[uint]string) // 课程ID到收藏时间的映射
+	for _, favorite := range favorites {
+		courseIDs = append(courseIDs, favorite.CourseID)
+		favoriteTimeMap[favorite.CourseID] = favorite.CreatedAt.Format("2006-01-02 15:04:05")
+	}
+
+	// 根据课程ID列表获取课程详情
+	courses, err := courseService.GetCoursesByIDs(courseIDs)
+	if err != nil {
+		global.GVA_LOG.Error("获取收藏课程详情失败!", zap.Error(err))
+		response.FailWithMessage("获取收藏课程详情失败: "+err.Error(), c)
+		return
+	}
+
+	// 转换为微信接口响应格式
+	wxFavoriteCourses := make([]WxFavoriteCourseItem, 0, len(courses))
+	for _, course := range courses {
+		wxFavoriteCourse := WxFavoriteCourseItem{
+			ID:              course.ID,
+			CourseTitle:     "",
+			CoverImage:      course.CoverImage,
+			Type:            "",
+			Price:           0,
+			OriginalPrice:   0,
+			OnSale:          false,
+			Hot:             false,
+			Exquisite:       false,
+			Sort:            0,
+			ViewDetails:     "",
+			ApprenticeCount: 0,
+			Teacher:         0,
+			Category:        0,
+			FavoriteTime:    favoriteTimeMap[course.ID], // 添加收藏时间
+		}
+
+		// 安全地获取指针值
+		if course.CourseTitle != nil {
+			wxFavoriteCourse.CourseTitle = *course.CourseTitle
+		}
+		if course.Type != nil {
+			wxFavoriteCourse.Type = *course.Type
+		}
+		if course.Price != nil {
+			wxFavoriteCourse.Price = *course.Price
+		}
+		if course.OriginalPrice != nil {
+			wxFavoriteCourse.OriginalPrice = *course.OriginalPrice
+		}
+		if course.OnSale != nil {
+			wxFavoriteCourse.OnSale = *course.OnSale
+		}
+		if course.Hot != nil {
+			wxFavoriteCourse.Hot = *course.Hot
+		}
+		if course.Exquisite != nil {
+			wxFavoriteCourse.Exquisite = *course.Exquisite
+		}
+		if course.Sort != nil {
+			wxFavoriteCourse.Sort = int(*course.Sort)
+		}
+		if course.ViewDetails != nil {
+			wxFavoriteCourse.ViewDetails = *course.ViewDetails
+		}
+		if course.ApprenticeCount != nil {
+			wxFavoriteCourse.ApprenticeCount = int(*course.ApprenticeCount)
+		}
+		if course.Category != nil {
+			wxFavoriteCourse.Category = int(*course.Category)
+		}
+		if course.Teacher != nil {
+			wxFavoriteCourse.Teacher = *course.Teacher
+		}
+		if course.Salesperson != nil {
+			wxFavoriteCourse.Salesperson = course.Salesperson
+		}
+
+		wxFavoriteCourses = append(wxFavoriteCourses, wxFavoriteCourse)
+	}
+
+	// 构建响应数据
+	wxFavoriteCourseResponse := WxFavoriteCourseResponse{
+		Courses:  wxFavoriteCourses,
+		Total:    total,
+		Page:     page,
+		PageSize: pageSize,
+	}
+
+	global.GVA_LOG.Info("用户收藏课程列表获取成功",
+		zap.Uint("userID", userID),
+		zap.Int("count", len(wxFavoriteCourses)),
+		zap.Int64("total", total))
+	response.OkWithDetailed(wxFavoriteCourseResponse, "获取成功", c)
 }

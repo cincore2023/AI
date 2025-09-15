@@ -2,6 +2,7 @@ package system
 
 import (
 	"context"
+
 	"github.com/flipped-aurora/gin-vue-admin/server/global"
 	"github.com/flipped-aurora/gin-vue-admin/server/model/system"
 	systemReq "github.com/flipped-aurora/gin-vue-admin/server/model/system/request"
@@ -218,4 +219,11 @@ func (courseService *CourseService) GetCourseDetailWithTeacher(id uint) (*Course
 		Course:  course,
 		Teacher: teacherPtr,
 	}, nil
+}
+
+// GetCoursesByIDs 根据ID列表获取课程列表
+func (courseService *CourseService) GetCoursesByIDs(ids []uint) (courses []system.Course, err error) {
+	// 查询已上架的课程详情
+	err = global.GVA_DB.Where("id IN ? AND on_sale = ?", ids, true).Find(&courses).Error
+	return
 }

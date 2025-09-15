@@ -20,5 +20,6 @@ func (s *WechatCourseRouter) InitWechatCourseRouter(Router *gin.RouterGroup, Pub
 	{
 		wechatCourseRouter.POST("Courses/favorite", wechatCourseApi.WxToggleCourseFavorite) // 收藏/取消收藏课程
 		wechatCourseRouter.GET("Courses/:id/favorite", wechatCourseApi.WxIsCourseFavorite)  // 检查课程是否已收藏
+		wechatCourseRouter.GET("Courses/favorite", wechatCourseApi.WxGetFavoriteCourses)    // 获取用户收藏课程列表
 	}
 }

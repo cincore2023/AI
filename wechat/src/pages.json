@@ -121,6 +121,15 @@
       }
     },
     {
+      "path": "pages/course/favorite",
+      "type": "page",
+      "layout": "default",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "我的课程"
+      }
+    },
+    {
       "path": "pages/course/index",
       "type": "page",
       "layout": "tabbar",

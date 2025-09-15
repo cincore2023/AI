@@ -25,3 +25,35 @@ export function toggleWxCourseFavorite(courseId: number) {
 export function getWxCourseFavoriteStatus(courseId: number) {
   return http.get<{ isFavorite: boolean }>(`/api/wx/Courses/${courseId}/favorite`)
 }
+
+// 微信小程序获取用户收藏课程列表API
+export function getWxFavoriteCourses(params: { page?: number; pageSize?: number } = {}) {
+  return http.get<WxFavoriteCourseResponse>('/api/wx/Courses/favorite', params)
+}
+
+// 微信小程序收藏课程响应类型
+export interface WxFavoriteCourseItem {
+  id: number
+  courseTitle: string
+  coverImage: string
+  type: string // 'img' | 'video'
+  price: number
+  originalPrice: number
+  onSale: boolean
+  hot: boolean
+  exquisite: boolean
+  sort: number
+  viewDetails: string
+  apprenticeCount: number
+  teacher: number
+  category: number
+  salesperson?: string // 销售员ID
+  favoriteTime: string // 收藏时间
+}
+
+export interface WxFavoriteCourseResponse {
+  courses: WxFavoriteCourseItem[]
+  total: number
+  page: number
+  pageSize: number
+}

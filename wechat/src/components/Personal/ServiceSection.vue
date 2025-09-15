@@ -17,7 +17,7 @@ const bindSalesModalRef = ref()
 // 我的服务列表
 const serviceList = ref<ServiceItem[]>([
   { icon: '📊', title: '我的活动', path: '/pages/activities/index' },
-  { icon: '📚', title: '我的课程', path: '/pages/course/index' },
+  { icon: '📚', title: '我的课程', path: '/pages/course/favorite' }, // 更新为指向收藏课程页面
   { icon: '📁', title: '我的素材', path: '/pages/material/index' },
   { icon: '🤖', title: '我的智能体', path: '/pages/ai/index' },
   { icon: '🎧', title: '联系客服', open: 'contact' },
