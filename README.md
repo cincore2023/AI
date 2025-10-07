@@ -1,126 +1,40 @@
-# PostgreSQL + Redis 数据库 Docker 部署指南
+# AI 项目
 
-## 1. 启动数据库和 Redis 容器
+本项目包含以下子项目：
+- gin-vue-admin: 后端管理系统
+- wechat: 微信小程序前端
 
-在项目根目录下执行：
+## 文档
 
-```bash
-docker-compose up -d
-```
+所有项目文档都位于 [docs](docs/) 文件夹中：
 
-这会启动 PostgreSQL 15 和 Redis 7 容器，配置如下：
+- [项目综合说明](docs/项目综合说明.md) - 包含项目整体架构、技术栈、部署流程等完整信息
+- [后端项目说明](docs/后端项目说明.md) - 后端详细功能说明
+- [独立微信用户体系说明](docs/独立微信用户体系说明.md) - 微信用户体系详细说明
 
-### PostgreSQL 配置：
-- 容器名：gin-vue-admin-db
-- 端口：5432（映射到本地 5432）
-- 用户名：gva
-- 密码：gva1234
-- 数据库名：gva
-- 数据持久化：pgdata volume
+## 快速开始
 
-### Redis 配置：
-- 容器名：gin-vue-admin-redis
-- 端口：6379（映射到本地 6379）
-- 数据持久化：redisdata volume
-- 启用 AOF 持久化
+1. 启动 Docker 环境:
+   ```bash
+   docker-compose up -d
+   ```
 
-## 2. 查看容器状态
+2. 初始化数据库和运行后端服务:
+   ```bash
+   cd gin-vue-admin/server
+   go run main.go
+   ```
 
-```bash
-docker ps
-```
+3. 运行前端管理界面:
+   ```bash
+   cd gin-vue-admin/web
+   npm install
+   npm run serve
+   ```
 
-应看到 `gin-vue-admin-db` 和 `gin-vue-admin-redis` 状态均为 `Up`。
-
-## 3. 查看服务日志
-
-```bash
-# 查看数据库日志
-docker-compose logs -f db
-
-# 查看 Redis 日志
-docker-compose logs -f redis
-```
-
-## 4. 连接数据库
-
-### 方式一：进入容器连接
-```bash
-docker-compose exec db psql -U gva -d gva
-```
-
-### 方式二：本地连接
-```bash
-psql -h localhost -p 5432 -U gva -d gva
-```
-
-## 5. 连接 Redis
-
-### 方式一：进入容器连接
-```bash
-docker-compose exec redis redis-cli
-```
-
-### 方式二：本地连接
-```bash
-redis-cli -h localhost -p 6379
-```
-
-## 6. 常用命令
-
-- 停止所有服务：
-  ```bash
-  docker-compose down
-  ```
-- 重启数据库：
-  ```bash
-  docker-compose restart db
-  ```
-- 重启 Redis：
-  ```bash
-  docker-compose restart redis
-  ```
-- 删除所有数据（数据会丢失）：
-  ```bash
-  docker-compose down -v
-  ```
-
-## 7. 数据持久化
-
-- PostgreSQL 数据存储在 `pgdata` volume 中
-- Redis 数据存储在 `redisdata` volume 中
-- 容器重启、删除后重建，数据不会丢失
-- 只有执行 `docker-compose down -v` 才会删除数据
-
-## 8. 连接参数
-
-### PostgreSQL：
-- Host: localhost 或 127.0.0.1
-- Port: 5432
-- User: gva
-- Password: gva1234
-- Database: gva
-
-### Redis：
-- Host: localhost 或 127.0.0.1
-- Port: 6379
-- 无密码（默认配置）
-
-## 9. 注意事项
-
-- 确保本地 5432 和 6379 端口未被占用
-- 如需修改数据库或 Redis 配置，请编辑 docker-compose.yml 中的 environment 部分
-- 生产环境建议为 Redis 设置密码
-- Redis 已启用 AOF 持久化，数据更安全
-
-## 10. 数据库 SQL 文件管理
-```bash
-# 给脚本执行权限
-chmod +x sync_db.sh
-
-# 同步数据库到本地
-./sync_db.sh
-
-# 查看帮助信息
-./sync_db.sh --help
-```
+4. 运行微信小程序:
+   ```bash
+   cd wechat
+   pnpm install
+   pnpm dev
+   ```
